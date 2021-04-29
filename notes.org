@@ -1,0 +1,67 @@
+* A way towards a wireless keyboard
+A few years ago I got a fascination for mechanical keyboards
+through the subreddit  /r/MechanicalKeyboards. Since my main
+jobs involves  computers 90 percent  of the time,  I figured
+wanted a  custom workhouse  myself; and  so the  rabbit hole
+that is mechanical keyboards began.
+
+A few  years ago I  hand-wired two keyboards.  These initial
+boards  had  some  nice  features  such  as  mag-like  quick
+release,  programmable layouts,  ortholinear layouts  and so
+on. Since building those, however, I really wanted something
+more portable, and wireless. In addition, I wanted something
+more comfortable: queue in this project!
+
+I will set the following goals for this project:
+1. The keyboard needs to be wireless
+2. The keyboard needs to be split
+3. (Optional) rotary encoders 
+4. (Optional) screen to display layout information
+
+Prior to  this log, there  was a  V1 with a  custom designed
+PCB. Even after  many hours of research  and finally pulling
+the  trigger on  ordering the  PCB, the  parts ended  up not
+working.  This was  either due  to my  soldering skills,  or
+(more likely) my poor PCB design skills. In this V2, I aimed
+to   eliminate  most   of  these   issues  by   letting  the
+microcontroller  take most  of  the grunt  work. After  some
+research I decided on a cheap ESP32 microcontroller with I2C
+display and  battery management. The design  was inspired by
+cornekeyboard.
+
+* Code progress
+The default  ESP32 firmware is fairly  complex and even setting  up bluetooth is
+non-trivial  for  the novice.  Luckily,  there  is  a  library written  in  C++
+(Arduino)  that would  abstract away  the  details and  allowed me  to focus  on
+designing the logic involved  for the keyboard. As I aimed to  write the code in
+C++,  this was  more of  a bonus  than a  downside. I  may look  into the  ESP32
+firmware in the future as I become more comfortable with the functions it has or
+when I need them.
+
+The keyboard would need three different aspects
+1. Driver for the screen
+   a. Display layer info
+   b. (Optional) other cool messaging features (?)
+2. Driver for the bluetooth
+   a. Connection between the two halves
+3. Driver for matrix keyboard
+   a. Layout switching
+   b. Cadet shift keys
+   c. (Optional) Macros
+
+First started to figure out the bluetooth  and the display as the keyboard logic
+itself would build on these two modules. 
+   
+* PCB design
+Most of this is done, but needs to be documented
+** TODO add power button on layout
+* Bluetooth setup
+** TODO setup HID for BLE
+** TODO Send keys by connecting a key
+* Keyboard firmware
+** TODO setting up keyboard layouts
+** TODO Matrix scanning
+* Display firmware
+** TODO create text class
+Take into account screen size and adjusts text accordingly
+** DONE Show layer info

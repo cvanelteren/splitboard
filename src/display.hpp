@@ -5,9 +5,11 @@
 // display
 #include <U8g2lib.h>
 
-class Display : public U8G2_SSD1306_128X64_NONAME_1_SW_I2C {
-
+class Display : public U8G2_SSD1306_128X64_NONAME_F_HW_I2C {
+private:
 public:
+  U8G2LOG log;
+  std::vector<uint8_t> log_buffer;
   Display(Config *config);
   // void print(uint8_t x, uint8_t y, text);
 };

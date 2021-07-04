@@ -1,0 +1,240 @@
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060430  A0      : 0x800d35fd  A1      : 0x3ffce9c0  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffce9b0  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffce9c0 0x400d35fa:0x3ffce9e0 0x400d37fd:0x3ffcea00 0x400d385d:0x3ffcea30 0x400d37bd:0x3ffcea50 0x400d1df9:0x3ffcea70 0x401e6221:0x3ffcea90 0x400d92fa:0x3ffceab0 0x400d934d:0x3ffcead0 0x400d9381:0x3ffceaf0 0x400d1f5c:0x3ffceb10 0x400d279a:0x3ffceb30 0x400da610:0x3ffceb50 0x40091012:0x3ffceb70
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060a30  A0      : 0x800d35fd  A1      : 0x3ffce9c0  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffce9b0  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffce9c0 0x400d35fa:0x3ffce9e0 0x400d37fd:0x3ffcea00 0x400d385d:0x3ffcea30 0x400d37bd:0x3ffcea50 0x400d1df9:0x3ffcea70 0x401e6221:0x3ffcea90 0x400d92fa:0x3ffceab0 0x400d934d:0x3ffcead0 0x400d9381:0x3ffceaf0 0x400d1f5c:0x3ffceb10 0x400d279a:0x3ffceb30 0x400da610:0x3ffceb50 0x40091012:0x3ffceb70
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060030  A0      : 0x800d35fd  A1      : 0x3ffcea50  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffcea40  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffcea50 0x400d35fa:0x3ffcea70 0x400d37fd:0x3ffcea90 0x400d385d:0x3ffceac0 0x400d37bd:0x3ffceae0 0x400d1df9:0x3ffceb00 0x401e6221:0x3ffceb20 0x400d92fa:0x3ffceb40 0x400d934d:0x3ffceb60 0x400d9381:0x3ffceb80 0x400d1f5c:0x3ffceba0 0x400d279a:0x3ffcebc0 0x400da610:0x3ffcebe0 0x40091012:0x3ffcec00
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Bytes received: 56
+Char: THIS IS A CHAR
+Int: 1
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060a30  A0      : 0x800d35fd  A1      : 0x3ffcea50  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffcea40  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffcea50 0x400d35fa:0x3ffcea70 0x400d37fd:0x3ffcea90 0x400d385d:0x3ffceac0 0x400d37bd:0x3ffceae0 0x400d1df9:0x3ffceb00 0x401e6221:0x3ffceb20 0x400d92fa:0x3ffceb40 0x400d934d:0x3ffceb60 0x400d9381:0x3ffceb80 0x400d1f5c:0x3ffceba0 0x400d279a:0x3ffcebc0 0x400da610:0x3ffcebe0 0x40091012:0x3ffcec00
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Bytes received: 56
+Char: THIS IS A CHAR
+Int: 8
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060030  A0      : 0x800d35fd  A1      : 0x3ffcea50  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffcea40  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffcea50 0x400d35fa:0x3ffcea70 0x400d37fd:0x3ffcea90 0x400d385d:0x3ffceac0 0x400d37bd:0x3ffceae0 0x400d1df9:0x3ffceb00 0x401e6221:0x3ffceb20 0x400d92fa:0x3ffceb40 0x400d934d:0x3ffceb60 0x400d9381:0x3ffceb80 0x400d1f5c:0x3ffceba0 0x400d279a:0x3ffcebc0 0x400da610:0x3ffcebe0 0x40091012:0x3ffcec00
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Bytes received: 56
+Char: THIS IS A CHAR
+Int: 19
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060e30  A0      : 0x800d35fd  A1      : 0x3ffce9d0  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffce9c0  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffce9d0 0x400d35fa:0x3ffce9f0 0x400d37fd:0x3ffcea10 0x400d385d:0x3ffcea40 0x400d37bd:0x3ffcea60 0x400d1df9:0x3ffcea80 0x401e6221:0x3ffceaa0 0x400d92fa:0x3ffceac0 0x400d934d:0x3ffceae0 0x400d9381:0x3ffceb00 0x400d1f5c:0x3ffceb20 0x400d279a:0x3ffceb40 0x400da610:0x3ffceb60 0x40091012:0x3ffceb80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Scanning
+ Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d3544  PS      : 0x00060030  A0      : 0x800d35fd  A1      : 0x3ffcea50  
+A2      : 0x3ffbae98  A3      : 0x00000020  A4      : 0x00000040  A5      : 0x3ffc4dd0  
+A6      : 0x3ffba6b8  A7      : 0x0000003f  A8      : 0x00000017  A9      : 0x3ffcea40  
+A10     : 0x3ffbae98  A11     : 0x3f401ee7  A12     : 0x3f401ee9  A13     : 0x3ffbaf3c  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x0000000b  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000018  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x400d3544:0x3ffcea50 0x400d35fa:0x3ffcea70 0x400d37fd:0x3ffcea90 0x400d385d:0x3ffceac0 0x400d37bd:0x3ffceae0 0x400d1df9:0x3ffceb00 0x401e6221:0x3ffceb20 0x400d92fa:0x3ffceb40 0x400d934d:0x3ffceb60 0x400d9381:0x3ffceb80 0x400d1f5c:0x3ffceba0 0x400d279a:0x3ffcebc0 0x400da610:0x3ffcebe0 0x40091012:0x3ffcec00
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting keyboard
+MAC address is: 38303A37443A33413A44343A32453A3434

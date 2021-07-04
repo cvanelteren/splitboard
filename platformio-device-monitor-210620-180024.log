@@ -1,0 +1,46 @@
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Scanning
+Setting up connection
+Initializing ble
+ Scanning
+ Found device 
+Found device 
+Found device LE_WH-1000XM3
+Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ Scanning
+ 

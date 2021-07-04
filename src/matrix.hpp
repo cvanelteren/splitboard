@@ -6,38 +6,45 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 // allow layout to access matrix
 #include "layout.hpp"
 // configuration
 #include "config.hpp"
 
-struct hash_pair {
-  template <class T1, class T2>
-  size_t operator()(const std::pair<T1, T2> &p) const {
-    auto hash1 = std::hash<T1>{}(p.first);
-    auto hash2 = std::hash<T2>{}(p.second);
-    return hash1 ^ hash2;
-  }
-};
+#include <iostream>
+#include <string>
 
-typedef std::pair<size_t, size_t> switch_t;
+#include "types.h"
+
 class Matrix {
-  // scans the pins
-  void scan();
-  // determine if switch was activated
-  void determine_activity(switch_t *pair);
-
   // properties
   size_t debounce;
-  std::vector<size_t> row_pins;
-  std::vector<size_t> col_pins;
-  // holds pin state
-  std::unordered_map<switch_t, size_t, hash_pair> active_keys;
+  std::vector<size_t> source_pins;
+  std::vector<size_t> sinc_pins;
 
-  friend Layout;
+  bool row2col;
+  // holds pin state
+
+  // friend Layout;
+  void show_switch(keyswitch_t *key);
+
+  std::unordered_map<size_t, std::unordered_map<size_t, keyswitch_t>> keys;
 
 public:
+  // scans the pins
+  //
+  // std::unordered_map<keyswitch_t, keyswitch_t> active_keys;
+  std::vector<keyswitch_t> active_keys;
+  void scan();
+  void print_ak();
+  void update();
+  void get_pinmode();
+  // determine if switch was activated
+  void determine_activity(keyswitch_t *key);
+  void setup_pins();
+  void setup_keys();
   Matrix(Config *config);
 };
 #endif

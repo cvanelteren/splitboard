@@ -1,3 +1,4 @@
+https://circuitdigest.com/microcontroller-projects/esp32-ble-server-how-to-use-gatt-services-for-battery-level-indication
 * A way towards a wireless keyboard
 A few years ago I got a fascination for mechanical keyboards
 through the subreddit  /r/MechanicalKeyboards. Since my main
@@ -31,16 +32,17 @@ cornekeyboard.
 
 * Code progress
 The default  ESP32 firmware is fairly  complex and even setting  up bluetooth is
-non-trivial  for  the novice.  Luckily,  there  is  a  library written  in  C++
-(Arduino)  that would  abstract away  the  details and  allowed me  to focus  on
-designing the logic involved  for the keyboard. As I aimed to  write the code in
-C++,  this was  more of  a bonus  than a  downside. I  may look  into the  ESP32
-firmware in the future as I become more comfortable with the functions it has or
-when I need them.
+non-trivial for the novice. Luckily, there is a library written in C++ (Arduino)
+that would abstract  away the details and  allowed me to focus  on designing the
+logic involved for the  keyboard. As I aimed to write the code  in C++, this was
+more of  a bonus  than a downside.  I may  look into the  ESP32 firmware  in the
+future as  I become more comfortable  with the functions  it has or when  I need
+them.
 
 The keyboard would need three different aspects
 1. Driver for the screen
    a. Display layer info
+      a. Scrolling buffer
    b. (Optional) other cool messaging features (?)
 2. Driver for the bluetooth
    a. Connection between the two halves
@@ -51,17 +53,131 @@ The keyboard would need three different aspects
 
 First started to figure out the bluetooth  and the display as the keyboard logic
 itself would build on these two modules. 
-   
+
+** Display setup
+** DONE Scrolling buffer
+When printing output on the screen, the screen may be cut short as it the U8G2 does not perform any bounds checking on what's being drawn on the screen. Luckily, for text the library is extended to enable scrolling buffers. To enable  this, the display class has to be extended through the U8G2LOG class. In a nutshell, this class tiles the display space according to rectangular spaces and draws the characters in those tiles. Monospace  fonts are
+preferred here as letters are all the same size. The framebuffer has to be set according to what font size is used, such that the characters are set to the correct space.
+
+As it currently stands, the framebuffers has to be manually resized when fontsize changes. I haven't finalized any designs yet on the GUI. Consequently, I have added a separate size function that will automate the bookkeeping.
+
+** TODO Designing a UI
+*** What should it display?
+- Battery information(!)
+- Layer information
+- Messages through wifi
+  + Perhaps not possible as wifi and  ble operate through the same antenna. With
+    latest idf it should be possible and interferes with the pin choice
 * PCB design
 Most of this is done, but needs to be documented
 ** TODO add power button on layout
 * Bluetooth setup
-** TODO setup HID for BLE
-** TODO Send keys by connecting a key
+** DONE setup HID for BLE
+** DONE Send keys by connecting a key
+** Server client setup
+https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-to-fitness-band-to-trigger-light
+Running two bluetooth instances separately is not wanted due to
+1. High power consumption; two devices running the a full bluetooth client is expensive.
+2. Communication; some  keys may require coordination among 2  halves before sent
+   to the computer.
+
+The esp32 supports energy efficient  communication among server-client setup. In
+the keyboard one half will be setup as the server and the other as a client. The
+server will communicate with the main device and will be recognized as hid.
+
+*** Generic Attributes (GATT)
+Communication between server  and client happens through GATT;  this defines how
+the  server  and  client  exchange  messages.   The  structure  of  of  GATT  is
+hierarchical. In brief, the hierarchy looks as follows:
+
+1. Service
+   a. UUID
+   b. Characteristic
+      a. Descriptor (UUID)
+      b. Value
+   c. (other service)
+
+At the top of the hierarchy is a profile which holds one or more services. Every
+service contains at least one characteristic, or can reference other services. A
+service is a collection of information,  such as a sensor reading, battery level
+reading and so on.  There are some pre-defined services that  can be called (see
+https://www.bluetooth.com/specifications/gatt/services).
+
+The BLE  characteristic is  owned by  a service  and is  the place  where actual
+information is  held in the  hierarchy. The  characteristic consists of  (1) the
+characteristic declaration, and (2) the characteristic value. The characteristic
+may be  expanded by descriptors which  further expand the metadata  contained in
+the  characteristic   declaration.  These  characteristic  may   have  different
+properties such as read-write, broadcast, write without response and so on.
+
+Each service needs  a universally unique identifier (UUID) which  is a 128-bit (16
+byte) unique string of numbers and letters.
+
+In the case of the BLEKeyboard library, the main class holds 3 characteristics
+
+1. inputKeyboard
+2. outputKeyboard
+3. inputMediaKeys
+
+
+** vTaskCreate
+Implementing tasks  on the esp32. These  functions run as an  infinite loop. The
+BLEKeyboard firmware creates a server in the `this->taskServer` and binds it in `begin`.
+   - minor notes; i think  i need to add stuff to the  ble connection status. It
+     needs to change from server to client and the way it interacts
+
+** TODO figure out the three callback arrays
+The callback  class merely has logging  functions but it inherents  from a class
+that has callbacks
+
+** TODO look at blehiddevice class
+
 * Keyboard firmware
 ** TODO setting up keyboard layouts
-** TODO Matrix scanning
+** DONE Matrix scanning
+
 * Display firmware
 ** TODO create text class
 Take into account screen size and adjusts text accordingly
+** DONE move log into display class
+** TODO write functions for dealing with font sizes and automatic log update
+if the font is changed; the  frameBuffer may be overwritten causing the firmware
+crash. This needs to be fixed.
 ** DONE Show layer info
+* TODO There shall be light!
+There are two  main programs one can  use for arduino and LEDs.  The most common
+ones are  FastLED and  NeoPixel. Unfortunately, the  LEDS I  bought are
+SK6812 ([[https://cdn-shop.adafruit.com/product-files/1138/SK6812+LED+datasheet+.pdf][datasheet]]) which both libraries don't support. Luckily, somebody already
+did the grunt work in converting the NeoPixel library to support this LED type.
+
+
+The class SK6182Serial implies that the LEDs are adressed through two buffers:
+- frameBuffer : buffer used for driving the leds
+- drawBuffer : attachment  to framebuffers. This buffer holds the  state that is
+  going to  be drawn in the  frame buffer after update;  it is what is  set when
+  setting colors of pixels.
+
+  The initializiation reads as:
+#+begin_src cpp
+    constexpr SK6182Serial(uint16_t num, void *fb, void *db, uint8_t pin,
+                           uint8_t cfg)
+        : numled(num), pin(pin), config(cfg), frameBuffer((uint8_t *)fb),
+          drawBuffer((uint8_t *)db) {}
+    bool begin();
+#+end_src
+
+`num` refers to the number of leds in the entire frameBuffer.
+* Esp32 pin information
+- Finalize pin design
+- Not all pins can be used for a  all inputs, for example 34 and higher can only
+  be used a input pins
+ - Touch pins can be used to wake from sleep.
+  + Perhaps use a rotary encoder to wake from sleep
+  + Not sure if you can use a pin at all for this purpose as it probably neds to
+    connect ground
+- What pins to use for waking from sleep?
+
+#+attr_html: :alt  :align left :class img
+[[file:pinout.jpg]]
+
+https://randomnerdtutorials.com/esp32-pinout-reference-gpios/

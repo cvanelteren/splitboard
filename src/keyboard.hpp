@@ -14,18 +14,28 @@
 // internal to readout the pins
 #include "matrix.hpp"
 // holds layout keys
+#include "bluetooth.hpp"
 #include "display.hpp"
 #include "layout.hpp"
+#include "types.h"
 
 class Keyboard {
 
 public:
   Matrix *matrix;
-  Layout *layout;
+  // Layout *layout;
+  layers_t layers;
   Display *display;
+  // std::vector<uint8_t> fb;
+
+  Bluetooth *bluetooth;
+  // BleKeyboard ble;
 
   Keyboard(Config *config);
   void begin();
-  BleKeyboard ble;
+  void update();
+
+private:
+  bool is_server;
 };
 #endif

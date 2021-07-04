@@ -1,0 +1,47 @@
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Found device Name: , Address: 05:26:6a:af:0e:3b, manufacturer data: 06000109200299ab659e1a220b9c729a05111d2b1c59b50d330ca639f2
+Found device Name: , Address: 25:2b:a0:2d:bd:78, serviceUUID: 0000fd6f-0000-1000-8000-00805f9b34fb
+Found device Name: , Address: 60:81:5c:74:0c:10, manufacturer data: 4c001005421cb5e94c, txPower: 7
+Guru Meditation Error: Core  1 panic'ed (StoreProhibited). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x4019cd66  PS      : 0x00060b30  A0      : 0x800d1b66  A1      : 0x3ffbbe80  
+A2      : 0x00000001  A3      : 0x000003c1  A4      : 0x3ffc4904  A5      : 0x3ffbbe80  
+A6      : 0x3ffbbe80  A7      : 0x00000011  A8      : 0x800d1a5c  A9      : 0x3ffbbd60  
+A10     : 0x3ffbbd84  A11     : 0x00000000  A12     : 0x00000000  A13     : 0x00000055  
+A14     : 0x3ffe0c24  A15     : 0x00000078  SAR     : 0x00000008  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x0000000d  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xffffffff  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4019cd66:0x3ffbbe80 0x400d1b63:0x3ffbbea0 0x400908e2:0x3ffbbee0
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard

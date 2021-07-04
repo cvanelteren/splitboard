@@ -1,0 +1,857 @@
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060f36  A0      : 0x00060f30  A1      : 0x3ffbb730  
+A2      : 0x00000025  A3      : 0x3ffbbb60  A4      : 0x00000000  A5      : 0x0000003a  
+A6      : 0x00000001  A7      : 0x00000002  A8      : 0x3f400af8  A9      : 0x3ff96354  
+A10     : 0x00000008  A11     : 0x3ffbb7f0  A12     : 0x00000000  A13     : 0x00000010  
+A14     : 0x00000057  A15     : 0x00000001  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x00060f2d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060736  A0      : 0x00060730  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x00000000  A5      : 0x00000000  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x00000078  A9      : 0x00000078  
+A10     : 0x0000006c  A11     : 0x00000002  A12     : 0x00000061  A13     : 0x00000073  
+A14     : 0x00000075  A15     : 0xff000000  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006072d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x40092ff4  PS      : 0x00060736  A0      : 0x4008d6dc  A1      : 0x3ffbb700  
+A2      : 0x3ffbbf84  A3      : 0x3ffbb7f0  A4      : 0x00000000  A5      : 0x00000010  
+A6      : 0x00000057  A7      : 0x00000037  A8      : 0x00000000  A9      : 0x0000003a  
+A10     : 0x00000001  A11     : 0x3ffbb7f3  A12     : 0x00000000  A13     : 0x0fffffff  
+A14     : 0x00000000  A15     : 0x00000037  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x40092ff4:0x3ffbb700 0x4008d6d9:0x3ffbb7f0 0x400dc2f5:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060d36  A0      : 0x00060d30  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x00000080  A5      : 0x3ffbb7f2  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x00000000  A9      : 0x00000001  
+A10     : 0x00000080  A11     : 0x3ffbb7f0  A12     : 0x00000000  A13     : 0x00000010  
+A14     : 0x00000057  A15     : 0x00000037  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x00060d2d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060736  A0      : 0x00060730  A1      : 0x3ffbb730  
+A2      : 0x3ff96379  A3      : 0x3ffbbb60  A4      : 0x3ffbb9f0  A5      : 0x00000025  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x3f400af6  A9      : 0x3ff96354  
+A10     : 0x00000008  A11     : 0x3ffbafc0  A12     : 0x00000011  A13     : 0x0000ff00  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006072d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060d36  A0      : 0x00060d30  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x3f400af5  A5      : 0x3ffbbc00  
+A6      : 0x3ffbbbe0  A7      : 0x00000008  A8      : 0x80091776  A9      : 0x3ffbbb20  
+A10     : 0x3ffbbf1c  A11     : 0x3ffbafc0  A12     : 0x00000011  A13     : 0x0000ff00  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x00060d2d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060936  A0      : 0x00060930  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x0000015d  A5      : 0x3ffbb7f0  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x00000f80  A9      : 0x00000038  
+A10     : 0x3ffdf2c4  A11     : 0x3f403cce  A12     : 0xfffffea3  A13     : 0x00000073  
+A14     : 0x00000039  A15     : 0x00000010  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006092d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060536  A0      : 0x00060530  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x3f400af5  A5      : 0x00000204  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x3f400af5  A9      : 0x3ffbbb20  
+A10     : 0x3ffbbf1c  A11     : 0x3ffbafc0  A12     : 0x00000011  A13     : 0x0000ff00  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006052d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060136  A0      : 0x00060130  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x00000000  A5      : 0x00000000  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x00000078  A9      : 0x3f400af6  
+A10     : 0x0000006c  A11     : 0x00000002  A12     : 0x00000061  A13     : 0x00000073  
+A14     : 0x00000075  A15     : 0xff000000  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006012d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060736  A0      : 0x00060730  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x00002204  A5      : 0x00000204  
+A6      : 0x3ffbbbe0  A7      : 0x00000008  A8      : 0x80091776  A9      : 0x3ffbbb20  
+A10     : 0x3ffbbf1c  A11     : 0x3ffbafc0  A12     : 0x00000011  A13     : 0x0000ff00  
+A14     : 0x00ff0000  A15     : 0xff000000  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006072d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x40092ff4  PS      : 0x00060d36  A0      : 0x4008d6dc  A1      : 0x3ffbb700  
+A2      : 0x3ffbbf84  A3      : 0x3ffbb7f0  A4      : 0x00000000  A5      : 0x00000010  
+A6      : 0x3ffbb7f0  A7      : 0x0000002d  A8      : 0x00000044  A9      : 0x3ff96398  
+A10     : 0x3ff96354  A11     : 0x3ffbb7f1  A12     : 0x00000000  A13     : 0x0fffffff  
+A14     : 0x00000000  A15     : 0x00000004  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x40092ff4:0x3ffbb700 0x4008d6d9:0x3ffbb7f0 0x400dc2f5:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Target is 
+80:7D:3A:D4:2E:46
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Target is 
+80:7D:3A:D4:2E:46
+Found device 
+23:62:0b:b6:30:30
+Scanning
+ Target is 
+80:7D:3A:D4:2E:46
+Found device 
+01:5d:f4:f7:83:bb
+Guru Meditation Error: Core  1 panic'ed (Unhandled debug exception)
+Debug exception reason: Stack canary watchpoint triggered (client) 
+Core 1 register dump:
+PC      : 0x4008d6c1  PS      : 0x00060936  A0      : 0x00060930  A1      : 0x3ffbb730  
+A2      : 0x00000000  A3      : 0x3ffbbb60  A4      : 0x00000080  A5      : 0x3ffbb7f2  
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x00000000  A9      : 0x00000001  
+A10     : 0x00000080  A11     : 0x3ffbb7f0  A12     : 0x00000000  A13     : 0x00000010  
+A14     : 0x00000057  A15     : 0x00000037  SAR     : 0x00000018  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400014fd  LEND    : 0x4000150d  LCOUNT  : 0xfffffffb  
+
+ELF file SHA256: 0000000000000000
+
+Backtrace: 0x4008d6c1:0x3ffbb730 0x0006092d:0x3ffbbb60 0x400d452d:0x3ffbbc20 0x400d1bea:0x3ffbbc70 0x400d1d6d:0x3ffbbe40 0x400908e2:0x3ffbbe80
+
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+Setting up bluetooth
+Setting up connectionScanning
+
+Initializing ble
+ 

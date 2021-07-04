@@ -1,72 +1,247 @@
-/**
- * This example turns the ESP32 into a Bluetooth LE keyboard that writes the
- * words, presses Enter, presses a media key and then Ctrl+Alt+Delete
- */
+/*
+  Rui Santos
+  Complete project details at
+  https://RandomNerdTutorials.com/esp-now-esp32-arduino-ide/
 
-#include <Arduino.h>
-#include <BleKeyboard.h>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files.
 
-#include <SPI.h>
-#include <Wire.h>
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+*/
+
+#include <WiFi.h>
+#include <esp_now.h>
 
 #include "config.hpp"
 #include "keyboard.hpp"
-
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
-auto ble = BleKeyboard("Test");
 
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Starting BLE work!");
-  Serial.println("1- Download and install an BLE scanner app in your phone");
-  Serial.println("2- Scan for BLE devices in the app");
-  Serial.println("3- Connect to MyESP32");
-  Serial.println(
-      "4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something");
-  Serial.println("5- See the magic =)");
-  keyboard.begin();
+// Structure example to receive data
+// Must match the sender structure
+typedef struct struct_message {
+  char a[32];
+  int b;
+  float c;
+  String d;
+  bool e;
+} struct_message;
+
+// Create a struct_message called myData
+struct_message myData;
+
+// callback function that will be executed when data is received
+void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
+  memcpy(&myData, incomingData, sizeof(myData));
+  Serial.print("Bytes received: ");
+  Serial.println(len);
+  Serial.print("Char: ");
+  Serial.println(myData.a);
+  Serial.print("Int: ");
+  Serial.println(myData.b);
+  Serial.print("Float: ");
+  Serial.println(myData.c);
+  Serial.print("String: ");
+  Serial.println(myData.d);
+  Serial.print("Bool: ");
+  Serial.println(myData.e);
+  Serial.println();
 }
 
-auto *font = u8g2_font_7x14B_mr;
+void setup() {
+  // Initialize Serial Monitor
+  Serial.begin(115200);
+
+  keyboard.begin();
+  // Set device as a Wi-Fi Station
+  // WiFi.mode(WIFI_STA);
+
+  // // Init ESP-NOW
+  // if (esp_now_init() != ESP_OK) {
+  //   Serial.println("Error initializing ESP-NOW");
+  //   return;
+  // }
+
+  // Once ESPNow is successfully Init, we will register for recv CB to
+  // get recv packer info
+  // esp_now_register_recv_cb(OnDataRecv);
+}
+
+// #include <WiFi.h>
+// #include <esp_now.h>
+
+// // REPLACE WITH YOUR RECEIVER MAC Address
+// // uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+// uint8_t broadcastAddress[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
+// // Structure example to send data
+// // Must match the receiver structure
+// typedef struct struct_message {
+//   char a[32];
+//   int b;
+//   float c;
+//   String d;
+//   bool e;
+// } struct_message;
+
+// // Create a struct_message called myData
+// struct_message myData;
+
+// // callback when data is sent
+// void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+//   Serial.print("\r\nLast Packet Send Status:\t");
+//   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
+//                                                 : "Delivery Fail");
+// }
+
+// void setup() {
+//   keyboard.begin();
+//   // Init Serial Monitor
+//   Serial.begin(115200);
+
+//   // Set device as a Wi-Fi Station
+//   WiFi.mode(WIFI_STA);
+
+//   // Init ESP-NOW
+//   if (esp_now_init() != ESP_OK) {
+//     Serial.println("Error initializing ESP-NOW");
+//     return;
+//   }
+
+//   // Once ESPNow is successfully Init, we will register for Send CB to
+//   // get the status of Trasnmitted packet
+//   esp_now_register_send_cb(OnDataSent);
+
+//   // Register peer
+//   esp_now_peer_info_t peerInfo;
+//   memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+//   peerInfo.channel = 0;
+//   peerInfo.encrypt = false;
+
+//   // Add peer
+//   if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+//     Serial.println("Failed to add peer");
+//     return;
+//   }
+// }
+
+// void loop() {
+//   // Set values to send
+//   strcpy(myData.a, "THIS IS A CHAR");
+//   myData.b = random(1, 20);
+//   myData.c = 1.2;
+//   myData.d = "Hello";
+//   myData.e = false;
+
+//   // Send message via ESP-NOW
+//   esp_err_t result =
+//       esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
+
+//   if (result == ESP_OK) {
+//     Serial.println("Sent with success");
+//   } else {
+//     Serial.println("Error sending the data");
+//   }
+//   delay(2000);
+// }
+
+//  **
+//  * This example turns the ESP32 into a Bluetooth LE keyboard that writes the
+//  * words, presses Enter, presses a media key and then Ctrl+Alt+Delete
+//  */
+
+// #include <Arduino.h>
+// #include <BleKeyboard.h>
+
+// #include <SPI.h>
+// #include <Wire.h>
+
+// #include "config.hpp"
+// #include "keyboard.hpp"
+
+// #include "now.hpp"
+
+// // auto ble = BleKeyboard("Test");
+
+// // // Create a U8g2log object
+// // U8G2LOG u8g2log;
+
+// // // assume 4x6 font, define width and height
+// // //
+// // // assume 4x6 font, define width and height
+// // #define U8LOG_WIDTH 10
+// // #define U8LOG_HEIGHT 32
+
+// // // allocate memory
+// // uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
+// // auto test = std::vector<uint8_t>(U8LOG_WIDTH * U8LOG_HEIGHT);
+
+// Config config = Config();
+// Keyboard keyboard = Keyboard(&config);
+
+// #include <WiFi.h>
+
+// #include <esp_now.h>
+// void setup() {
+
+//   WiFi.mode(WIFI_STA);
+//   Serial.begin(config.baud_rate);
+//   Serial.println("Starting BLE work!");
+//   Serial.println("1- Download and install an BLE scanner app in your phone");
+//   Serial.println("2- Scan for BLE devices in the app");
+//   Serial.println("3- Connect to MyESP32");
+//   Serial.println(
+//       "4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write
+//       something");
+//   Serial.println("5- See the magic =)");
+
+//   keyboard.begin();
+//   keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
+//   // keyboard.log = &u8g2log;
+
+//   // keyboard.log->begin(*keyboard.display, 32, 10, &keyboard.fb[0]);
+//   // u8g2log.begin(*(keyboard.display), U8LOG_WIDTH, U8LOG_HEIGHT,
+//   // &keyboard.fb[0]); // connect to u8g2, assign buffer
+//   // u8g2log.setLineHeightOffset(
+//   // 0); // set extra space between lines in pixel, this can be negative
+//   // u8g2log.setRedrawMode(
+//   // 0); // 0: Update screen with newline, 1: Update screen for every char
+//   if (WiFi.macAddress() == config.client_address) {
+//     auto now = EspNow(&config);
+//     now.add_peer(config.serv_add);
+//     Serial.println("HELLO FROM HERE");
+//   }
+//   Serial.println("My mac address is: ");
+//   Serial.println(WiFi.macAddress());
+//   Serial.print("The server address is: ");
+//   Serial.println(config.server_address);
+// }
+
 void loop() {
-  if (keyboard.ble.isConnected()) {
-    // Serial.println("Sending 'Hello world'...");
-    keyboard.display->firstPage();
-    do {
-      keyboard.display->setFont(font);
-      keyboard.display->drawUTF8(1, 30, "hello from bluetooth");
+  // Print a number on the U8g2log window
+  keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
 
-    } while (keyboard.display->nextPage());
-    delay(1000);
-    // Serial.println("Sending 'Hello world'...");
-    // bleKeyboard.print("Hello world");
+  keyboard.update();
 
-    // delay(1000);
+  // for (auto i = 0; i < 32; i++) {
+  //   keyboard.display->log.print("this is a very long text line");
+  //   keyboard.display->log.print("\n");
+  // }
 
-    // Serial.println("Sending Enter key...");
-    // bleKeyboard.write(KEY_RETURN);
+  // keyboard.display->clearDisplay();
 
-    // delay(1000);
+  // for (auto i = 0; i < 64; i++) {
+  //   keyboard.log->print(millis());
+  //   keyboard.log->print(" ");
+  // }
 
-    // Serial.println("Sending Play/Pause media key...");
-    // bleKeyboard.write(KEY_MEDIA_PLAY_PAUSE);
+  // u8g2log.print(millis());
+  // Print a new line, scroll the text window content if required
+  // Refresh the screen
 
-    // delay(1000);
+  // u8g2log.print("\n");
 
-    // bleKeyboard.press(KEY_LEFT_CTRL);
-    // bleKeyboard.press(KEY_LEFT_ALT);
-    // delay(100);
-    // bleKeyboard.releaseAll();
-  } else {
-    keyboard.display->clearDisplay();
-    do {
-      keyboard.display->setFont(font);
-      keyboard.display->drawUTF8(1, 30, "No bluetooth :(");
-
-    } while (keyboard.display->nextPage());
-    // Serial.println("Waiting...");
-    delay(1000);
-  }
+  // keyboard.update();
+  delay(500);
   // delay(5000);
 }

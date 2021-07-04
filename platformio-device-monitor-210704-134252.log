@@ -1,0 +1,378 @@
+Starting keyboard
+16
+MAC address is: 8 0 : 7 D : 3 A : D 4 : 2 E : 4 4 
+Setting up bluetooth
+Setting up connection
+Initializing ble
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 4
+Float: 1.20
+String: Hello
+Bool: 0
+
+Found device LE_WH-1000XM3
+cc:98:8b:d1:cb:18
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 13
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 6
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 9
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 8
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 7
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 5
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 1
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 17
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 7
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 15
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 3
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 9
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 14
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 3
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 8
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 9
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 7
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 3
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 11
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 5
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 10
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 2
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 14
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 1
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 2
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 7
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 7
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 1
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 11
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 3
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 11
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 10
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 14
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 4
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 14
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 17
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 8
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 4
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 9
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 6
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 15
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ Scanning
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 7
+Float: 1.20
+String: Hello
+Bool: 0
+
+Scanning
+ 

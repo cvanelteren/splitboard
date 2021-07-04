@@ -1,10 +1,10 @@
-#ifndef LAYOUT_HPP
-#define LAYOUT_HPP
-#include "config.hpp"
+// #ifndef LAYOUT_HPP
+// #define LAYOUT_HPP
+// #include "config.hpp"
 
-class Layout {
-public:
-  Layout(Config *config);
-};
+// class Layout {
+// public:
+//   Layout(Config *config);
+// };
 
-#endif
+// #endif

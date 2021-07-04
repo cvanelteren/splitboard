@@ -1,0 +1,10 @@
+Starting bluetooth
+Setting up connection
+Initializing ble
+ Starting services
+  lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+  lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+ lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+  lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+  lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+         

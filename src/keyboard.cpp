@@ -6,20 +6,33 @@
 
 #include <WiFi.h>
 
+#include "mesh.hpp"
+
+#include "types.h"
 Keyboard::Keyboard(Config *config) {
+  // setting station wifi mode
+  // for esp_now
+  WiFi.mode(WIFI_STA);
+
   Serial.println("Setting up keyboard");
   // init the keyboard
   this->matrix = new Matrix(config);
   // this->layout = new Layout(config);
-  //
+
   this->layers = {{1, config->test}};
+
+  // setup esp_now
+  this->mesh = new Mesh(config);
+
+  // setup display
   this->display = new Display(config);
 
+  // default to client
+  this->is_server = false;
   if (WiFi.macAddress() == config->server_address) {
     this->bluetooth = new Bluetooth(config);
     this->is_server = true;
-  } else
-    this->is_server = false;
+  }
 
   // this->ble = BleKeyboard(config->name);
 
@@ -54,10 +67,10 @@ void Keyboard::begin() {
   this->display->log.begin(*this->display, width, height,
                            &(this->display->log_buffer)[0]);
   this->display->log.setRedrawMode(1);
-  Serial.println("Setting up bluetooth");
 
   // start bluetooth when server
   if (this->is_server) {
+    Serial.println("Starting bluetooth");
     this->bluetooth->begin();
   }
 
@@ -76,20 +89,29 @@ void Keyboard::begin() {
 }
 
 void Keyboard::update() {
-  Serial.println("Scanning");
+  // Serial.println("Scanning");
   this->matrix->update();
 
   // this->display->log.print("testing this bullshit");
   // this->display->log.print("\n");
 
   if (this->is_server) {
+    // 1. collect message from client
+    // 2. collect active keys
+    // 3. merge the keys
+    // 4. send through bluetooth
     if (this->bluetooth->connection->connected) {
       // Serial.println("Sending 'Hello world'...");
+      Serial.println("Printing received keys");
+      for (auto k : this->mesh->getBuffer()->active_keys) {
+        Serial.println(printf("source %u sink %u", k.source, k.sinc));
+      };
+
       this->display->firstPage();
       do {
         this->display->log.println("");
         this->display->log.print("\rhello:)");
-        this->display->log.print(printf("Connected to %s", "test"));
+        // this->display->log.print(printf("Connected to %s", "test"));
         // this->display->setFont(font);
         // this->display->drawUTF8(1, 30, "hello :)");
 
@@ -110,6 +132,8 @@ void Keyboard::update() {
   }
   // handle client
   else {
+    this->mesh->send(KeyData{this->matrix->active_keys});
+    this->display->log.print("\rI am a client");
   }
   delay(10);
 }

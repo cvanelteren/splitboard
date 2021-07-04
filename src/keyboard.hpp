@@ -17,6 +17,7 @@
 #include "bluetooth.hpp"
 #include "display.hpp"
 #include "layout.hpp"
+#include "mesh.hpp"
 #include "types.h"
 
 class Keyboard {
@@ -29,6 +30,7 @@ public:
   // std::vector<uint8_t> fb;
 
   Bluetooth *bluetooth;
+  Mesh *mesh;
   // BleKeyboard ble;
 
   Keyboard(Config *config);

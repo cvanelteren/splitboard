@@ -2,6 +2,7 @@
 #define types_h
 #include <cstddef>
 #include <unordered_map>
+#include <vector>
 struct hash_pair {
   template <class T1, class T2>
   size_t operator()(const std::pair<T1, T2> &p) const {
@@ -21,6 +22,15 @@ typedef struct {
 // typedef std::pair<size_t, size_t> switch_t;
 typedef std::unordered_map<size_t, std::unordered_map<size_t, std::string>>
     layer_t;
+
 typedef std::unordered_map<size_t, layer_t> layers_t;
+
+typedef std::unordered_map<size_t, std::unordered_map<size_t, keyswitch_t>>
+    matrix_t;
+
+typedef struct {
+  std::vector<keyswitch_t> active_keys;
+
+} KeyData;
 
 #endif

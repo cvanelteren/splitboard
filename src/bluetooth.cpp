@@ -95,7 +95,7 @@ BleConnection::BleConnection() { this->connected = false; }
 void BleConnection::onConnect(BLEServer *pServer) {
   this->connected = true;
 
-  this->adv->start();
+  // this->adv->start();
   // BLE2902 *desc = (BLE2902 *)this->inputKeyboard->getDescriptorByUUID(
   //     BLEUUID((uint16_t)0x2902));
   // desc->setNotifications(true);
@@ -242,8 +242,8 @@ void Bluetooth::taskClient(void *pvParameter) {
 }
 
 void Bluetooth::begin() {
-  // xTaskCreate(this->taskServer, "server", 2048, (void *)this, 5, NULL);
-  xTaskCreate(this->taskClient, "client", 2048, (void *)this, 5, NULL);
+  xTaskCreate(this->taskServer, "server", 2048, (void *)this, 5, NULL);
+  // xTaskCreate(this->taskClient, "client", 2048, (void *)this, 5, NULL);
 }
 
 // virtual in the original; does not hing

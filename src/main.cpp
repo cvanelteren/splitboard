@@ -49,24 +49,24 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   Serial.println();
 }
 
-void setup() {
-  // Initialize Serial Monitor
-  Serial.begin(115200);
+// void setup() {
+//   // Initialize Serial Monitor
+//   Serial.begin(115200);
 
-  keyboard.begin();
-  // Set device as a Wi-Fi Station
-  // WiFi.mode(WIFI_STA);
+//   keyboard.begin();
+//   // Set device as a Wi-Fi Station
+//   // WiFi.mode(WIFI_STA);
 
-  // // Init ESP-NOW
-  // if (esp_now_init() != ESP_OK) {
-  //   Serial.println("Error initializing ESP-NOW");
-  //   return;
-  // }
+//   // // Init ESP-NOW
+//   // if (esp_now_init() != ESP_OK) {
+//   //   Serial.println("Error initializing ESP-NOW");
+//   //   return;
+//   // }
 
-  // Once ESPNow is successfully Init, we will register for recv CB to
-  // get recv packer info
-  // esp_now_register_recv_cb(OnDataRecv);
-}
+//   // Once ESPNow is successfully Init, we will register for recv CB to
+//   // get recv packer info
+//   // esp_now_register_recv_cb(OnDataRecv);
+// }
 
 // #include <WiFi.h>
 // #include <esp_now.h>
@@ -179,43 +179,41 @@ void setup() {
 // Config config = Config();
 // Keyboard keyboard = Keyboard(&config);
 
-// #include <WiFi.h>
+#include <WiFi.h>
+#include <esp_now.h>
+void setup() {
 
-// #include <esp_now.h>
-// void setup() {
+  Serial.begin(config.baud_rate);
+  Serial.println("Starting BLE work!");
+  Serial.println("1- Download and install an BLE scanner app in your phone");
+  Serial.println("2- Scan for BLE devices in the app");
+  Serial.println("3- Connect to MyESP32");
+  Serial.println(
+      "4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something");
+  Serial.println("5- See the magic =)");
 
-//   WiFi.mode(WIFI_STA);
-//   Serial.begin(config.baud_rate);
-//   Serial.println("Starting BLE work!");
-//   Serial.println("1- Download and install an BLE scanner app in your phone");
-//   Serial.println("2- Scan for BLE devices in the app");
-//   Serial.println("3- Connect to MyESP32");
-//   Serial.println(
-//       "4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write
-//       something");
-//   Serial.println("5- See the magic =)");
+  keyboard.begin();
+  keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
+  // keyboard.log = &u8g2log;
 
-//   keyboard.begin();
-//   keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
-//   // keyboard.log = &u8g2log;
+  // WiFi.mode(WIFI_STA);
+  // // Init ESP-NOW
+  // if (esp_now_init() != ESP_OK) {
+  //   Serial.println("Error initializing ESP-NOW");
+  //   return;
+  // }
 
-//   // keyboard.log->begin(*keyboard.display, 32, 10, &keyboard.fb[0]);
-//   // u8g2log.begin(*(keyboard.display), U8LOG_WIDTH, U8LOG_HEIGHT,
-//   // &keyboard.fb[0]); // connect to u8g2, assign buffer
-//   // u8g2log.setLineHeightOffset(
-//   // 0); // set extra space between lines in pixel, this can be negative
-//   // u8g2log.setRedrawMode(
-//   // 0); // 0: Update screen with newline, 1: Update screen for every char
-//   if (WiFi.macAddress() == config.client_address) {
-//     auto now = EspNow(&config);
-//     now.add_peer(config.serv_add);
-//     Serial.println("HELLO FROM HERE");
-//   }
-//   Serial.println("My mac address is: ");
-//   Serial.println(WiFi.macAddress());
-//   Serial.print("The server address is: ");
-//   Serial.println(config.server_address);
-// }
+  // Once ESPNow is successfully Init, we will register for recv CB to
+  // get recv packer info
+  // esp_now_register_recv_cb(OnDataRecv);
+
+  // keyboard.log->begin(*keyboard.display, 32, 10, &keyboard.fb[0]);
+  // u8g2log.begin(*(keyboard.display), U8LOG_WIDTH, U8LOG_HEIGHT,
+  // &keyboard.fb[0]); // connect to u8g2, assign buffer
+  // u8g2log.setLineHeightOffset(0); // set extra space between lines in pixel,
+  // this can be negative u8g2log.setRedrawMode(0); // 0: Update screen with
+  // newline, 1: Update screen for every char
+}
 
 void loop() {
   // Print a number on the U8g2log window

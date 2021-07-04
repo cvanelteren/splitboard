@@ -1,0 +1,59 @@
+Starting BLE work!
+1- Download and install an BLE scanner app in your phone
+2- Scan for BLE devices in the app
+3- Connect to MyESP32
+4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something
+5- See the magic =)
+Starting keyboard
+16
+MAC address is: 5
+Setting up bluetooth
+Starting bluetooth
+Setting up connection
+Initializing ble
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 8
+Float: 1.20
+String: Hello
+Bool: 0
+
+Starting services
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 5
+Float: 1.20
+String: Hello
+Bool: 0
+
+ lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+  Bytes received: 56
+Char: THIS IS A CHAR
+Int: 5
+Float: 1.20
+String: Hello
+Bool: 0
+
+lld_pdu_get_tx_flush_nb HCI packet count mismatch (0, 1)
+ Bytes received: 56
+Char: THIS IS A CHAR
+Int: 10
+Float: 1.20
+String: Hello
+Bool: 0
+
+  Bytes received: 56
+Char: THIS IS A CHAR
+Int: 3
+Float: 1.20
+String: Hello
+Bool: 0
+
+  Bytes received: 56
+Char: THIS IS A CHAR
+Int: 3
+Float: 1.20
+String: Hello
+Bool: 0
+
+ 

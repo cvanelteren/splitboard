@@ -100,6 +100,10 @@ To give a course overview consider the following picture:
 Some info about the esp32
 * Matrix scanning
 * ESP-Now
+#+begin_quote
+ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
+#+end_quote
+
 * Bluetooth
 * OLED Display
 * Battery control

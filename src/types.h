@@ -1,5 +1,6 @@
 #ifndef types_h
 #define types_h
+#include <array>
 #include <cstddef>
 #include <unordered_map>
 #include <vector>
@@ -15,22 +16,23 @@ struct hash_pair {
 typedef struct {
   size_t time;
   bool active;
-  size_t source;
-  size_t sinc;
+  uint8_t source;
+  uint8_t sinc;
 } keyswitch_t;
 
 // typedef std::pair<size_t, size_t> switch_t;
-typedef std::unordered_map<size_t, std::unordered_map<size_t, std::string>>
+typedef std::unordered_map<size_t, std::unordered_map<uint8_t, std::string>>
     layer_t;
 
-typedef std::unordered_map<size_t, layer_t> layers_t;
+typedef std::unordered_map<uint8_t, layer_t> layers_t;
 
-typedef std::unordered_map<size_t, std::unordered_map<size_t, keyswitch_t>>
+typedef std::unordered_map<size_t, std::unordered_map<uint8_t, keyswitch_t>>
     matrix_t;
 
 typedef struct {
   std::vector<keyswitch_t> active_keys;
-
 } KeyData;
+
+typedef std::array<keyswitch_t, 5> buffer_t;
 
 #endif

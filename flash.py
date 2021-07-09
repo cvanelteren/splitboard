@@ -5,11 +5,9 @@ import subprocess, click
 def flash_all(device):
     devs = [f"/dev/ttyUSB{idx}" for idx in range(2)]
     try:
-        device = f"/dev/ttyUSB{int(d)}"
+        devs = [f"/dev/ttyUSB{int(d)}"]
     except:
         print("Not an integer")
-    if device != 'all':
-        devs = [device]
     for dev in devs:
         print(f"Flashing {dev}")
         subprocess.call(f"pio run -t upload --upload-port {dev}".split())

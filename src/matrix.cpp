@@ -45,6 +45,7 @@ void Matrix::scan() {
   /* Determines the activity of the pins */
   keyswitch_t *key;
   this->active_keys.clear();
+  // Serial.println(this->active_keys.size());
   // check switch by setting source pin to high
   for (auto source : this->source_pins) {
     digitalWrite(source, LOW);
@@ -93,12 +94,11 @@ void Matrix::update() {
 
   // Serial.println("Listing keys");
   // Serial.println();
-  Serial.print(" ");
-  Serial.print("\r");
   for (auto key : this->active_keys) {
+    Serial.print("\r");
     Serial.print(key.source);
     Serial.print(key.sinc);
-    Serial.print(" ");
+    Serial.println();
   }
 }
 
@@ -106,7 +106,7 @@ void Matrix::update() {
 void Matrix::print_ak() {
   for (auto source : this->source_pins) {
     for (auto sinc : this->sinc_pins) {
-      Serial.print(this->keys[source][sinc].active);
+      Serial.println(this->keys[source][sinc].active);
       Serial.print(" ");
       Serial.print(digitalRead(source));
       Serial.print(" ");

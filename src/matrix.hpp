@@ -21,8 +21,8 @@
 class Matrix {
   // properties
   size_t debounce;
-  std::vector<size_t> source_pins;
-  std::vector<size_t> sinc_pins;
+  std::vector<uint8_t> source_pins;
+  std::vector<uint8_t> sinc_pins;
 
   bool row2col;
   // holds pin state
@@ -30,7 +30,7 @@ class Matrix {
   // friend Layout;
   void show_switch(keyswitch_t *key);
 
-  std::unordered_map<size_t, std::unordered_map<size_t, keyswitch_t>> keys;
+  std::unordered_map<size_t, std::unordered_map<uint8_t, keyswitch_t>> keys;
 
 public:
   // scans the pins

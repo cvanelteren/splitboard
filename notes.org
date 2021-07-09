@@ -1,4 +1,5 @@
 https://circuitdigest.com/microcontroller-projects/esp32-ble-server-how-to-use-gatt-services-for-battery-level-indication
+
 * A way towards a wireless keyboard
 A few years ago I got a fascination for mechanical keyboards
 through the subreddit  /r/MechanicalKeyboards. Since my main
@@ -31,13 +32,15 @@ display and  battery management. The design  was inspired by
 cornekeyboard.
 
 * Code progress
-The default  ESP32 firmware is fairly  complex and even setting  up bluetooth is
-non-trivial for the novice. Luckily, there is a library written in C++ (Arduino)
-that would abstract  away the details and  allowed me to focus  on designing the
-logic involved for the  keyboard. As I aimed to write the code  in C++, this was
-more of  a bonus  than a downside.  I may  look into the  ESP32 firmware  in the
-future as  I become more comfortable  with the functions  it has or when  I need
-them.
+The  default  ESP32  firmware  is fairly  complex  and  even
+setting up bluetooth is non-trivial for the novice. Luckily,
+there  is a  library  written in  C++  (Arduino) that  would
+abstract  away  the  details  and allowed  me  to  focus  on
+designing the logic involved for the keyboard. As I aimed to
+write  the code  in C++,  this was  more of  a bonus  than a
+downside. I may  look into the ESP32 firmware  in the future
+as I  become more comfortable  with the functions it  has or
+when I need them.
 
 The keyboard would need three different aspects
 1. Driver for the screen
@@ -51,8 +54,8 @@ The keyboard would need three different aspects
    b. Cadet shift keys
    c. (Optional) Macros
 
-First started to figure out the bluetooth  and the display as the keyboard logic
-itself would build on these two modules. 
+First started to figure out the bluetooth and the display as
+the keyboard logic itself would build on these two modules.
 
 ** Display setup
 ** DONE Scrolling buffer
@@ -137,6 +140,9 @@ that has callbacks
 ** DONE Matrix scanning
 
 * Display firmware
+** Updating the display is slow
+- [ ] perhaps move the updating f the display into a
+  ring buffer type setup
 ** TODO create text class
 Take into account screen size and adjusts text accordingly
 ** DONE move log into display class

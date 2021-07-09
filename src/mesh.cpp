@@ -10,35 +10,56 @@
 void handle_input(const unsigned char *addr, const uint8_t *data, int len){};
 
 Mesh::Mesh() {
-  WiFi.mode(WIFI_MODE_STA);
+  // WiFi.mode(WIFI_MODE_STA);
   // initialize wifi before esp-now
-  this->init_esp_now();
 }
 
-Mesh::Mesh(Config *config) : Mesh() {
-  this->config = config;
-  if (config->server_address == WiFi.macAddress().c_str()) {
-    // init client stuff
-    Serial.println("Setting handle_input on server");
-    esp_now_register_recv_cb(this->handle_input);
-  } else {
-    Serial.println("Setting send_input on client");
-    esp_now_register_send_cb(this->send_input);
-  }
-}
+Mesh::Mesh(Config *config) : Mesh() { this->config = config; }
 
 void Mesh::add_peer(const uint8_t *peer_addr) {
-  esp_now_peer_info_t peer;
-  memcpy(peer.peer_addr, peer_addr, 6);
-  peer.channel = 0;
-  peer.encrypt = false;
+  this->peer = {};
+  memcpy(this->peer.peer_addr, peer_addr, 6);
+  this->peer.channel = 0;
+  this->peer.encrypt = false;
 
-  if (esp_now_add_peer(&peer) == ESP_OK) {
+  // for (auto i = 0; i < 6; i++) {
+  //   Serial.print(this->peer.peer_addr[i]);
+  //   Serial.print(" ");
+  // }
+  // Serial.println();
+
+  // this->peer.ifidx = WIFI_IF_AP;
+
+  // Serial.println(printf("%s", this->peer.peer_addr));
+  // Serial.println(printf("%d", this->peer.channel));
+
+  if (esp_now_add_peer(&(this->peer)) != ESP_OK) {
     Serial.println("Failed to add peer");
   } else {
     Serial.println("Added peer");
   }
 }
+
+void Mesh::begin() {
+  this->init_esp_now();
+  // add peer
+  if (WiFi.macAddress() == this->config->server_address) {
+    // init client stuff
+    Serial.println("Setting handle_input on server");
+    // this->add_peer(this->config->client_add);
+    // TODO connect to itself remove
+    this->add_peer(this->config->client_add);
+    // add callbacks
+    esp_now_register_send_cb(this->send_input);
+    esp_now_register_recv_cb(this->handle_input);
+  } else {
+    Serial.println("Setting send_input on client");
+    this->add_peer(this->config->serv_add);
+    // add callbacks
+    esp_now_register_send_cb(this->send_input);
+    esp_now_register_recv_cb(this->handle_input);
+  }
+};
 
 void Mesh::init_esp_now() {
   if (esp_now_init() != ESP_OK) {
@@ -51,22 +72,72 @@ void Mesh::init_esp_now() {
 
 void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
                         int len) {
+  Serial.print("Received ");
+  Serial.println(len);
+
   // empty buffer
-  Mesh::buffer = {};
+  // Mesh::buffer = {};
   // copy received bits into buffer
   memcpy(&(Mesh::buffer), data, len);
+  for (keyswitch_t it : Mesh::buffer) {
+    Serial.print(it.source);
+    Serial.print(" ");
+    Serial.print(it.sinc);
+    Serial.print(" ");
+    Serial.println(it.time);
+  }
 };
 
-KeyData Mesh::buffer = {};
-KeyData *Mesh::getBuffer() { return &Mesh::buffer; }
+buffer_t Mesh::buffer = {};
+// KeyData Mesh::buffer = {};
+// KeyData *Mesh::getBuffer() { return &Mesh::buffer; }
+//
+// std::vector<keyswitch_t> Mesh::buffer = {};
+// std::vector<keyswitch_t> *Mesh::getBuffer() { return &Mesh::buffer; }
 
-void Mesh::send_input(const unsigned char *addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
-                                                : "Delivery Fail");
+void Mesh::send_input(const uint8_t *addr, esp_now_send_status_t status) {
+
+  // Serial.print("\r\nLast Packet Send Status:\t");
+  // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
+  // : "Delivery Fail");
+  if (status == ESP_NOW_SEND_SUCCESS) {
+    Mesh::buffer = {};
+  } else {
+    Serial.print("\r\nLast Packet Send Status:\t");
+    Serial.println("Delivery failed");
+  }
 }
 
-void Mesh::send(KeyData data) {
-  esp_now_send(reinterpret_cast<const uint8_t *>(this->config->server_address),
-               (uint8_t *)&data, sizeof(data));
+void Mesh::send(std::vector<keyswitch_t> data) {
+  // esp_now_send(reinterpret_cast<const uint8_t
+  // *>(this->config->server_address), (uint8_t *)&data, sizeof(data));
+
+  Serial.println(printf("\rSize of data %d \n", sizeof(data)));
+  Serial.println(sizeof(data[0]) * data.size());
+  // Serial.println(printf("Size of keys %d\n", sizeof(data.active_keys)));
+
+  esp_err_t msg = esp_now_send(this->peer.peer_addr, (uint8_t *)&data,
+                               sizeof(data[0]) * data.size());
+
+  if (msg == ESP_OK) {
+    Serial.print("\rMsg sent:\t sucess");
+  } else {
+    Serial.print("\rMsg sent:\t failed");
+  }
+}
+
+void Mesh::send() {
+
+  Serial.println(printf("Size of data %d \n", sizeof(Mesh::buffer)));
+  Serial.println(Mesh::buffer.size() * sizeof(Mesh::buffer[0]));
+  // Serial.println(printf("Size of keys %d\n",
+  // sizeof(Mesh::buffer.active_keys)));
+  esp_err_t msg = esp_now_send(this->peer.peer_addr, (uint8_t *)&Mesh::buffer,
+                               sizeof(Mesh::buffer));
+
+  if (msg == ESP_OK) {
+    Serial.print("\rMsg sent:\t sucess");
+  } else {
+    Serial.print("\rMsg sent:\t failed");
+  }
 }

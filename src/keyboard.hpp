@@ -36,8 +36,11 @@ public:
   Keyboard(Config *config);
   void begin();
   void update();
+  // communicate with bluetooth
+  void send_keys();
+
+  bool is_server;
 
 private:
-  bool is_server;
 };
 #endif

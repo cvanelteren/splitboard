@@ -4,6 +4,7 @@
 
 #include <WiFi.h>
 
+#include "keymap.h"
 #include "mesh.hpp"
 
 #include "types.h"
@@ -30,7 +31,10 @@ Keyboard::Keyboard(Config *config) {
   this->is_server = false;
   if (WiFi.macAddress() == config->server_address) {
     Serial.println("Setting up bluetooth");
-    this->bluetooth = new Bluetooth(config);
+    this->bluetooth =
+        new BleKeyboard(config->device_name, config->device_manufacturer,
+                        this->get_battery_level());
+    // this->bluetooth = new Bluetooth(config);
     this->is_server = true;
   }
 
@@ -44,6 +48,7 @@ Keyboard::Keyboard(Config *config) {
 
 auto *font = u8g2_font_7x14B_mr;
 // start the keyboard
+double Keyboard::get_battery_level() { return 0.0; }
 void Keyboard::begin() {
 
   // print info on bluetooth
@@ -93,6 +98,14 @@ void Keyboard::begin() {
 void Keyboard::send_keys() {
   // read the mesh
   // send the keys
+  if (this->bluetooth->isConnected()) {
+    // this->bluetooth->print("Hello world");
+    if (Mesh::buffer[0].active) {
+      // send a
+      this->bluetooth->write(0x41);
+      Mesh::buffer.fill({});
+    }
+  }
 }
 void Keyboard::update() {
   // Serial.println("Scanning");
@@ -145,8 +158,9 @@ void Keyboard::update() {
 
       for (int i = 0; i < this->matrix->active_keys.size(); i++) {
         Serial.println("Adding keys");
-        this->mesh->buffer[i % 5] = this->matrix->active_keys[i];
-        if (i > 4) {
+        this->mesh->buffer[i % (Mesh::buffer.size() - 1)] =
+            this->matrix->active_keys[i];
+        if (i > (Mesh::buffer.size() - 1)) {
           this->mesh->send();
         }
         if (i == this->matrix->active_keys.size() - 1) {
@@ -154,7 +168,7 @@ void Keyboard::update() {
           this->mesh->buffer.fill({});
         }
       }
-      this->mesh->send();
+      // this->mesh->send();
     }
 
     // this->mesh->send(KeyData{this->matrix->active_keys});

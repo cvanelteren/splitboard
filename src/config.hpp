@@ -37,7 +37,9 @@ public:
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
 
-  size_t debounce = 30;
+  size_t debounce = 5;
+
+  // size_t debounce = 30;
 
   // info advertising bluetooth
   std::string device_manufacturer = "Casper van Elteren";
@@ -54,12 +56,13 @@ public:
 
   // change this for your device
   // const char *server_address = "80:7d:3a:d4:2e:46";
+  // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
   const char *client_address = "80:7D:3A:D4:2E:44";
   uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
-  // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
   const char *server_address = "80:7D:3A:D4:2C:9C";
   uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  // const char *client_address = "80:7D:3A:D4:2C:9C";
   // uint8_t client_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 };
 #endif

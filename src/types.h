@@ -26,13 +26,13 @@ typedef std::unordered_map<size_t, std::unordered_map<uint8_t, std::string>>
 
 typedef std::unordered_map<uint8_t, layer_t> layers_t;
 
-typedef std::unordered_map<size_t, std::unordered_map<uint8_t, keyswitch_t>>
+typedef std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>>
     matrix_t;
 
 typedef struct {
   std::vector<keyswitch_t> active_keys;
 } KeyData;
 
-typedef std::array<keyswitch_t, 5> buffer_t;
+typedef std::array<keyswitch_t, 6> buffer_t;
 
 #endif

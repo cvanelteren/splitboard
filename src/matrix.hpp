@@ -30,7 +30,11 @@ class Matrix {
   // friend Layout;
   void show_switch(keyswitch_t *key);
 
-  std::unordered_map<size_t, std::unordered_map<uint8_t, keyswitch_t>> keys;
+  std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>> keys;
+  std::vector<keyswitch_t> active_scan_keys;
+  std::vector<keyswitch_t> past_scan_keys;
+
+  void determine_change();
 
 public:
   // scans the pins
@@ -45,6 +49,7 @@ public:
   void determine_activity(keyswitch_t *key);
   void setup_pins();
   void setup_keys();
+
   Matrix(Config *config);
 };
 #endif

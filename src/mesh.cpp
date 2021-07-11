@@ -72,20 +72,22 @@ void Mesh::init_esp_now() {
 
 void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
                         int len) {
-  Serial.print("Received ");
-  Serial.println(len);
+
+  // Serial.print("Received ");
+  // Serial.println(len);
 
   // empty buffer
   // Mesh::buffer = {};
   // copy received bits into buffer
   memcpy(&(Mesh::buffer), data, len);
-  for (keyswitch_t it : Mesh::buffer) {
-    Serial.print(it.source);
-    Serial.print(" ");
-    Serial.print(it.sinc);
-    Serial.print(" ");
-    Serial.println(it.time);
-  }
+
+  // for (keyswitch_t it : Mesh::buffer) {
+  //   Serial.print(it.source);
+  //   Serial.print(" ");
+  //   Serial.print(it.sinc);
+  //   Serial.print(" ");
+  //   Serial.println(it.time);
+  // }
 };
 
 buffer_t Mesh::buffer = {};
@@ -120,9 +122,9 @@ void Mesh::send(std::vector<keyswitch_t> data) {
                                sizeof(data[0]) * data.size());
 
   if (msg == ESP_OK) {
-    Serial.print("\rMsg sent:\t sucess");
+    Serial.print("\rMsg sent:\t sucess\n");
   } else {
-    Serial.print("\rMsg sent:\t failed");
+    Serial.print("\rMsg sent:\t failed\n");
   }
 }
 
@@ -136,8 +138,8 @@ void Mesh::send() {
                                sizeof(Mesh::buffer));
 
   if (msg == ESP_OK) {
-    Serial.print("\rMsg sent:\t sucess");
+    Serial.println("\rMsg sent:\t sucess");
   } else {
-    Serial.print("\rMsg sent:\t failed");
+    Serial.println("\rMsg sent:\t failed");
   }
 }

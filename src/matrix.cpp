@@ -41,10 +41,12 @@ void Matrix::setup_pins() {
 // todo implement coroutine or async routine for measuring minimum debounce
 // i need a way to track the pin state over a time
 // the ide
+//
 void Matrix::scan() {
   /* Determines the activity of the pins */
   keyswitch_t *key;
   this->active_keys.clear();
+  this->active_scan_keys.clear();
   // Serial.println(this->active_keys.size());
   // check switch by setting source pin to high
   for (auto source : this->source_pins) {
@@ -59,6 +61,61 @@ void Matrix::scan() {
     // reset source pin
     digitalWrite(source, HIGH);
   }
+
+  // for (auto elem : this->active_scan_keys) {
+  //   if (elem.active)
+  //     Serial.printf("Found: %d %d\n", elem.sinc, elem.source);
+  //   else
+  //     Serial.printf("Not active: %d %d\n", elem.sinc, elem.source);
+  // }
+  // push into active
+  this->determine_change();
+}
+
+void Matrix::determine_change() {
+  bool update_key = false;
+
+  // keep track of overlap
+  size_t delta;
+  keyswitch_t key, old_key;
+  for (int idx = 0; idx < this->active_scan_keys.size(); idx++) {
+    update_key = true;
+    key = this->active_scan_keys[idx];
+
+    for (int jdx = 0; jdx < this->past_scan_keys.size(); jdx++) {
+      old_key = this->past_scan_keys[jdx];
+      if ((key.source == old_key.source) && (key.sinc == old_key.sinc)) {
+        // compare debounce on keys
+
+        delta = millis() - key.time;
+        if ((delta >= 1000) && (!(delta % 100))) {
+          update_key = true;
+        } else {
+          // don't update
+          update_key = false;
+          // keep the old activation time
+          this->active_scan_keys[idx] = this->past_scan_keys[jdx];
+
+          // Serial.printf("Old time %ld", old_key.time);
+          // Serial.println();
+          // Serial.printf("New time %ld", key.time);
+          // Serial.println();
+          // Serial.printf("Delta: %d", delta);
+
+          // key = old_key;
+          // but do not update
+        }
+        // break out  the loop
+        break;
+      }
+    }
+    if (update_key) {
+      // push to bluetooth or other half
+      Serial.println("Pushing a key");
+      this->active_keys.push_back(this->active_scan_keys[idx]);
+    }
+  }
+  this->active_scan_keys.swap(this->past_scan_keys);
 }
 
 void Matrix::determine_activity(keyswitch_t *key) {
@@ -78,7 +135,7 @@ void Matrix::determine_activity(keyswitch_t *key) {
   // if was active just remain active
   if (active & key->active) {
     if ((millis() - key->time) >= this->debounce) {
-      this->active_keys.push_back(*key);
+      this->active_scan_keys.push_back(*key);
     }
   } else if (active & !key->active) {
     key->active = true;

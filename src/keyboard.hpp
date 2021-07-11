@@ -20,6 +20,7 @@
 #include "mesh.hpp"
 #include "types.h"
 
+#include <BleKeyboard.h>
 class Keyboard {
 
 public:
@@ -29,7 +30,8 @@ public:
   Display *display;
   // std::vector<uint8_t> fb;
 
-  Bluetooth *bluetooth;
+  // Bluetooth *bluetooth;
+  BleKeyboard *bluetooth;
   Mesh *mesh;
   // BleKeyboard ble;
 
@@ -40,6 +42,7 @@ public:
   void send_keys();
 
   bool is_server;
+  double get_battery_level();
 
 private:
 };

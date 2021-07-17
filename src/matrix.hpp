@@ -16,7 +16,7 @@
 #include <iostream>
 #include <string>
 
-#include "types.h"
+#include "types.hpp"
 
 class Matrix {
   // properties
@@ -50,6 +50,8 @@ public:
   void setup_pins();
   void setup_keys();
 
+  uint8_t get_cols();
+  uint8_t get_rows();
   Matrix(Config *config);
 };
 #endif

@@ -4,27 +4,26 @@
 
 #include <WiFi.h>
 
-#include "keymap.h"
 #include "mesh.hpp"
 
-#include "types.h"
-Keyboard::Keyboard(Config *config) {
-  // setting station wifi mode
-  // for esp_now
+#include "keymap.hpp"
+#include "types.hpp"
 
-  Serial.println("Setting up keyboard");
+#include <BleKeyboard.h>
+
+Keyboard::Keyboard(Config *config) {
+
+  this->config = config;
   // init the keyboard
   this->matrix = new Matrix(config);
   // this->layout = new Layout(config);
 
-  this->layers = {{1, config->test}};
-
   // setup esp_now
-  Serial.println("Setting up mesh connection");
+  // setting station wifi mode
+  WiFi.mode(WIFI_STA);
   this->mesh = new Mesh(config);
 
   // setup display
-  Serial.println("Setting up display");
   this->display = new Display(config);
 
   // default to client
@@ -37,6 +36,12 @@ Keyboard::Keyboard(Config *config) {
     // this->bluetooth = new Bluetooth(config);
     this->is_server = true;
   }
+
+  layer_t qwerty = {{KC_A, KC_B}};
+  layers_t layers = {qwerty};
+
+  this->layers = layers;
+  this->active_layer = &this->layers[0];
 
   // this->ble = BleKeyboard(config->name);
 
@@ -95,18 +100,72 @@ void Keyboard::begin() {
   // this->log->setRedrawMode(1);
 }
 
+uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
+  // encodes pin switch to actual char
+
+  uint8_t col = (this->is_server ? keyswitch.col
+                                 : keyswitch.col + this->matrix->get_cols());
+  return (*this->active_layer)[keyswitch.row][col];
+}
+
+// void Keyboard::send_keys() {
+//   // read the mesh
+//   // send the keys
+//   if (this->bluetooth->isConnected()) {
+//     // this->bluetooth->print("Hello world");
+//     if (Mesh::buffer[0].active) {
+//       // send a
+//       this->bluetooth->write(0x41);
+//       Mesh::buffer.fill({});
+//     }
+//   }
+// }
+
 void Keyboard::send_keys() {
+
   // read the mesh
-  // send the keys
+  buffer_t client_keys = Mesh::get_buffer();
+
+  // read server keys
+  auto &active_keys = this->matrix->active_keys;
+
+  // join the two lists
+  uint8_t n_server_keys = active_keys.size();
+  uint8_t total_keys = client_keys.size() + n_server_keys;
+
+  // init report & counter
+  // uint8_t key;
+  keyswitch_t *keyswitch;
+
+  // KeyReport keys = {};
+  // uint8_t counter = 0;
+  // uint8_t col;
   if (this->bluetooth->isConnected()) {
-    // this->bluetooth->print("Hello world");
-    if (Mesh::buffer[0].active) {
-      // send a
-      this->bluetooth->write(0x41);
-      Mesh::buffer.fill({});
+    // read matrix state
+    // read the keys from client(s)
+    // merge the keys in a singular key report
+
+    // read server active keys
+    for (int idx = 0; idx < total_keys; idx++) {
+      // read switch
+      keyswitch =
+          &(idx < active_keys.size() ? active_keys[idx]
+                                     : client_keys[total_keys - n_server_keys]);
+      // add idx to columns
+      this->bluetooth->write(this->read_key(*keyswitch));
+
+      // if (counter > 5) {
+      //   // send key report
+      //   this->bluetooth->sendReport(keys);
+      //   keys.keys.fill(0);
+      //   counter = 0;
+      // }
     }
+
+    // this->bluetooth->write(keys);
   }
 }
+
 void Keyboard::update() {
   // Serial.println("Scanning");
   this->matrix->update();

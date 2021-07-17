@@ -2,7 +2,7 @@
 #define mesh_hpp
 #include "config.hpp"
 
-#include "types.h"
+#include "types.hpp"
 #include <WiFi.h>
 #include <esp_now.h>
 class Mesh {
@@ -29,6 +29,7 @@ public:
 
   // static KeyData *getBuffer();
   static std::vector<keyswitch_t> *getBuffer();
+  static buffer_t get_buffer();
 
   // static KeyData buffer;
   // static std::vector<keyswitch_t> buffer;

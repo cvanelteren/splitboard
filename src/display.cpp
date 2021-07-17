@@ -5,5 +5,6 @@ Display::Display(Config *config)
                                           config->pin_sda) {
 
   // setup logger
+  Serial.println("Setting up display");
   this->log_buffer = std::vector<uint8_t>(0);
 }

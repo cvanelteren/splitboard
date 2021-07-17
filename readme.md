@@ -1,6 +1,23 @@
 
-* Introduction
-<2021-06-21 Mon>
+# Table of Contents
+
+1.  [Introduction <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-21 Mon&gt;</span></span>](#org6714a75)
+2.  [Outline](#org44503d9)
+3.  [ESP32](#org24166b6)
+4.  [Matrix scanning](#orge681682)
+    1.  [Ghosting](#org822271a)
+    2.  [Key debouncing](#org8cc2e24)
+    3.  [Changelog](#orge6dc45a)
+5.  [ESP-Now](#orge679640)
+6.  [Bluetooth](#orgb3d66a9)
+7.  [OLED Display](#org0ec9635)
+8.  [Battery control](#org4868c45)
+
+
+<a id="org6714a75"></a>
+
+# Introduction <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-21 Mon&gt;</span></span>
+
 Mechanical keyboards  are somewhat  of a dated  concept that
 has  gathered some  speed in  more recent  years. Back  when
 computers were  first coming  out for the  public, keyboards
@@ -8,10 +25,10 @@ had  mechanical connections  that would  allow a  current to
 activate a  switch. Then as  economics got wind,  somehow we
 got used  to membrane  keyboards; virtually every  office in
 the  world   has  these  membrane  keyboards.   Compared  to
-mechanical keyboards, membrane  keyboards feel more "mushy".
+mechanical keyboards, membrane  keyboards feel more &ldquo;mushy&rdquo;.
 In contrast,  mechanical keyboards  may have  different feel
 based  on  the  springs  or  whether the  key  switch  has  a
-noticeable  "bump".   They  can   be  clicky  or   not;  the
+noticeable  &ldquo;bump&rdquo;.   They  can   be  clicky  or   not;  the
 possibility are wild now.
 
 A  few  years  ago  I started  following  the  subreddit  on
@@ -22,29 +39,29 @@ the market. Now,  the landscape has changed quite  a bit and
 more and more different types of switches are available.
 
 Why do  I prefer mechanical keyboards?  Mechanical keyboards
-give a "joy" to typing.  Membrane keyboards are fine to type
-on, but  they aren't fun.  Generally my fingers  get "tired"
+give a &ldquo;joy&rdquo; to typing.  Membrane keyboards are fine to type
+on, but  they aren&rsquo;t fun.  Generally my fingers  get &ldquo;tired&rdquo;
 after typing  on membrane keyboards  as the keys feel  a bit
 mushy, i.e.  you get no relief  when pushing down a  key and
 the key press does not feel crisp.
 
 After  following  / r / mechanicalkeyboards   for  a  while,  I
-decided to  /build/ my  own keyboard. Within  the community,
+decided to  *build* my  own keyboard. Within  the community,
 there is a wide variety  of switches and shapes of keyboards
-available. The one I wanted, an orthonormal keyboard, wasn't
+available. The one I wanted, an orthonormal keyboard, wasn&rsquo;t
 commercially available. Plus I liked the idea of building my
 own keyboard.  In my work,  the keyboard is my  primary tool
 and why not  key a custom version of it  for myself. I ended
 up  building 2  handwired  versions of  65  percent with  85
 switches  in  a  grid  layout.   In  addition,  I  modded  a
 MagSafe-inspired cable to it which allowed it to be nice and
-portable. After  every build I told  myself : " This  is the
-last one I'll build".
+portable. After  every build I told  myself : &ldquo; This  is the
+last one I&rsquo;ll build&rdquo;.
 
-Enter  this blog,  where I  again tell  myself "this  is the
-last  one I  build!". What  changed? Since  I learned  about
+Enter  this blog,  where I  again tell  myself &ldquo;this  is the
+last  one I  build!&rdquo;. What  changed? Since  I learned  about
 split-style keyboard,  I always wanted one.  The keyboards I
-had  made   so  far  weren't.  Split   would  be  completely
+had  made   so  far  weren&rsquo;t.  Split   would  be  completely
 ergonomical,  but  unfortunately,  none (that  I  know  of)
 exists that are both (a) wireless and (b) split. As always
 I aimed to high and wanted to emulate the many features that
@@ -57,48 +74,56 @@ This post  will serve as  my log for building  the keyboard.
 The post will updated as I work on it.
 
 Core feature targets
-- Split _wireless_ keyboard
-- Hot swappable key sockets
-- Portable, not a full keyboard
-- Battery control
-- OLED display
-- Rotary encoders
 
-* Outline
+-   Split <span class="underline">wireless</span> keyboard
+-   Hot swappable key sockets
+-   Portable, not a full keyboard
+-   Battery control
+-   OLED display
+-   Rotary encoders
+
+
+<a id="org44503d9"></a>
+
+# Outline
+
 The keyboard is split; it has two halves. The right and left
-half will have  most of the same  "base" functionality. Most
+half will have  most of the same  &ldquo;base&rdquo; functionality. Most
 importantly, each  half needs to  scan the matrix  to obtain
 which keys are being pressed. One of the halves will act as a
 server, the other will act as a client. The server will need
 the following capabilities
 
 Server abilities
-- Read matrix
-- Setup a bluetooth connection
-  + HID Device
-  + Mouse emulation
-- Setup connection with client
-  + Merge keys pressed and send to bluetooth controller
-- Control LEDs on both client and server
+
+-   Read matrix
+-   Setup a bluetooth connection
+    -   HID Device
+    -   Mouse emulation
+-   Setup connection with client
+    -   Merge keys pressed and send to bluetooth controller
+-   Control LEDs on both client and server
 
 Client abilities
-- Read matrix
-- Find server and send pressed keys to server
+
+-   Read matrix
+-   Find server and send pressed keys to server
 
 Due to the heavier load of  the server, I prefer to make the
 role of  who is server and  who is client dynamic.  That is,
 with some heuristic (for example  deep sleep), the roles may
 switch to prolong batter life of both units.
 
-
 To give a course overview consider the following picture:
 
-#+attr_html: :alt   :class img
-[[file:./figures/overview.png]]
+![img](./figures/overview.png)
 
 
-* ESP32
-<2021-07-12 Mon>-
+<a id="org24166b6"></a>
+
+# ESP32
+
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-07-12 Mon&gt;</span></span>-
 I  opted for  a micro-controller  as this  would allow  me to
 prototype without  worrying about my electronic  skills. The
 controller needed  to have  battery control,  bluetooth, and
@@ -123,11 +148,14 @@ low  energy simultanaously.  In  addition, through  ESP-NOW,
 different  eps32  modules can  form  a  mesh, which  I  will
 harness to do server-client communication.
 
-#+caption: Pin-out ESP32 LORA-V2
-[[file:./figures/pinout.jpg]]
+![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
-* Matrix scanning
-<2021-07-12 Mon>
+
+<a id="orge681682"></a>
+
+# Matrix scanning
+
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-07-12 Mon&gt;</span></span>
 A keyboard  matrix scanning circuit  is used to  enhance the
 number  of keys,  while keeping  the number  of pins  low. A
 micro-controller  uses general  pin  input/output (GPIO)  to
@@ -137,7 +165,7 @@ single pin, 96 pins would be needed for a 104 sized keyboard
 
 As an alternative  one could apply matrix  scanning. In this
 method,  the keys  are wired  as  a grid  where each  column
-connects to each  row effectively forming a  "switch". For a
+connects to each  row effectively forming a  &ldquo;switch&rdquo;. For a
 total for 100 keys, one would need 10x10 grid. The grid acts
 as a force multiplier for the number of switches. Instead of
 needing 100  separate keys,  we merely need  10 rows  and 10
@@ -149,7 +177,11 @@ pressed down, current  can flow between the  row and column.
 The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
-** Ghosting
+
+<a id="org822271a"></a>
+
+## Ghosting
+
 Matrix  scanning  forms  an excellent  idea  to  efficiently
 represent our electronic  switches. However, merely scanning
 does  not  correctly records  all  key  presses. Under  some
@@ -167,88 +199,47 @@ approach is to put a diode  right after the switch either on
 the columns or rows,  which prevents current from traversing
 and causing ghosting.
 
-#+caption: Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left.
-#+caption: (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the
-#+caption: second row, second column etc.
-[[file:./figures/ghosting.png]]
-
-#+begin_src jupyter-python :exports none :eval never-exports
-import matplotlib.pyplot as plt, cmasher as cmr
-import numpy as np, os, sys, networkx as nx, warnings
-warnings.simplefilter("ignore");
-plt.style.use("fivethirtyeight spooky".split())
+![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-g = nx.grid_graph((2,2))
-pos = {k : np.array(k) for k in g.nodes()}
+<a id="org8cc2e24"></a>
 
-c1 = [cmr.guppy(0) if k == (0,0) else cmr.guppy(255) for k in g.nodes()]
-c3 = []
-for node in g.nodes():
-    if node == (0,0) or node == (1,1):
-        c = cmr.guppy(0)
-    elif node == (0,1) or node == (1,0):
-        c = cmr.guppy(128)
-    else:
-        c = cmr.guppy(255)
-    c3.append(c)
+## Key debouncing
 
-c2 = [cmr.guppy(0) if k == (0,0) or k == (1,1) else cmr.guppy(255) for k in g.nodes()]
-fig, ax = plt.subplots(1, 3)
-nx.draw(g, pos = pos, ax = ax[0], node_color = c1)
-nx.draw(g, pos = pos, ax = ax[1], node_color = c2)
-nx.draw(g, pos = pos, ax = ax[2], node_color = c3)
-
-[axi.axis('equal') for axi in ax]
-
-labels = "Active Inactive Ghosting".split()
-colors = [cmr.guppy(0), cmr.guppy(255), cmr.guppy(128)]
-handles = [plt.Line2D([], [], color = c, marker = 'o', linestyle = 'none', label = l) for l, c in zip(labels, colors)]
-ax[0].legend(handles = handles, loc = 'upper left')
-fig.savefig("./figures/ghosting.png", transparent = False)
-fig.show()
-
-
-#+end_src
-
-#+RESULTS:
-[[file:./.ob-jupyter/d0b098fc3ba7f3150194b2d6e9501e2d98dfb90b.png]]
-
-
-** Key debouncing
 Key  debounce is  a mechanism  to filter  out erroneous  key
 activity.  When  two metal  plates  come  into contact,  the
 signal does not form a clean  square wave. In order to clean
 up  this  signal, key  debouncing  is  used to  reflect  the
-"press" of key switch.
+&ldquo;press&rdquo; of key switch.
 
-** Changelog
-- [X] Added matrix class
-  + [X] added matrix scan
-  + [X] added key debounce
-  + [X] added (whole) matrix debounce
-    - [X] filters out erronenous keypresses
 
-* ESP-Now
+<a id="orge6dc45a"></a>
 
-#+begin_quote
-# ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
- #+end_quote
+## Changelog
 
-* Bluetooth
-Bluetooth  is  rather  complicated. The  Bluetooth  class
-takes care of  most of the heavy lifting. Key  codes have an
-associated ascii code, these are put into an ascii code map.
-Note  that the  over bluetooth  (for whatever  reason) these
-keycodes are remapped to different numbers.
+-   [X] Added matrix class
+    -   [X] added matrix scan
+    -   [X] added key debounce
+    -   [X] added (whole) matrix debounce
+        -   [X] filters out erronenous keypresses
 
-** TODO
-- [ ] Write a bind  method that combines input  from both halves
-  and pushes them into a uint8 buffer.
-- [ ]  Write the layouts to a static const array
-  + [ ] Evaluate  whether it is  nicer to put separate  key pins
-    ids to the switch
-- [ ] Convert config to static class
 
-* OLED Display
-* Battery control
+<a id="orge679640"></a>
+
+# ESP-Now
+
+
+<a id="orgb3d66a9"></a>
+
+# Bluetooth
+
+
+<a id="org0ec9635"></a>
+
+# OLED Display
+
+
+<a id="org4868c45"></a>
+
+# Battery control
+

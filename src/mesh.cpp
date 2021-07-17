@@ -14,7 +14,10 @@ Mesh::Mesh() {
   // initialize wifi before esp-now
 }
 
-Mesh::Mesh(Config *config) : Mesh() { this->config = config; }
+Mesh::Mesh(Config *config) : Mesh() {
+  Serial.println("Setting up mesh connection");
+  this->config = config;
+}
 
 void Mesh::add_peer(const uint8_t *peer_addr) {
   this->peer = {};
@@ -142,4 +145,10 @@ void Mesh::send() {
   } else {
     Serial.println("\rMsg sent:\t failed");
   }
+}
+
+buffer_t Mesh::get_buffer() {
+  auto buffer = Mesh::buffer;
+  Mesh::buffer.fill({});
+  return buffer;
 }

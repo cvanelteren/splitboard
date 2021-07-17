@@ -3,47 +3,10 @@
 #include <esp_now.h>
 
 #include "config.hpp"
+#include "key_definitions.hpp"
 #include "keyboard.hpp"
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
-
-// Structure example to receive data
-// Must match the sender structure
-typedef struct struct_message {
-  char a[32];
-  int b;
-  float c;
-  String d;
-  bool e;
-} struct_message;
-
-struct_message myData = {};
-uint8_t broadcastAddress[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
-
-// callback function that will be executed when data is received
-void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
-  memcpy(&myData, incomingData, sizeof(myData));
-  Serial.print("Bytes received: ");
-  Serial.println(len);
-  Serial.print("Char: ");
-  Serial.println(myData.a);
-  Serial.print("Int: ");
-  Serial.println(myData.b);
-  Serial.print("Float: ");
-  Serial.println(myData.c);
-  Serial.print("String: ");
-  Serial.println(myData.d);
-  Serial.print("Bool: ");
-  Serial.println(myData.e);
-  Serial.println();
-}
-
-// callback when data is sent
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
-                                                : "Delivery Fail");
-}
 
 void setup() {
 
@@ -57,7 +20,6 @@ void setup() {
   Serial.println("5- See the magic =)");
 
   // Set device as a Wi-Fi Station
-  WiFi.mode(WIFI_STA);
 
   // // Init ESP-NOW
   // if (esp_now_init() != ESP_OK) {

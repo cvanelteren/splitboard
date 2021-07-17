@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 
-#include "types.h"
+#include "types.hpp"
 // #include <nlohmann/json.hpp>
 // for convenience
 // using json = nlohmann::json;
@@ -29,7 +29,7 @@ public:
   std::vector<uint8_t> col_pins = {13, 12, 14, 27, 26};
   bool row2col = true; // diode direction
 
-  layer_t test = {{18, {{34, "A"}}}};
+  // layer_t test = {{18, {{34, "A"}}}};
   // layers_t layers{{1, test}};
 
   uint8_t led_pin = 25;
@@ -37,7 +37,7 @@ public:
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
 
-  size_t debounce = 5;
+  uint8_t debounce = 5;
 
   // size_t debounce = 30;
 

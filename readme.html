@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-  <!-- 2021-07-04 Sun 18:16 -->
+  <!-- 2021-07-12 Mon 08:29 -->
   <meta http-equiv="Content-Type" content=
   "text/html; charset=utf-8" />
   <meta name="viewport" content=
@@ -222,14 +224,26 @@
       <h2>Table of Contents</h2>
       <div id="text-table-of-contents">
         <ul>
-          <li><a href="#orge588713">1. Introduction</a></li>
-          <li><a href="#orgd36fe70">2. Outline</a></li>
-          <li><a href="#org7a809e3">3. ESP32</a></li>
+          <li><a href="#orge452f89">1. Introduction</a></li>
+          <li><a href="#orgad82d5a">2. Outline</a></li>
+          <li><a href="#org2bc9c6a">3. ESP32</a></li>
+          <li>
+            <a href="#orgfc18d38">4. Matrix scanning</a>
+            <ul>
+              <li><a href="#org9d21540">4.1. Ghosting</a></li>
+              <li><a href="#org6759277">4.2. Key
+              debouncing</a></li>
+            </ul>
+          </li>
+          <li><a href="#org5232250">5. ESP-Now</a></li>
+          <li><a href="#org11bd4db">6. Bluetooth</a></li>
+          <li><a href="#org4467c98">7. OLED Display</a></li>
+          <li><a href="#org94998eb">8. Battery control</a></li>
         </ul>
       </div>
     </div>
-    <div id="outline-container-orge588713" class="outline-2">
-      <h2 id="orge588713"><span class="section-number-2">1</span>
+    <div id="outline-container-orge452f89" class="outline-2">
+      <h2 id="orge452f89"><span class="section-number-2">1</span>
       Introduction</h2>
       <div class="outline-text-2" id="text-1">
         <p>Mechanical keyboards are somewhat of a dated concept
@@ -257,7 +271,7 @@
         get “tired” after typing on membrane keyboards as the keys
         feel a bit mushy, i.e. you get no relief when pushing down
         a key and the key press does not feel crisp.</p>
-        <p>After following ~/r~/ mechanicalkeyboards for a while, I
+        <p>After following / r / mechanicalkeyboards for a while, I
         decided to <i>build</i> my own keyboard. Within the
         community, there is a wide variety of switches and shapes
         of keyboards available. The one I wanted, an orthonormal
@@ -273,25 +287,35 @@
         last one I build!”. What changed? Since I learned about
         split-style keyboard, I always wanted one. The keyboards I
         had made so far weren’t. Split would be completely
-        ergonomical, but unfortuntately, none (that I know of)
-        exists that are both (a) wireleless and (b) split. As
-        always I aimed to high and wanted to emulate the many
-        features that QMK implements. Most importantly, I wanted to
-        get back into writing more low level languages like c++,
-        and I take this project as a nice opportunity to get into
-        c++ again, and work with microcontrollers.</p>
+        ergonomical, but unfortunately, none (that I know of)
+        exists that are both (a) wireless and (b) split. As always
+        I aimed to high and wanted to emulate the many features
+        that QMK implements. Most importantly, I wanted to get back
+        into writing more low level languages like c++, and I take
+        this project as a nice opportunity to get into c++ again,
+        and work with micro-controllers.</p>
         <p>This post will serve as my log for building the
         keyboard. The post will updated as I work on it.</p>
+        <p>Core feature targets</p>
+        <ul class="org-ul">
+          <li>Split <span class="underline">wireless</span>
+          keyboard</li>
+          <li>Hot swappable key sockets</li>
+          <li>Portable, not a full keyboard</li>
+          <li>Battery control</li>
+          <li>OLED display</li>
+          <li>Rotary encoders</li>
+        </ul>
       </div>
     </div>
-    <div id="outline-container-orgd36fe70" class="outline-2">
-      <h2 id="orgd36fe70"><span class="section-number-2">2</span>
+    <div id="outline-container-orgad82d5a" class="outline-2">
+      <h2 id="orgad82d5a"><span class="section-number-2">2</span>
       Outline</h2>
       <div class="outline-text-2" id="text-2">
         <p>The keyboard is split; it has two halves. The right and
         left half will have most of the same “base” functionality.
         Most importantly, each half needs to scan the matrix to
-        obtain which keys are being pressed. One of the halfs will
+        obtain which keys are being pressed. One of the halves will
         act as a server, the other will act as a client. The server
         will need the following capabilities</p>
         <p>Server abilities</p>
@@ -309,7 +333,7 @@
               controller</li>
             </ul>
           </li>
-          <li>Control leds on both client and server</li>
+          <li>Control LEDs on both client and server</li>
         </ul>
         <p>Client abilities</p>
         <ul class="org-ul">
@@ -322,19 +346,133 @@
         may switch to prolong batter life of both units.</p>
         <p>To give a course overview consider the following
         picture:</p>
-        <p align="left" class="img"><a href=
-        "./figures/overview.png" align="left" class=
-        "img">overview</a></p>
+        <div id="orgd701180" class="figure">
+          <p><img src="./figures/overview.png" class="img" /></p>
+        </div>
       </div>
     </div>
-    <div id="outline-container-org7a809e3" class="outline-2">
-      <h2 id="org7a809e3"><span class="section-number-2">3</span>
+    <div id="outline-container-org2bc9c6a" class="outline-2">
+      <h2 id="org2bc9c6a"><span class="section-number-2">3</span>
       ESP32</h2>
+      <div class="outline-text-2" id="text-3">
+        <p>I opted for a micro-controller as this would allow me to
+        prototype without worrying about my electronic skills. The
+        controller needed to have battery control, bluetooth, and
+        preferable an energy efficient screen; I ended up with an
+        esp32.</p>
+        <p>The esp32 is a hybrid chip that has both Wi-Fi and
+        bluetooth capabilities. The esp32 consists of different
+        versions that varies in (mainly) in the number of pins,
+        battery connector, and or screen. The version I ended with
+        (LORA-V2) had a battery connector and a tiny OLED
+        screen.</p>
+        <p>The ecosystem of ESP32 is well-developed albeit less
+        convenient than its arduino counterparts. Luckily, the
+        opensource community has taken it upon themselves to
+        provide lots of arduino bindings to the libraries by
+        espressif (manufacturer of esp32).</p>
+        <p>Especially important (as it turned out later) is that
+        the esp32 has the capabilities of using both Wi-Fi and
+        bluetooth low energy simultanaously. In addition, through
+        ESP-NOW, different eps32 modules can form a mesh, which I
+        will harness to do server-client communication.</p>
+        <div id="orgbd69923" class="figure">
+          <p><img src="./figures/pinout.jpg" alt=
+          "pinout.jpg" /></p>
+          <p><span class="figure-number">Figure 2:</span> Pin-out
+          ESP32 LORA-V2</p>
+        </div>
+      </div>
+    </div>
+    <div id="outline-container-orgfc18d38" class="outline-2">
+      <h2 id="orgfc18d38"><span class="section-number-2">4</span>
+      Matrix scanning</h2>
+      <div class="outline-text-2" id="text-4">
+        <p>A keyboard matrix scanning circuit is used to enhance
+        the number of keys, while keeping the number of pins low. A
+        micro-controller uses general pin input/output (GPIO) to
+        register currents. If a singular key switch is wired to a
+        single pin, 96 pins would be needed for a 104 sized
+        keyboard (full-size). This would be unpractical.</p>
+        <p>As an alternative one could apply matrix scanning. In
+        this method, the keys are wired as a grid where each column
+        connects to each row effectively forming a “switch”. For a
+        total for 100 keys, one would need 10x10 grid. The grid
+        acts as a force multiplier for the number of switches.
+        Instead of needing 100 separate keys, we merely need 10
+        rows and 10 columns (20 pins) to wire our 100 switch
+        keyboard.</p>
+        <p>The matrix is repeatedly scanned to determine if a row
+        column form an open circuit. That is, if a key switch is
+        pressed down, current can flow between the row and column.
+        The scanning occurs at a high scan rate, making it
+        seemingly instantaneous.</p>
+      </div>
+      <div id="outline-container-org9d21540" class="outline-3">
+        <h3 id="org9d21540"><span class=
+        "section-number-3">4.1</span> Ghosting</h3>
+        <div class="outline-text-3" id="text-4-1">
+          <p>Matrix scanning forms an excellent idea to efficiently
+          represent our electronic switches. However, merely
+          scanning does not correctly records all key presses.
+          Under some conditions, a matrix can record ghost keys,
+          i.e. keys that are registered but not pressed. This
+          process is called ghosting.</p>
+          <p>Ghosting occurs when current can freely flow between
+          separate rows or columns due to another row/column being
+          open. For example consider a simple two row, two column
+          keyboard. This board can support 4 keys. When two keys
+          along the diagonal are pressed, we register 4 keys(!).
+          This is obviously wrong and needs to be corrected. The
+          most common approach is to put a diode right after the
+          switch either on the columns or rows, which prevents
+          current from traversing and causing ghosting.</p>
+          <div id="org67a9b43" class="figure">
+            <p><img src="./figures/ghosting.png" alt=
+            "ghosting.png" /></p>
+            <p><span class="figure-number">Figure 3:</span>
+            Ghosting example. Ghosting occurs when current can flow
+            freely across columns and rows. (Left) one key is
+            pressed down bottom left. (Middle) A key across from
+            the first is activated which causes ghosting (right);
+            current flows from the second row, first column to the
+            second row, second column etc.</p>
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org6759277" class="outline-3">
+        <h3 id="org6759277"><span class=
+        "section-number-3">4.2</span> Key debouncing</h3>
+        <div class="outline-text-3" id="text-4-2">
+          <p>Key debounce is a mechanism to filter out erroneous
+          key activity. When two metal plates come into contact,
+          the signal does not form a clean square wave. In order to
+          clean up this signal, key debouncing is used to reflect
+          the “press” of key switch.</p>
+        </div>
+      </div>
+    </div>
+    <div id="outline-container-org5232250" class="outline-2">
+      <h2 id="org5232250"><span class="section-number-2">5</span>
+      ESP-Now</h2>
+      <div class="outline-text-2" id="text-5"></div>
+    </div>
+    <div id="outline-container-org11bd4db" class="outline-2">
+      <h2 id="org11bd4db"><span class="section-number-2">6</span>
+      Bluetooth</h2>
+    </div>
+    <div id="outline-container-org4467c98" class="outline-2">
+      <h2 id="org4467c98"><span class="section-number-2">7</span>
+      OLED Display</h2>
+    </div>
+    <div id="outline-container-org94998eb" class="outline-2">
+      <h2 id="org94998eb"><span class="section-number-2">8</span>
+      Battery control</h2>
     </div>
   </div>
   <div id="postamble" class="status">
     <p class="author">Author: Casper van Elteren</p>
-    <p class="date">Created: 2021-07-04 Sun 18:16</p>
+    <p class="date">Created: 2021-07-12 Mon 08:29</p>
   </div>
 </body>
 </html>

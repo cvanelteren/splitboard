@@ -3,6 +3,7 @@
 Matrix::Matrix(Config *config) {
   // setup pins
   // Serial.println("Setting up matrix");
+  Serial.println("Setting up keyboard");
   this->row2col = config->row2col;
   this->source_pins = (this->row2col ? config->row_pins : config->col_pins);
   this->sinc_pins = (this->row2col ? config->col_pins : config->row_pins);
@@ -10,19 +11,24 @@ Matrix::Matrix(Config *config) {
 
   // empty active_keys on init
   // this->active_keys.clear();
-  Serial.println("Setting pins");
+  //
 
+  // activate pins
   this->setup_pins();
-
+  // initialize keys
   this->setup_keys();
 }
 
 void Matrix::setup_keys() {
-
-  for (auto source : this->source_pins) {
-    for (auto sinc : this->sinc_pins) {
+  // Sets all keys to non-active
+  uint8_t source, sinc;
+  for (uint8_t row = 0; row < this->source_pins.size(); row++) {
+    source = this->source_pins[row];
+    for (uint8_t col = 0; col < this->sinc_pins.size(); col++) {
       // init switch with current time, non-active and pin info
-      this->keys[source][sinc] = keyswitch_t{millis(), false, source, sinc};
+      sinc = this->sinc_pins[row];
+      this->keys[source][sinc] =
+          keyswitch_t{millis(), false, source, sinc, row, col};
     }
   }
 }
@@ -43,6 +49,20 @@ void Matrix::setup_pins() {
 // the ide
 //
 void Matrix::scan() {
+  /**
+   * @brief      Scans keyboard pins sequentially
+   *
+   * @details Scanning  consists of determining  the current
+   * active key by debouncing. In addition, repeated presses
+   * are filtered out;  keeping key pressed down  has a cool
+   * down period after which at  regular interval the key is
+   * sent.
+   *
+   * Active keys are tracked through three arrays
+   * - active_keys: actual double debounced keys
+   * - active_scan_keys: debounced keys
+   * - past_scan_keys: debounce buffer for repeated key presses
+   */
   /* Determines the activity of the pins */
   keyswitch_t *key;
   this->active_keys.clear();
@@ -62,27 +82,36 @@ void Matrix::scan() {
     digitalWrite(source, HIGH);
   }
 
-  // for (auto elem : this->active_scan_keys) {
-  //   if (elem.active)
-  //     Serial.printf("Found: %d %d\n", elem.sinc, elem.source);
-  //   else
-  //     Serial.printf("Not active: %d %d\n", elem.sinc, elem.source);
-  // }
   // push into active
   this->determine_change();
 }
 
 void Matrix::determine_change() {
+  /**
+   * @brief Debounces the active_scan_keys to prevent double
+   * presses.
+   *
+   * @details Keys  need debouncing  as the activation  of a
+   * key is  not a perfect  square wave. The  debounced keys
+   * are activated when  a change of signal  occurs. That is
+   * at  the onset  of a  signal. This  results in  repeated
+   * button  presses. This  function filters  those repeated
+   * button presses out, and resends  a key after the key is
+   * pressed down for some threshold.
+   *
+   * This function pushes a key into active_keys.
+   */
   bool update_key = false;
 
   // keep track of overlap
   size_t delta;
   keyswitch_t key, old_key;
-  for (int idx = 0; idx < this->active_scan_keys.size(); idx++) {
+  // TODO: move back to range based loops?
+  for (size_t idx = 0; idx < this->active_scan_keys.size(); idx++) {
     update_key = true;
     key = this->active_scan_keys[idx];
 
-    for (int jdx = 0; jdx < this->past_scan_keys.size(); jdx++) {
+    for (size_t jdx = 0; jdx < this->past_scan_keys.size(); jdx++) {
       old_key = this->past_scan_keys[jdx];
       if ((key.source == old_key.source) && (key.sinc == old_key.sinc)) {
         // compare debounce on keys
@@ -91,19 +120,10 @@ void Matrix::determine_change() {
         if ((delta >= 1000) && (!(delta % 100))) {
           update_key = true;
         } else {
-          // don't update
+          // don't
           update_key = false;
           // keep the old activation time
           this->active_scan_keys[idx] = this->past_scan_keys[jdx];
-
-          // Serial.printf("Old time %ld", old_key.time);
-          // Serial.println();
-          // Serial.printf("New time %ld", key.time);
-          // Serial.println();
-          // Serial.printf("Delta: %d", delta);
-
-          // key = old_key;
-          // but do not update
         }
         // break out  the loop
         break;
@@ -119,14 +139,16 @@ void Matrix::determine_change() {
 }
 
 void Matrix::determine_activity(keyswitch_t *key) {
-  /* Determine the activity of the keys and puts them in the unordered map */
-  // check for debounce active keys
-  // check for debounce
-
-  // std::cout << key->first << key->second;
-  // std::cout << std::endl;
-  // std::cout << digitalRead(key->first) << digitalRead(key->second);
-  // std::cout << std::endl;
+  /**
+   * @brief      Debounce keys
+   *
+   * @details  Debouces the  keys,  i.e.  determine a  key's
+   * activitiy through multiple time samples. This functions
+   * pushes a debounced key into active_scan_keys
+   *
+   * @param      key, current matrix vertex being checked.
+   *
+   */
 
   // check pin state
   auto active = digitalRead(key->sinc) ? false : true;
@@ -146,6 +168,13 @@ void Matrix::determine_activity(keyswitch_t *key) {
 }
 
 void Matrix::update() {
+  /**
+   * @brief      Matrix update loop
+   *
+   * @details Put all relevant  functions that need repeated
+   * calls in here.
+   *
+   */
   this->scan();
   // this->print_ak();
 
@@ -205,3 +234,6 @@ void Matrix::show_switch(keyswitch_t *key) {
   Serial.print(digitalRead(key->sinc));
   Serial.println();
 }
+
+uint8_t Matrix::get_cols() { return this->source_pins.size(); }
+uint8_t Matrix::get_rows() { return this->sinc_pins.size(); }

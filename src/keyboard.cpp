@@ -105,7 +105,10 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // uint8_t col = (this->is_server ? keyswitch.col
   // : keyswitch.col + this->matrix->get_cols());
   // uint8_t row = keyswitch.row;
-  return (*this->active_layer)[0][0];
+  if (keyswitch.row == 21 && keyswitch.col == 26)
+    return SHIFT;
+  else
+    return (*this->active_layer)[0][0];
   // return this->active_layer[keyswitch.row][col];
 }
 
@@ -126,6 +129,7 @@ void Keyboard::send_keys() {
 
   // read the mesh
   auto client_keys = Mesh::get_buffer();
+  // Mesh::buffer.fill({});
 
   // read server keys
   auto &active_keys = this->matrix->active_keys;
@@ -232,16 +236,17 @@ void Keyboard::update() {
       // Mesh::buffer.active_keys = this->matrix->active_keys;
       // this->mesh->send();
 
+      // this->mesh->buffer.clear();
       for (int i = 0; i < this->matrix->active_keys.size(); i++) {
         Serial.println("Adding keys");
         this->mesh->buffer[i % (Mesh::buffer.size() - 1)] =
             this->matrix->active_keys[i];
+        // this->mesh->buffer.push_back(this->matrix->active_keys[i]);
         if (i > (Mesh::buffer.size() - 1)) {
           this->mesh->send();
         }
         if (i == this->matrix->active_keys.size() - 1) {
           this->mesh->send();
-          this->mesh->buffer.fill({});
         }
       }
       // this->mesh->send();

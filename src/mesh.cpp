@@ -63,6 +63,7 @@ void Mesh::begin() {
     esp_now_register_send_cb(this->send_input);
     esp_now_register_recv_cb(this->handle_input);
   }
+  Mesh::buffer.fill({});
 };
 
 void Mesh::init_esp_now() {
@@ -148,12 +149,14 @@ void Mesh::send() {
   } else {
     Serial.println("\rMsg sent:\t failed");
   }
+  Mesh::buffer.fill({});
 }
 
 std::vector<keyswitch_t> Mesh::get_buffer() {
   std::vector<keyswitch_t> buffer;
   for (auto &elem : Mesh::buffer) {
-    buffer.push_back(elem);
+    if (elem.time)
+      buffer.push_back(elem);
   }
   Mesh::buffer.fill({});
   return buffer;

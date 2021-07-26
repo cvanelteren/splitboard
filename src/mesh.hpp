@@ -34,6 +34,7 @@ public:
   // static KeyData buffer;
   // static std::vector<keyswitch_t> buffer;
   static buffer_t buffer;
+  // static std::vector<keyswitch_t> buffer;
 
 private:
   Config *config;

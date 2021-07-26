@@ -105,9 +105,11 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // uint8_t col = (this->is_server ? keyswitch.col
   // : keyswitch.col + this->matrix->get_cols());
   // uint8_t row = keyswitch.row;
-  if (keyswitch.row == 21 && keyswitch.col == 26)
-    return SHIFT;
-  else
+  Serial.printf("row %d %col %d\n", keyswitch.source, keyswitch.sinc);
+  if (keyswitch.source == 21 && keyswitch.sinc == 26) {
+    Serial.println("SENDING SHIFT");
+    return SHIFT + 1;
+  } else
     return (*this->active_layer)[0][0];
   // return this->active_layer[keyswitch.row][col];
 }
@@ -158,21 +160,27 @@ void Keyboard::send_keys() {
 
   for (int idx = 0; idx < total_keys; idx++) {
     // read switch
-    keyswitch =
-        &(idx < active_keys.size() ? active_keys[idx]
-                                   : client_keys[total_keys - n_server_keys]);
+    keyswitch = &(idx < active_keys.size() ? active_keys[idx]
+                                           : client_keys[idx - n_server_keys]);
     key = this->read_key(*keyswitch);
     // add idx to columns
     // if (this->bluetooth->isConnected()) {
     // press event
     if (keyswitch->active) {
       Serial.println("Key press");
-      // this->bluetooth->press(key);
     }
     // release event
     else {
       Serial.println("Key release");
+
       // this->bluetooth->release(key);
+    }
+
+    if (this->bluetooth->isConnected()) {
+      if (keyswitch->active)
+        this->bluetooth->press(key);
+      else
+        this->bluetooth->release(key);
     }
     // }
 
@@ -236,24 +244,11 @@ void Keyboard::update() {
       // Mesh::buffer.active_keys = this->matrix->active_keys;
       // this->mesh->send();
 
-      // this->mesh->buffer.clear();
-      for (int i = 0; i < this->matrix->active_keys.size(); i++) {
-        Serial.println("Adding keys");
-        this->mesh->buffer[i % (Mesh::buffer.size() - 1)] =
-            this->matrix->active_keys[i];
-        // this->mesh->buffer.push_back(this->matrix->active_keys[i]);
-        if (i > (Mesh::buffer.size() - 1)) {
-          this->mesh->send();
-        }
-        if (i == this->matrix->active_keys.size() - 1) {
-          this->mesh->send();
-        }
-      }
-      // this->mesh->send();
-    }
+      this->mesh->send(this->matrix->active_keys);
 
-    // this->mesh->send(KeyData{this->matrix->active_keys});
-    // this->display->log.print("\rI am a client");
+      // this->mesh->send(KeyData{this->matrix->active_keys});
+      // this->display->log.print("\rI am a client");
+    }
+    // delay(10);
   }
-  // delay(10);
 }

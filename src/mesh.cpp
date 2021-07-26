@@ -117,22 +117,20 @@ void Mesh::send_input(const uint8_t *addr, esp_now_send_status_t status) {
   }
 }
 
-void Mesh::send(std::vector<keyswitch_t> data) {
-  // esp_now_send(reinterpret_cast<const uint8_t
-  // *>(this->config->server_address), (uint8_t *)&data, sizeof(data));
-
-  Serial.println(printf("\rSize of data %d \n", sizeof(data)));
-  Serial.println(sizeof(data[0]) * data.size());
-  // Serial.println(printf("Size of keys %d\n", sizeof(data.active_keys)));
-
-  esp_err_t msg = esp_now_send(this->peer.peer_addr, (uint8_t *)&data,
-                               sizeof(data[0]) * data.size());
-
-  if (msg == ESP_OK) {
-    Serial.print("\rMsg sent:\t sucess\n");
-  } else {
-    Serial.print("\rMsg sent:\t failed\n");
+void Mesh::send(std::vector<keyswitch_t> &data) {
+  // this->mesh->buffer.clear();
+  for (int i = 0; i < data.size(); i++) {
+    Serial.println("Adding keys");
+    Mesh::buffer[i % (Mesh::buffer.size() - 1)] = data[i];
+    // this->mesh->buffer.push_back(this->matrix->active_keys[i]);
+    if (i > (Mesh::buffer.size() - 1)) {
+      this->send();
+    }
+    if (i == data.size() - 1) {
+      this->send();
+    }
   }
+  // this->mesh->send();
 }
 
 void Mesh::send() {

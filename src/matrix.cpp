@@ -170,7 +170,7 @@ void Matrix::determine_activity(keyswitch_t *key) {
 
   // key switch turned off
   else if (!active && key->active) {
-    if ((millis() - key->time) >= this->debounce * 10) {
+    if ((millis() - key->time) >= this->debounce) {
       key->active = false;
       // key->time = millis();
       this->active_keys.push_back(*key);

@@ -15,7 +15,7 @@ public:
   void register_receive_callback(esp_now_recv_cb_t func);
   void add_peer(const uint8_t *peer_address);
   void send();
-  void send(std::vector<keyswitch_t>);
+  void send(std::vector<keyswitch_t> &data);
   // void send(KeyData);
 
   KeyData receive();

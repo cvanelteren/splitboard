@@ -20,7 +20,6 @@ Keyboard::Keyboard(Config *config) {
 
   // setup esp_now
   // setting station wifi mode
-  WiFi.mode(WIFI_STA);
   this->mesh = new Mesh(config);
 
   // setup display
@@ -103,9 +102,11 @@ void Keyboard::begin() {
 uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // encodes pin switch to actual char
 
-  uint8_t col = (this->is_server ? keyswitch.col
-                                 : keyswitch.col + this->matrix->get_cols());
-  return (*this->active_layer)[keyswitch.row][col];
+  // uint8_t col = (this->is_server ? keyswitch.col
+  // : keyswitch.col + this->matrix->get_cols());
+  // uint8_t row = keyswitch.row;
+  return (*this->active_layer)[0][0];
+  // return this->active_layer[keyswitch.row][col];
 }
 
 // void Keyboard::send_keys() {
@@ -124,7 +125,7 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
 void Keyboard::send_keys() {
 
   // read the mesh
-  buffer_t client_keys = Mesh::get_buffer();
+  auto client_keys = Mesh::get_buffer();
 
   // read server keys
   auto &active_keys = this->matrix->active_keys;
@@ -136,31 +137,47 @@ void Keyboard::send_keys() {
   // init report & counter
   // uint8_t key;
   keyswitch_t *keyswitch;
+  uint8_t key;
 
   // KeyReport keys = {};
   // uint8_t counter = 0;
   // uint8_t col;
-  if (this->bluetooth->isConnected()) {
-    // read matrix state
-    // read the keys from client(s)
-    // merge the keys in a singular key report
+  // read matrix state
+  // read the keys from client(s)
+  // merge the keys in a singular key report
 
-    // read server active keys
-    for (int idx = 0; idx < total_keys; idx++) {
-      // read switch
-      keyswitch =
-          &(idx < active_keys.size() ? active_keys[idx]
-                                     : client_keys[total_keys - n_server_keys]);
-      // add idx to columns
-      this->bluetooth->write(this->read_key(*keyswitch));
+  // read server active keys
+  if (total_keys) {
+    Serial.printf("Active keys %d\n", total_keys);
+    Serial.printf("Client keys %d\n", client_keys.size());
+  }
 
-      // if (counter > 5) {
-      //   // send key report
-      //   this->bluetooth->sendReport(keys);
-      //   keys.keys.fill(0);
-      //   counter = 0;
-      // }
+  for (int idx = 0; idx < total_keys; idx++) {
+    // read switch
+    keyswitch =
+        &(idx < active_keys.size() ? active_keys[idx]
+                                   : client_keys[total_keys - n_server_keys]);
+    key = this->read_key(*keyswitch);
+    // add idx to columns
+    // if (this->bluetooth->isConnected()) {
+    // press event
+    if (keyswitch->active) {
+      Serial.println("Key press");
+      // this->bluetooth->press(key);
     }
+    // release event
+    else {
+      Serial.println("Key release");
+      // this->bluetooth->release(key);
+    }
+    // }
+
+    // if (counter > 5) {
+    //   // send key report
+    //   this->bluetooth->sendReport(keys);
+    //   keys.keys.fill(0);
+    //   counter = 0;
+    // }
 
     // this->bluetooth->write(keys);
   }

@@ -10,6 +10,8 @@ Keyboard keyboard = Keyboard(&config);
 
 void setup() {
 
+  // this needs to be here for some reason?
+  WiFi.mode(WIFI_STA);
   Serial.begin(config.baud_rate);
   Serial.println("Starting BLE work!");
   Serial.println("1- Download and install an BLE scanner app in your phone");

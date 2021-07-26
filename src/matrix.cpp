@@ -26,9 +26,9 @@ void Matrix::setup_keys() {
     source = this->source_pins[row];
     for (uint8_t col = 0; col < this->sinc_pins.size(); col++) {
       // init switch with current time, non-active and pin info
-      sinc = this->sinc_pins[row];
+      sinc = this->sinc_pins[col];
       this->keys[source][sinc] =
-          keyswitch_t{millis(), false, source, sinc, row, col};
+          keyswitch_t{millis(), false, source, sinc, col, row};
     }
   }
 }
@@ -117,7 +117,9 @@ void Matrix::determine_change() {
         // compare debounce on keys
 
         delta = millis() - key.time;
-        if ((delta >= 1000) && (!(delta % 100))) {
+        // FIXME: left number is when the debounce will be repeated
+        // bit of a magic number, move into config?
+        if ((delta >= 500) && (!(delta % (this->debounce * 10)))) {
           update_key = true;
         } else {
           // don't
@@ -155,13 +157,21 @@ void Matrix::determine_activity(keyswitch_t *key) {
 
   // this line doesnot check that it was already active before
   // if was active just remain active
-  if (active & key->active) {
+  if (active && key->active) {
     if ((millis() - key->time) >= this->debounce) {
       this->active_scan_keys.push_back(*key);
     }
-  } else if (active & !key->active) {
+  }
+  // key switch turned on with debounce
+  else if (active & !key->active) {
     key->active = true;
     key->time = millis();
+  }
+  // key switch turned off
+  else if (!active && key->active) {
+    key->active = false;
+    key->time = millis();
+    this->active_keys.push_back(*key);
   } else {
     key->active = false;
   }
@@ -192,7 +202,7 @@ void Matrix::update() {
 void Matrix::print_ak() {
   for (auto source : this->source_pins) {
     for (auto sinc : this->sinc_pins) {
-      Serial.println(this->keys[source][sinc].active);
+      Serial.print(this->keys[source][sinc].active);
       Serial.print(" ");
       Serial.print(digitalRead(source));
       Serial.print(" ");
@@ -213,6 +223,7 @@ void Matrix::print_ak() {
     }
     Serial.println();
   }
+
   // Serial.print("\r");
 
   // Serial.println("Listing active keys");

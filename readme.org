@@ -96,7 +96,6 @@ To give a course overview consider the following picture:
 #+attr_html: :alt   :class img
 [[file:./figures/overview.png]]
 
-
 * ESP32
 <2021-07-12 Mon>-
 I  opted for  a micro-controller  as this  would allow  me to
@@ -252,3 +251,14 @@ keycodes are remapped to different numbers.
 
 * OLED Display
 * Battery control
+* Weird notes
+- Pressing  down  a  key  repeatedly and  then  another  key
+  afterwards, stops sending the  initially pressed down key.
+  For example holding down `a` and then pressing any other
+  key (including modifies) stops sending `a`.
+- Figure out bug  where `-` is sent  repeatedly. This occurs
+  especially when sending `a` key.  I think it is related to
+  the ascii code for for `a` and `-`.
+- Figure out bug  where 'up arrow' is  sent repeatedly. This
+  occurs  when the  keyboard is  connected to  bluetooth. No
+  keys are send on my part.

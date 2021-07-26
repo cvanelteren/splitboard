@@ -15,6 +15,7 @@ Mesh::Mesh() {
 }
 
 Mesh::Mesh(Config *config) : Mesh() {
+  // WiFi.mode(WIFI_STA);
   Serial.println("Setting up mesh connection");
   this->config = config;
 }
@@ -76,21 +77,23 @@ void Mesh::init_esp_now() {
 void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
                         int len) {
 
-  // Serial.print("Received ");
-  // Serial.println(len);
+  // Serial.printf("Received: %d\n", len);
 
   // empty buffer
   // Mesh::buffer = {};
   // copy received bits into buffer
   memcpy(&(Mesh::buffer), data, len);
 
-  // for (keyswitch_t it : Mesh::buffer) {
-  //   Serial.print(it.source);
-  //   Serial.print(" ");
-  //   Serial.print(it.sinc);
-  //   Serial.print(" ");
-  //   Serial.println(it.time);
-  // }
+  for (keyswitch_t it : Mesh::buffer) {
+    // print only non-empty
+    if (it.active) {
+      Serial.print(it.source);
+      Serial.print(" ");
+      Serial.print(it.sinc);
+      Serial.print(" ");
+      Serial.println(it.time);
+    }
+  }
 };
 
 buffer_t Mesh::buffer = {};
@@ -102,9 +105,9 @@ buffer_t Mesh::buffer = {};
 
 void Mesh::send_input(const uint8_t *addr, esp_now_send_status_t status) {
 
-  // Serial.print("\r\nLast Packet Send Status:\t");
-  // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
-  // : "Delivery Fail");
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
+                                                : "Delivery Fail");
   if (status == ESP_NOW_SEND_SUCCESS) {
     Mesh::buffer = {};
   } else {
@@ -147,8 +150,11 @@ void Mesh::send() {
   }
 }
 
-buffer_t Mesh::get_buffer() {
-  auto buffer = Mesh::buffer;
+std::vector<keyswitch_t> Mesh::get_buffer() {
+  std::vector<keyswitch_t> buffer;
+  for (auto &elem : Mesh::buffer) {
+    buffer.push_back(elem);
+  }
   Mesh::buffer.fill({});
   return buffer;
 }

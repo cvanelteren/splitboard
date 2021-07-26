@@ -31,17 +31,12 @@ class Keyboard {
    * that a user interfaces with.
    */
 public:
-  Matrix *matrix;
-  // Layout *layout;
-  layers_t layers;
-  Display *display;
   Config *config;
-  // std::vector<uint8_t> fb;
 
-  // Bluetooth *bluetooth;
-  BleKeyboard *bluetooth;
+  Matrix *matrix;
   Mesh *mesh;
-  // BleKeyboard ble;
+  Display *display;
+  BleKeyboard *bluetooth;
 
   Keyboard(Config *config);
   void begin();
@@ -55,6 +50,7 @@ public:
   double get_battery_level();
 
 private:
+  layers_t layers;
   layer_t *active_layer;
 };
 #endif

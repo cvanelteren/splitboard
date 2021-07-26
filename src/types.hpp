@@ -20,7 +20,6 @@ typedef struct {
   bool active;
   uint8_t source;
   uint8_t sinc;
-
   uint8_t col;
   uint8_t row;
   // size_t activation_time;
@@ -32,7 +31,7 @@ typedef struct {
 
 // typedef std::unordered_map<uint8_t, layer_t> layers_t;
 //
-typedef std::vector<std::vector<int>> layer_t;
+typedef std::vector<std::vector<uint8_t>> layer_t;
 typedef std::vector<layer_t> layers_t;
 
 typedef std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>>

@@ -1,7 +1,8 @@
-// // controls
-// #define KC_BACPSPACE 0x2a // BS	Backspace
-// #define KC_TAB 0x2b       // TAB	Tab
-// #define KC_ENTER 0x28     // LF	Enter
+#include <BleKeyboard.h>
+// * // controls
+#define KC_BSPC 0x2a  // BS	Backspace
+#define KC_TAB 0x2b   // TAB	Tab
+#define KC_ENTER 0x28 // LF	Enter
 
 // alphabet
 #define KC_A 0x61
@@ -35,6 +36,16 @@
 
 #define SHIFT 0x80
 
+// inside blekeyboard.h
+#define KC_LCTL KEY_LEFT_CTRL
+#define KC_LSHIFT KEY_LEFT_SHIFT
+#define KC_ALT KEY_LEFT_ALT
+#define KC_SUPER KEY_LEFT_GUI
+#define KC_RCTL KEY_RIGHT_CTRL
+#define KC_RSHIFT KEY_RIGHT_SHIFT
+
+#define KC_NO 0x00
+
 // numbers
 #define KC_0 0x30
 #define KC_1 0x31
@@ -54,42 +65,42 @@
 // #define KC_BSP
 
 // // symbols
-// #define KC_COLON 0x3A    // :
-// #define KC_SCOLON 0x3B   // ;
+#define KC_COLON 0x3A  // :
+#define KC_SCOLON 0x3B // ;
 // #define KC_LT 0x3C       // <
 // #define KC_GT 0x3D       // >
-// #define KC_QUESTION 0x3F // ?
+#define KC_QUESTION 0x3F // ?
 // // #define KC_AT 40         // @o
 
-// #define KC_SLASH 0x2F    // /
-// #define KC_OBRACKET 0x5B // [
-// #define KC_BSLASH 0x5C   // bslash
-// #define KC_CBRACKET 0x5D // ]
+#define KC_SLASH 0x2F    // /
+#define KC_OBRACKET 0x5B // [
+#define KC_BSLASH 0x5C   // bslash
+#define KC_CBRACKET 0x5D // ]
 
-// #define KC_HAT 0x5E               //^
-// #define KC_US 0x2d | SHIFT        // _
-// #define KC_BACKTICK 0x35          // `
-// #define KC_LCBACKET 0x2f | SHIFT  // {
-// #define KC_VMID 0x31 | SHIFT      // |
-// #define KC_CCBRACKET 0x30 | SHIFT // }
-// #define KC_TILDE 0x35 | SHIFT     // ~
-// #define KC_DEL 0                  // DEL
-// #define KC_SPC 0x2c               //  ' '
-// #define KC_EXCLAIM 0x1e | SHIFT   // !
-// #define KC_QUOTE 0x34 | SHIFT     // "
-// #define KC_HASH 0x20 | SHIFT      // #
-// #define KC_DOLLAR 0x21 | SHIFT    // $
-// #define KC_PRCT 0x22 | SHIFT      // %
-// #define KC_AND 0x24 | SHIFT       // &
-// #define KC_SQUOTE 0x34            // '
-// #define KC_OPAREN 0x26 | SHIFT    // (
-// #define KC_CPAREN 0x27 | SHIFT    // )
-// #define KC_ASTERISK 0x25 | SHIFT  // *
-// #define KC_PLUS 0x2e | SHIFT      // +
-// #define KC_COMMA 0x36             // ,
-// #define KC_DASH 0x2d              // -
-// #define KC_DOT 0x37               // .
-// #define KC_AT 0x1f | SHIFT        // @
+#define KC_HAT 0x5E               //^
+#define KC_US 0x2d | SHIFT        // _
+#define KC_BACKTICK 0x35          // `
+#define KC_LCBACKET 0x2f | SHIFT  // {
+#define KC_VMID 0x31 | SHIFT      // |
+#define KC_CCBRACKET 0x30 | SHIFT // }
+#define KC_TILDE 0x35 | SHIFT     // ~
+#define KC_DEL 0                  // DEL
+#define KC_SPC 0x2c               //  ' '
+#define KC_EXCLAIM 0x1e | SHIFT   // !
+#define KC_QUOTE 0x34 | SHIFT     // "
+#define KC_HASH 0x20 | SHIFT      // #
+#define KC_DOLLAR 0x21 | SHIFT    // $
+#define KC_PRCT 0x22 | SHIFT      // %
+#define KC_AND 0x24 | SHIFT       // &
+#define KC_SQUOTE 0x34            // '
+#define KC_OPAREN 0x26 | SHIFT    // (
+#define KC_CPAREN 0x27 | SHIFT    // )
+#define KC_ASTERISK 0x25 | SHIFT  // *
+#define KC_PLUS 0x2e | SHIFT      // +
+#define KC_COMMA 0x36             // ,
+#define KC_DASH 0x2d              // -
+#define KC_DOT 0x37               // .
+#define KC_AT 0x1f | SHIFT        // @
 
 // #define KC_NUL 0x00 // NUL
 // #define KC_SOH 0x00 // SOH

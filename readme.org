@@ -1,4 +1,3 @@
-
 * Introduction
 <2021-06-21 Mon>
 Mechanical keyboards  are somewhat  of a dated  concept that
@@ -72,7 +71,7 @@ which keys are being pressed. One of the halves will act as a
 server, the other will act as a client. The server will need
 the following capabilities
 
-Server abilities
+*Server abilities*
 - Read matrix
 - Setup a bluetooth connection
   + HID Device
@@ -81,7 +80,7 @@ Server abilities
   + Merge keys pressed and send to bluetooth controller
 - Control LEDs on both client and server
 
-Client abilities
+*Client abilities*
 - Read matrix
 - Find server and send pressed keys to server
 
@@ -221,37 +220,186 @@ signal does not form a clean  square wave. In order to clean
 up  this  signal, key  debouncing  is  used to  reflect  the
 "press" of key switch.
 
-** Changelog
+** Changes
 - [X] Added matrix class
   + [X] added matrix scan
   + [X] added key debounce
   + [X] added (whole) matrix debounce
-    - [X] filters out erronenous keypresses
+    - [X] filters out erroneous key presses
 
 * ESP-Now
+<2021-06-19 Sat>
+The two  halves need to  communicate to eachother.  There is
+only one half that is connected through bluetooth to another
+device. We call  this the server, and the  other the client.
+Keys pressed on  the client needs to be  communicated to the
+server  which   processes  the  keys,  and   sends  it  over
+bluetooth. Luckily,  ESP-now offers a mesh  interface we can
+utilize for  this purpose.  This is easier  to setup  than a
+bluetooth mesh interface and should be relatively secure for
+foreign attackers. From the website we read:
 
 #+begin_quote
-# ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
- #+end_quote
+ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
+#+end_quote
+
+
+** Mesh interface class
+The mesh class is responsible for:
+- Setup / deinit the ESP-now connection
+- Holding a buffer that is sent over the ESP-now connection.
+  The buffer holds information that needs to be communicated
+  between each  halves.
+
+At  the moment  of writing,  the mesh  class holds  a static
+buffer   which  holds   `keyswitch_t`.  These   are  structs
+containing when the last time  the pins were read as active.
+In addition, it contains information  on the source and sinc
+pins, and column and row indices. These last two are used to
+index into the final keymap on the server side. This way, no
+actual key information is send, but the server reads the key
+from the  col and row,  then they are combined.  This solves
+the issue of sending ascii shifted codes or media keys.
+
+** Changes
+- [X] Implemented mesh interface class
+- [X] Added server capabilities to join the keys from both half and communicate through bluetooth
+
+* Modifier keys
+<2021-07-26  Mon>  My  initial implementation  measures  the
+onset of  keys. That is,  debounce worked by  measuring when
+the "square  wave" of the  key was pressed. This  allows for
+fast  and  accurate  detection  detecting  key  press  down.
+Initially my intentions was to merge the other keys together
+such that multiple keys are registered at the same time. For
+example, the shift key needs to register two keys at minimum
+to shift the ascii code around for let's say `a` to `A`.
+
+Consequently, I need to both  register the key press down as
+well as the  key release; I modified  the debounce mechanism
+to also detect the key release.
+
+** Changes
+- [X] Change key detection. Register key press and key release
+- [X] Mesh buffer management is moved out of the keyboard class.
+- [X] Fixed wrong indexing in reading the active keys on the server.
 
 * Bluetooth
-Bluetooth  is  rather  complicated. The  Bluetooth  class
-takes care of  most of the heavy lifting. Key  codes have an
-associated ascii code, these are put into an ascii code map.
-Note  that the  over bluetooth  (for whatever  reason) these
-keycodes are remapped to different numbers.
+Bluetooth  is  rather  complicated. The  Bluetooth  Keyboard
+class takes  care of  most of the  heavy lifting.  Key codes
+have an associated  ascii code, these are put  into an ascii
+code map. Note that the over bluetooth (for whatever reason)
+these keycodes are remapped to different numbers.
 
-** TODO
-- [ ] Write a bind  method that combines input  from both halves
-  and pushes them into a uint8 buffer.
-- [ ]  Write the layouts to a static const array
-  + [ ] Evaluate  whether it is  nicer to put separate  key pins
-    ids to the switch
-- [ ] Convert config to static class
+** Changes
+- [ ] Expand  this section with info  on characteristics and
+  services.
+- [X]    Figure out  how  the key  codes  are organized  The
+  symbols are organized in a 128 ascii keymap containing the
+  hex codes to  a symbol. Hex codes can be  send directly in
+  addition to  normal strings  over bluetooth.  The modifier
+  keys  in  combination with  some  media  control keys  are
+  defined   in  "BleKeyboard.h",   the  ascii   map  is   in
+  "BleKeyboard.cpp".  I  have  written a  short  wrapper  in
+  "key_defintions.hpp".
+- [X]  Add functions for  interfacing with bluetooth  to the
+  keyboard class
+  + [X] Pressing down keys
+  + [X] Releasing keys
+- [ ] Convert config class  to static class
+- [-] Write layer keymap for keyboard
+  + [X] Wrote qwerty base layer
+  + [ ] Add fixed array check to the layers (add to constant
+    config class steps)
+
+* Keyboard layers
+:LOGBOOK:
+CLOCK: [2021-07-29 Thu 09:27]--[2021-07-29 Thu 10:57] =>  1:30
+:END:
+A layer  is implemented as a  2D vector for the  moment, but
+will  likely change  in finalizing  the keyboard.  An active
+layer is set as a pointer  to the current active layer. Each
+keyswitch has  information on  where in  the grid  they fit;
+keys are read by using these indices in the 2D vector. I did
+consider an  unordered_map use the keyswitch  directly as an
+indicator. This could then be combined with pointers to make
+a  layer dynamic,  i.e.  instead of  having  the concept  of
+layers, each key has a different layer that can be accessed.
+This adds  some complexity and  I decided against  this. The
+main reason is that the client side would then need to store
+information  on what  each keyswitch  points to.  This would
+increase communication between each  halves if modifiers are
+used for example. I am  afraid that this added communication
+is not as trivially solved,  i.e. one needs to send modifier
+key across ESP-NOW and then shift all affected keys and when
+activated send this information back. The ESP-NOW channel is
+not designed for high information throughput.
+
+The keyboard is  not going to be full size.  That is, purely
+based on the number of keys,  this keyboard will not be able
+to have a 1-to-1 mapping  from symbol to keyswitch. Luckily,
+we  can  greatly  increase  the number  of  symbols  on  the
+keyboard by hosting the missing symbols on different layers.
+This means we have to implement a feature that allows one to
+switch  between   different  layers.  For  example   we  may
+implement a layer up and layer  down key, or allow to switch
+directly between different  layers. In QMK is  worked out by
+an `enum struct`.  Layers are stacked on top  of each other.
+This has the  added feature of allowing  a "transparent" key
+to access on a layer below. I wish to emulate this feature.
+
+I currently host my key layer  as a 2d vector. In finalizing
+my build this  may change to a fixed array  size. As vectors
+can be arbitrary sized, I need to add a check to the vectors
+to not allow uses to  define oddly sized arrays (which would
+lead to  seg faults).  This will be  added to  the finalized
+checks.
+
+In  QMK layers  are `enum` type, which  means the  layers are
+number  and tracked  through an  int. Here,  I will  have an
+`active_layer`  which points  to the  `layer_t` hosting  the
+current  active keys.  With transparent  keys I  can imagine
+that this approach will not work.
+
+** Changes
+- [ ] Implement key layers
+  + [ ] KC_TRANS accesses key below the current layer
+    - [ ] This effect may  stack until a non-transparent key
+      is found
+    - [ ] Layer switch keys
+      + [ ] Up and down
+    - [ ] Hold  layer switch key: similar  to modifier keys,
+      these  keys  temporarily   shift  the  key layer  while
+      holding down this key.
+* Rotary encoder
+The keyboard  has two rotary  encoder (one on  each halves).
+The encoders  I added were mostly  as a gimmick, but  can be
+used as slider controls for volume control and or scrolling.
+
+The  AI esp32  rotary encoder  allows  me to  quickly add  a
+(clickable) rotary encoder to  the keyboard. In addition, it
+has acceleration detection which  can enhance scrolling over
+large (rotary) ranges.
+** Changes
+:LOGBOOK:
+CLOCK: [2021-07-30 Fri 10:07]--[2021-07-30 Fri 10:08] =>  0:01
+CLOCK: [2021-07-30 Fri 09:00]--[2021-07-30 Fri 10:07] =>  1:07
+:END:
+- [ ] Add rotary encoder to keyboard class
 
 * OLED Display
+** Changes
+- [ ] Start creating interface for display management
+- [ ] Find interesting functions to put on the screen
+  + [ ] WiFi notifications?
+  + [ ] Keyboard status info
+    - [ ] Keyboard layer info
+    - [ ] Battery level info
 * Battery control
-* Weird notes
+** Changes
+- [ ] Implement battery control
+
+* Backlog and weird behavior notes
 - Pressing  down  a  key  repeatedly and  then  another  key
   afterwards, stops sending the  initially pressed down key.
   For example holding down `a` and then pressing any other

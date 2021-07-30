@@ -30,6 +30,13 @@ void setup() {
   // }
 
   keyboard.begin();
+  // The setup has to deal with weird casting of pointers
+  // As such the setup has to be performed when an actual object is instantiated
+  // It is therefore here
+  keyboard.rotaryEncoder->setup(
+      [] { keyboard.rotaryEncoder->readEncoder_ISR(); },
+      [] { keyboard.rotaryEncoder->onButtonClick(); });
+
   // keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
 
   //   esp_now_register_recv_cb(OnDataRecv);

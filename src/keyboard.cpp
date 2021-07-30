@@ -1,15 +1,5 @@
 #include "keyboard.hpp"
-
-#include <Arduino.h>
-
 #include <WiFi.h>
-
-#include "mesh.hpp"
-
-#include "keymap.hpp"
-#include "types.hpp"
-
-#include <BleKeyboard.h>
 
 Keyboard::Keyboard(Config *config) {
 
@@ -36,12 +26,13 @@ Keyboard::Keyboard(Config *config) {
     this->is_server = true;
   }
 
-  layer_t qwerty = {{KC_A, KC_B}};
-  layers_t layers = {qwerty};
+  layers_t layers = {key_layers::qwerty};
 
   this->layers = layers;
   this->active_layer = &this->layers[0];
 
+  // setup rotary encoder
+  this->rotaryEncoder = new RotaryEncoder(config);
   // this->ble = BleKeyboard(config->name);
 
   // this->fb = std::vector<uint8_t>(this->display->getDisplayHeight() *
@@ -52,6 +43,8 @@ Keyboard::Keyboard(Config *config) {
 
 auto *font = u8g2_font_7x14B_mr;
 // start the keyboard
+//
+
 double Keyboard::get_battery_level() { return 0.0; }
 void Keyboard::begin() {
 
@@ -70,7 +63,7 @@ void Keyboard::begin() {
   // setup start display
   this->display->begin();
 
-  // move this to display somehow
+  // FIXME: move this to display somehow
   auto width = 32;
   auto height = 10;
 
@@ -85,6 +78,9 @@ void Keyboard::begin() {
     this->bluetooth->begin();
   }
 
+  // if (this->rotaryEncoder != NULL) {
+  this->rotaryEncoder->begin();
+  // }
   // this->display->setFont(u8g2_font_tom_thumb_4x6_mf);
   // this->display->setFont(u8g2_font_7x14B_mr);
   // this->display->setFont(u8g2_font_7x14_tf);
@@ -196,8 +192,16 @@ void Keyboard::send_keys() {
 }
 
 void Keyboard::update() {
+  /**
+   * @brief     keyboard updater
+   * @details  Main controller  for keyboard  functionality.
+   * Reads switch states and pushes it to bluetooth.
+   *
+   */
   // Serial.println("Scanning");
   this->matrix->update();
+
+  this->rotaryEncoder->update();
 
   if (this->is_server) {
     this->send_keys();

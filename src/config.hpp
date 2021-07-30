@@ -22,11 +22,11 @@ public:
   Config();
 
   // pin configuration
-  std::vector<uint8_t> row_pins = {18, 23, 19, 22, 21};
+  std::vector<uint8_t> row_pins = {5, 18, 23, 19, 22, 21};
   // std::vector<size_t> row_pins = {13, 12, 14, 27, 26};
   // std::vector<size_t> col_pins = {18, 23, 19, 22, 21};
   // std::vector<size_t> col_pins = {34, 39, 37, 36};
-  std::vector<uint8_t> col_pins = {13, 12, 14, 27, 26};
+  std::vector<uint8_t> col_pins = {13, 12, 14, 27, 26, 25};
   bool row2col = true; // diode direction
 
   // layer_t test = {{18, {{34, "A"}}}};
@@ -54,6 +54,13 @@ public:
   const u8g2_cb_t *display_rotation = U8G2_R3;
   uint baud_rate = 115200;
 
+  uint8_t rot_a_pin = 1;
+  uint8_t rot_b_pin = 3;
+  uint8_t rot_button_pin = 37;
+  uint8_t rot_output_pin = 17; // set to -1 to use vcc
+
+  uint8_t rot_encoder_steps = 4;
+  uint8_t rot_accel = 250;
   // change this for your device
   // const char *server_address = "80:7d:3a:d4:2e:46";
   // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};

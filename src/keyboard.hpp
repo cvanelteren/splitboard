@@ -16,11 +16,13 @@
 // holds layout keys
 #include "bluetooth.hpp"
 #include "display.hpp"
+#include "keymap.hpp"
 #include "layout.hpp"
 #include "mesh.hpp"
+#include "rotary_encoder.hpp"
 #include "types.hpp"
-
 #include <BleKeyboard.h>
+
 class Keyboard {
   /**
    * @brief      Main keyboard class
@@ -37,6 +39,8 @@ public:
   Mesh *mesh;
   Display *display;
   BleKeyboard *bluetooth;
+
+  RotaryEncoder *rotaryEncoder;
 
   Keyboard(Config *config);
   void begin();

@@ -1,23 +1,34 @@
 
 # Table of Contents
 
-1.  [Introduction <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-21 Mon&gt;</span></span>](#org6714a75)
-2.  [Outline](#org44503d9)
-3.  [ESP32](#org24166b6)
-4.  [Matrix scanning](#orge681682)
-    1.  [Ghosting](#org822271a)
-    2.  [Key debouncing](#org8cc2e24)
-    3.  [Changelog](#orge6dc45a)
-5.  [ESP-Now](#orge679640)
-6.  [Bluetooth](#orgb3d66a9)
-7.  [OLED Display](#org0ec9635)
-8.  [Battery control](#org4868c45)
+1.  [Introduction](#org1117906)
+2.  [Outline](#orgde85c1e)
+3.  [ESP32](#org716d0ab)
+4.  [Matrix scanning](#org5357480)
+    1.  [Ghosting](#org5ae6392)
+    2.  [Key debouncing](#org9d6fe18)
+    3.  [Changes](#org08e8dd8)
+5.  [ESP-Now](#org13bedc9)
+    1.  [Mesh interface class](#org281bd2a)
+    2.  [Changes](#org4c65541)
+6.  [Modifier keys](#orgcbf3146)
+    1.  [Changes](#org2e4ae43)
+7.  [Bluetooth](#orgebca092)
+    1.  [Changes](#orgc331644)
+8.  [Keyboard layers](#orgce4f577)
+    1.  [Changes](#org721c4d9)
+9.  [OLED Display](#orgb2d08dd)
+    1.  [Changes](#orgbea234a)
+10. [Battery control](#org1d8973c)
+    1.  [Changes](#orgdf3dd0c)
+11. [Backlog and weird behavior notes](#org7fb8bf7)
 
 
-<a id="org6714a75"></a>
+<a id="org1117906"></a>
 
-# Introduction <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-21 Mon&gt;</span></span>
+# Introduction
 
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-21 Mon&gt;</span></span>
 Mechanical keyboards  are somewhat  of a dated  concept that
 has  gathered some  speed in  more recent  years. Back  when
 computers were  first coming  out for the  public, keyboards
@@ -83,7 +94,7 @@ Core feature targets
 -   Rotary encoders
 
 
-<a id="org44503d9"></a>
+<a id="orgde85c1e"></a>
 
 # Outline
 
@@ -94,7 +105,7 @@ which keys are being pressed. One of the halves will act as a
 server, the other will act as a client. The server will need
 the following capabilities
 
-Server abilities
+**Server abilities**
 
 -   Read matrix
 -   Setup a bluetooth connection
@@ -104,7 +115,7 @@ Server abilities
     -   Merge keys pressed and send to bluetooth controller
 -   Control LEDs on both client and server
 
-Client abilities
+**Client abilities**
 
 -   Read matrix
 -   Find server and send pressed keys to server
@@ -119,7 +130,7 @@ To give a course overview consider the following picture:
 ![img](./figures/overview.png)
 
 
-<a id="org24166b6"></a>
+<a id="org716d0ab"></a>
 
 # ESP32
 
@@ -151,7 +162,7 @@ harness to do server-client communication.
 ![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
 
-<a id="orge681682"></a>
+<a id="org5357480"></a>
 
 # Matrix scanning
 
@@ -178,7 +189,7 @@ The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
 
-<a id="org822271a"></a>
+<a id="org5ae6392"></a>
 
 ## Ghosting
 
@@ -202,7 +213,7 @@ and causing ghosting.
 ![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-<a id="org8cc2e24"></a>
+<a id="org9d6fe18"></a>
 
 ## Key debouncing
 
@@ -213,33 +224,234 @@ up  this  signal, key  debouncing  is  used to  reflect  the
 &ldquo;press&rdquo; of key switch.
 
 
-<a id="orge6dc45a"></a>
+<a id="org08e8dd8"></a>
 
-## Changelog
+## Changes
 
 -   [X] Added matrix class
     -   [X] added matrix scan
     -   [X] added key debounce
     -   [X] added (whole) matrix debounce
-        -   [X] filters out erronenous keypresses
+        -   [X] filters out erroneous key presses
 
 
-<a id="orge679640"></a>
+<a id="org13bedc9"></a>
 
 # ESP-Now
 
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-19 Sat&gt;</span></span>
+The two  halves need to  communicate to eachother.  There is
+only one half that is connected through bluetooth to another
+device. We call  this the server, and the  other the client.
+Keys pressed on  the client needs to be  communicated to the
+server  which   processes  the  keys,  and   sends  it  over
+bluetooth. Luckily,  ESP-now offers a mesh  interface we can
+utilize for  this purpose.  This is easier  to setup  than a
+bluetooth mesh interface and should be relatively secure for
+foreign attackers. From the website we read:
 
-<a id="orgb3d66a9"></a>
+> ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
+
+
+<a id="org281bd2a"></a>
+
+## Mesh interface class
+
+The mesh class is responsible for:
+
+-   Setup / deinit the ESP-now connection
+-   Holding a buffer that is sent over the ESP-now connection.
+    The buffer holds information that needs to be communicated
+    between each  halves.
+
+At  the moment  of writing,  the mesh  class holds  a static
+buffer   which  holds   \`keyswitch<sub>t</sub>\`.  These   are  structs
+containing when the last time  the pins were read as active.
+In addition, it contains information  on the source and sinc
+pins, and column and row indices. These last two are used to
+index into the final keymap on the server side. This way, no
+actual key information is send, but the server reads the key
+from the  col and row,  then they are combined.  This solves
+the issue of sending ascii shifted codes or media keys.
+
+
+<a id="org4c65541"></a>
+
+## Changes
+
+-   [X] Implemented mesh interface class
+-   [X] Added server capabilities to join the keys from both half and communicate through bluetooth
+
+
+<a id="orgcbf3146"></a>
+
+# Modifier keys
+
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-07-26 Mon&gt;  </span></span>  My  initial implementation  measures  the
+onset of  keys. That is,  debounce worked by  measuring when
+the &ldquo;square  wave&rdquo; of the  key was pressed. This  allows for
+fast  and  accurate  detection  detecting  key  press  down.
+Initially my intentions was to merge the other keys together
+such that multiple keys are registered at the same time. For
+example, the shift key needs to register two keys at minimum
+to shift the ascii code around for let&rsquo;s say \`a\` to \`A\`.
+
+Consequently, I need to both  register the key press down as
+well as the  key release; I modified  the debounce mechanism
+to also detect the key release.
+
+
+<a id="org2e4ae43"></a>
+
+## Changes
+
+-   [X] Change key detection. Register key press and key release
+-   [X] Mesh buffer management is moved out of the keyboard class.
+-   [X] Fixed wrong indexing in reading the active keys on the server.
+
+
+<a id="orgebca092"></a>
 
 # Bluetooth
 
+Bluetooth  is  rather  complicated. The  Bluetooth  Keyboard
+class takes  care of  most of the  heavy lifting.  Key codes
+have an associated  ascii code, these are put  into an ascii
+code map. Note that the over bluetooth (for whatever reason)
+these keycodes are remapped to different numbers.
 
-<a id="org0ec9635"></a>
+
+<a id="orgc331644"></a>
+
+## Changes
+
+-   [ ] Expand  this section with info  on characteristics and
+    services.
+-   [X] Figure out  how  the key  codes  are organized  The
+    symbols are organized in a 128 ascii keymap containing the
+    hex codes to  a symbol. Hex codes can be  send directly in
+    addition to  normal strings  over bluetooth.  The modifier
+    keys  in  combination with  some  media  control keys  are
+    defined   in  &ldquo;BleKeyboard.h&rdquo;,   the  ascii   map  is   in
+    &ldquo;BleKeyboard.cpp&rdquo;.  I  have  written a  short  wrapper  in
+    &ldquo;key<sub>defintions.hpp</sub>&rdquo;.
+-   [X] Add functions for  interfacing with bluetooth  to the
+    keyboard class
+    -   [X] Pressing down keys
+    -   [X] Releasing keys
+-   [ ] Convert config class  to static class
+-   [-] Write layer keymap for keyboard
+    -   [X] Wrote qwerty base layer
+    -   [ ] Add fixed array check to the layers (add to constant
+        config class steps)
+
+
+<a id="orgce4f577"></a>
+
+# Keyboard layers
+
+A layer  is implemented as a  2D vector for the  moment, but
+will  likely change  in finalizing  the keyboard.  An active
+layer is set as a pointer  to the current active layer. Each
+keyswitch has  information on  where in  the grid  they fit;
+keys are read by using these indices in the 2D vector. I did
+consider an  unordered<sub>map</sub> use the keyswitch  directly as an
+indicator. This could then be combined with pointers to make
+a  layer dynamic,  i.e.  instead of  having  the concept  of
+layers, each key has a different layer that can be accessed.
+This adds  some complexity and  I decided against  this. The
+main reason is that the client side would then need to store
+information  on what  each keyswitch  points to.  This would
+increase communication between each  halves if modifiers are
+used for example. I am  afraid that this added communication
+is not as trivially solved,  i.e. one needs to send modifier
+key across ESP-NOW and then shift all affected keys and when
+activated send this information back. The ESP-NOW channel is
+not designed for high information throughput.
+
+The keyboard is  not going to be full size.  That is, purely
+based on the number of keys,  this keyboard will not be able
+to have a 1-to-1 mapping  from symbol to keyswitch. Luckily,
+we  can  greatly  increase  the number  of  symbols  on  the
+keyboard by hosting the missing symbols on different layers.
+This means we have to implement a feature that allows one to
+switch  between   different  layers.  For  example   we  may
+implement a layer up and layer  down key, or allow to switch
+directly between different  layers. In QMK is  worked out by
+an \`enum struct\`.  Layers are stacked on top  of each other.
+This has the  added feature of allowing  a &ldquo;transparent&rdquo; key
+to access on a layer below. I wish to emulate this feature.
+
+I currently host my key layer  as a 2d vector. In finalizing
+my build this  may change to a fixed array  size. As vectors
+can be arbitrary sized, I need to add a check to the vectors
+to not allow uses to  define oddly sized arrays (which would
+lead to  seg faults).  This will be  added to  the finalized
+checks.
+
+In  QMK layers  are \`enum\` type, which  means the  layers are
+number  and tracked  through an  int. Here,  I will  have an
+\`active<sub>layer</sub>\`  which points  to the  \`layer<sub>t</sub>\` hosting  the
+current  active keys.  With transparent  keys I  can imagine
+that this approach will not work.
+
+
+<a id="org721c4d9"></a>
+
+## Changes
+
+-   [ ] Implement key layers
+    -   [ ] KC<sub>TRANS</sub> accesses key below the current layer
+        -   [ ] This effect may  stack until a non-transparent key
+            is found
+        -   [ ] Layer switch keys
+            -   [ ] Up and down
+        -   [ ] Hold  layer switch key: similar  to modifier keys,
+            these  keys  temporarily   shift  the  key layer  while
+            holding down this key.
+
+
+<a id="orgb2d08dd"></a>
 
 # OLED Display
 
 
-<a id="org4868c45"></a>
+<a id="orgbea234a"></a>
+
+## Changes
+
+-   [ ] Start creating interface for display management
+-   [ ] Find interesting functions to put on the screen
+    -   [ ] WiFi notifications?
+    -   [ ] Keyboard status info
+        -   [ ] Keyboard layer info
+        -   [ ] Battery level info
+
+
+<a id="org1d8973c"></a>
 
 # Battery control
+
+
+<a id="orgdf3dd0c"></a>
+
+## Changes
+
+-   [ ] Implement battery control
+
+
+<a id="org7fb8bf7"></a>
+
+# Backlog and weird behavior notes
+
+-   Pressing  down  a  key  repeatedly and  then  another  key
+    afterwards, stops sending the  initially pressed down key.
+    For example holding down \`a\` and then pressing any other
+    key (including modifies) stops sending \`a\`.
+-   Figure out bug  where \`-\` is sent  repeatedly. This occurs
+    especially when sending \`a\` key.  I think it is related to
+    the ascii code for for \`a\` and \`-\`.
+-   Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This
+    occurs  when the  keyboard is  connected to  bluetooth. No
+    keys are send on my part.
 

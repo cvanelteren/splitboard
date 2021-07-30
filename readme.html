@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-  <!-- 2021-07-12 Mon 08:29 -->
+  <!-- 2021-07-26 Mon 14:13 -->
   <meta http-equiv="Content-Type" content=
   "text/html; charset=utf-8" />
   <meta name="viewport" content=
@@ -11,8 +11,9 @@
   <title>‎</title>
   <meta name="author" content="Casper van Elteren" />
   <meta name="generator" content="Org Mode" />
-  <style type="text/css">
-  <!--/*--><![CDATA[/*><!--*/
+  <style>
+  <![CDATA[
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -33,8 +34,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -43,21 +45,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -193,71 +195,71 @@
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
   .org-svg { width: 90%; }
-  /*]]>*/-->
+  ]]>
   </style>
-  <script type="text/javascript">
-  // @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-  <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-         elem.classList.add("code-highlighted");
-         target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-         elem.classList.remove("code-highlighted");
-         target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-  // @license-end
-  </script>
 </head>
 <body>
-  <div id="content">
-    <div id="table-of-contents">
+  <div id="content" class="content">
+    <div id="table-of-contents" role="doc-toc">
       <h2>Table of Contents</h2>
-      <div id="text-table-of-contents">
+      <div id="text-table-of-contents" role="doc-toc">
         <ul>
-          <li><a href="#orge452f89">1. Introduction</a></li>
-          <li><a href="#orgad82d5a">2. Outline</a></li>
-          <li><a href="#org2bc9c6a">3. ESP32</a></li>
+          <li><a href="#org35a92ef">1. Introduction</a></li>
+          <li><a href="#org5175528">2. Outline</a></li>
+          <li><a href="#orgf383381">3. ESP32</a></li>
           <li>
-            <a href="#orgfc18d38">4. Matrix scanning</a>
+            <a href="#org8197867">4. Matrix scanning</a>
             <ul>
-              <li><a href="#org9d21540">4.1. Ghosting</a></li>
-              <li><a href="#org6759277">4.2. Key
+              <li><a href="#org7f90a48">4.1. Ghosting</a></li>
+              <li><a href="#org568dcef">4.2. Key
               debouncing</a></li>
+              <li><a href="#orgf4b69a0">4.3. Changelog</a></li>
             </ul>
           </li>
-          <li><a href="#org5232250">5. ESP-Now</a></li>
-          <li><a href="#org11bd4db">6. Bluetooth</a></li>
-          <li><a href="#org4467c98">7. OLED Display</a></li>
-          <li><a href="#org94998eb">8. Battery control</a></li>
+          <li>
+            <a href="#orgf6b98bb">5. Modifier keys</a>
+            <ul>
+              <li><a href="#orgb96b821">5.1. Changes</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#orga9a0554">6. ESP-Now</a>
+            <ul>
+              <li><a href="#orgdba2de7">6.1. Mesh interface
+              class</a></li>
+              <li><a href="#org57582de">6.2. Changes</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#org04468b5">7. Bluetooth</a>
+            <ul>
+              <li><a href="#orgf2d0ba1">7.1. TODO</a></li>
+            </ul>
+          </li>
+          <li><a href="#org685bc1e">8. OLED Display</a></li>
+          <li><a href="#orgfe19935">9. Battery control</a></li>
+          <li><a href="#org48fffad">10. Weird notes</a></li>
         </ul>
       </div>
     </div>
-    <div id="outline-container-orge452f89" class="outline-2">
-      <h2 id="orge452f89"><span class="section-number-2">1</span>
+    <div id="outline-container-org35a92ef" class="outline-2">
+      <h2 id="org35a92ef"><span class="section-number-2">1.</span>
       Introduction</h2>
       <div class="outline-text-2" id="text-1">
-        <p>Mechanical keyboards are somewhat of a dated concept
-        that has gathered some speed in more recent years. Back
-        when computers were first coming out for the public,
-        keyboards had mechanical connections that would allow a
-        current to activate a switch. Then as economics got wind,
-        somehow we got used to membrane keyboards; virtually every
-        office in the world has these membrane keyboards. Compared
-        to mechanical keyboards, membrane keyboards feel more
-        “mushy”. In contrast, mechanical keyboards may have
-        different feel based on the springs or whether the key
-        switch has a noticeable “bump”. They can be clicky or not;
-        the possibility are wild now.</p>
+        <p><span class="timestamp-wrapper"><span class=
+        "timestamp">&lt;2021-06-21 Mon&gt;</span></span> Mechanical
+        keyboards are somewhat of a dated concept that has gathered
+        some speed in more recent years. Back when computers were
+        first coming out for the public, keyboards had mechanical
+        connections that would allow a current to activate a
+        switch. Then as economics got wind, somehow we got used to
+        membrane keyboards; virtually every office in the world has
+        these membrane keyboards. Compared to mechanical keyboards,
+        membrane keyboards feel more “mushy”. In contrast,
+        mechanical keyboards may have different feel based on the
+        springs or whether the key switch has a noticeable “bump”.
+        They can be clicky or not; the possibility are wild
+        now.</p>
         <p>A few years ago I started following the subreddit on
         mechanical keyboards. Back then, the community had little
         options and cherry still had patents on the switches.
@@ -308,8 +310,8 @@
         </ul>
       </div>
     </div>
-    <div id="outline-container-orgad82d5a" class="outline-2">
-      <h2 id="orgad82d5a"><span class="section-number-2">2</span>
+    <div id="outline-container-org5175528" class="outline-2">
+      <h2 id="org5175528"><span class="section-number-2">2.</span>
       Outline</h2>
       <div class="outline-text-2" id="text-2">
         <p>The keyboard is split; it has two halves. The right and
@@ -346,20 +348,21 @@
         may switch to prolong batter life of both units.</p>
         <p>To give a course overview consider the following
         picture:</p>
-        <div id="orgd701180" class="figure">
+        <div id="org27e05d1" class="figure">
           <p><img src="./figures/overview.png" class="img" /></p>
         </div>
       </div>
     </div>
-    <div id="outline-container-org2bc9c6a" class="outline-2">
-      <h2 id="org2bc9c6a"><span class="section-number-2">3</span>
+    <div id="outline-container-orgf383381" class="outline-2">
+      <h2 id="orgf383381"><span class="section-number-2">3.</span>
       ESP32</h2>
       <div class="outline-text-2" id="text-3">
-        <p>I opted for a micro-controller as this would allow me to
-        prototype without worrying about my electronic skills. The
-        controller needed to have battery control, bluetooth, and
-        preferable an energy efficient screen; I ended up with an
-        esp32.</p>
+        <p><span class="timestamp-wrapper"><span class=
+        "timestamp">&lt;2021-07-12 Mon&gt;</span></span>- I opted
+        for a micro-controller as this would allow me to prototype
+        without worrying about my electronic skills. The controller
+        needed to have battery control, bluetooth, and preferable
+        an energy efficient screen; I ended up with an esp32.</p>
         <p>The esp32 is a hybrid chip that has both Wi-Fi and
         bluetooth capabilities. The esp32 consists of different
         versions that varies in (mainly) in the number of pins,
@@ -376,20 +379,22 @@
         bluetooth low energy simultanaously. In addition, through
         ESP-NOW, different eps32 modules can form a mesh, which I
         will harness to do server-client communication.</p>
-        <div id="orgbd69923" class="figure">
+        <div id="orgd5884e1" class="figure">
           <p><img src="./figures/pinout.jpg" alt=
           "pinout.jpg" /></p>
-          <p><span class="figure-number">Figure 2:</span> Pin-out
+          <p><span class="figure-number">Figure 1:</span> Pin-out
           ESP32 LORA-V2</p>
         </div>
       </div>
     </div>
-    <div id="outline-container-orgfc18d38" class="outline-2">
-      <h2 id="orgfc18d38"><span class="section-number-2">4</span>
+    <div id="outline-container-org8197867" class="outline-2">
+      <h2 id="org8197867"><span class="section-number-2">4.</span>
       Matrix scanning</h2>
       <div class="outline-text-2" id="text-4">
-        <p>A keyboard matrix scanning circuit is used to enhance
-        the number of keys, while keeping the number of pins low. A
+        <p><span class="timestamp-wrapper"><span class=
+        "timestamp">&lt;2021-07-12 Mon&gt;</span></span> A keyboard
+        matrix scanning circuit is used to enhance the number of
+        keys, while keeping the number of pins low. A
         micro-controller uses general pin input/output (GPIO) to
         register currents. If a singular key switch is wired to a
         single pin, 96 pins would be needed for a 104 sized
@@ -408,9 +413,9 @@
         The scanning occurs at a high scan rate, making it
         seemingly instantaneous.</p>
       </div>
-      <div id="outline-container-org9d21540" class="outline-3">
-        <h3 id="org9d21540"><span class=
-        "section-number-3">4.1</span> Ghosting</h3>
+      <div id="outline-container-org7f90a48" class="outline-3">
+        <h3 id="org7f90a48"><span class=
+        "section-number-3">4.1.</span> Ghosting</h3>
         <div class="outline-text-3" id="text-4-1">
           <p>Matrix scanning forms an excellent idea to efficiently
           represent our electronic switches. However, merely
@@ -427,10 +432,10 @@
           most common approach is to put a diode right after the
           switch either on the columns or rows, which prevents
           current from traversing and causing ghosting.</p>
-          <div id="org67a9b43" class="figure">
+          <div id="orgb65ad5a" class="figure">
             <p><img src="./figures/ghosting.png" alt=
             "ghosting.png" /></p>
-            <p><span class="figure-number">Figure 3:</span>
+            <p><span class="figure-number">Figure 2:</span>
             Ghosting example. Ghosting occurs when current can flow
             freely across columns and rows. (Left) one key is
             pressed down bottom left. (Middle) A key across from
@@ -440,9 +445,9 @@
           </div>
         </div>
       </div>
-      <div id="outline-container-org6759277" class="outline-3">
-        <h3 id="org6759277"><span class=
-        "section-number-3">4.2</span> Key debouncing</h3>
+      <div id="outline-container-org568dcef" class="outline-3">
+        <h3 id="org568dcef"><span class=
+        "section-number-3">4.2.</span> Key debouncing</h3>
         <div class="outline-text-3" id="text-4-2">
           <p>Key debounce is a mechanism to filter out erroneous
           key activity. When two metal plates come into contact,
@@ -451,28 +456,181 @@
           the “press” of key switch.</p>
         </div>
       </div>
+      <div id="outline-container-orgf4b69a0" class="outline-3">
+        <h3 id="orgf4b69a0"><span class=
+        "section-number-3">4.3.</span> Changelog</h3>
+        <div class="outline-text-3" id="text-4-3">
+          <ul class="org-ul">
+            <li class="on">
+              <code>[X]</code> Added matrix class
+              <ul class="org-ul">
+                <li class="on"><code>[X]</code> added matrix
+                scan</li>
+                <li class="on"><code>[X]</code> added key
+                debounce</li>
+                <li class="on">
+                  <code>[X]</code> added (whole) matrix debounce
+                  <ul class="org-ul">
+                    <li class="on"><code>[X]</code> filters out
+                    erronenous keypresses</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div id="outline-container-org5232250" class="outline-2">
-      <h2 id="org5232250"><span class="section-number-2">5</span>
+    <div id="outline-container-orgf6b98bb" class="outline-2">
+      <h2 id="orgf6b98bb"><span class="section-number-2">5.</span>
+      Modifier keys</h2>
+      <div class="outline-text-2" id="text-5">
+        <p><span class="timestamp-wrapper"><span class=
+        "timestamp">&lt;2021-07-26 Mon&gt;</span></span> My initial
+        implementation measures the onset of keys. That is,
+        debounce worked by measuring when the “square wave” of the
+        key was pressed. This allows for fast and accurate
+        detection detecting key press down. Initially my intentions
+        was to merge the other keys together such that multiple
+        keys are registered at the same time. For example, the
+        shift key needs to register two keys at minimum to shift
+        the ascii code around for let’s say `a` to `A`.</p>
+        <p>Consequently, I need to both register the key press down
+        as well as the key release; I modified the debounce
+        mechanism to also detect the key release.</p>
+      </div>
+      <div id="outline-container-orgb96b821" class="outline-3">
+        <h3 id="orgb96b821"><span class=
+        "section-number-3">5.1.</span> Changes</h3>
+        <div class="outline-text-3" id="text-5-1">
+          <ul class="org-ul">
+            <li class="on"><code>[X]</code> Change key detection.
+            Register key press and key release</li>
+            <li class="on"><code>[X]</code> Mesh buffer management
+            is moved out of the keyboard class.</li>
+            <li class="on"><code>[X]</code> Fixed wrong indexing in
+            reading the active keys on the server.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="outline-container-orga9a0554" class="outline-2">
+      <h2 id="orga9a0554"><span class="section-number-2">6.</span>
       ESP-Now</h2>
-      <div class="outline-text-2" id="text-5"></div>
+      <div class="outline-text-2" id="text-6">
+        <p>The two halves need to communicate to eachother. There
+        is only one half that is connected through bluetooth to
+        another device. We call this the server, and the other the
+        client. Keys pressed on the client needs to be communicated
+        to the server which processes the keys, and sends it over
+        bluetooth. Luckily, ESP-now offers a mesh interface we can
+        utilize for this purpose. This is easier to setup than a
+        bluetooth mesh interface and should be relatively secure
+        for foreign attackers. From the website we read:</p>
+        <blockquote>
+          nil
+        </blockquote>
+      </div>
+      <div id="outline-container-orgdba2de7" class="outline-3">
+        <h3 id="orgdba2de7"><span class=
+        "section-number-3">6.1.</span> Mesh interface class</h3>
+        <div class="outline-text-3" id="text-6-1">
+          <p>The mesh class is responsible for:</p>
+          <ul class="org-ul">
+            <li>Setup / deinit the ESP-now connection</li>
+            <li>Holding a buffer that is sent over the ESP-now
+            connection. The buffer holds information that needs to
+            be communicated between each halves.</li>
+          </ul>
+          <p>At the moment of writing, the mesh class holds a
+          static buffer which holds `keyswitch<sub>t</sub>`. These
+          are structs containing when the last time the pins were
+          read as active. In addition, it contains information on
+          the source and sinc pins, and column and row indices.
+          These last two are used to index into the final keymap on
+          the server side. This way, no actual key information is
+          send, but the server reads the key from the col and row,
+          then they are combined. This solves the issue of sending
+          ascii shifted codes or media keys.</p>
+        </div>
+      </div>
+      <div id="outline-container-org57582de" class="outline-3">
+        <h3 id="org57582de"><span class=
+        "section-number-3">6.2.</span> Changes</h3>
+        <div class="outline-text-3" id="text-6-2">
+          <ul class="org-ul">
+            <li class="on"><code>[X]</code> Implemented mesh
+            interface class</li>
+            <li class="on"><code>[X]</code> Added server
+            capabilities to join the keys from both half and
+            communicate through bluetooth</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div id="outline-container-org11bd4db" class="outline-2">
-      <h2 id="org11bd4db"><span class="section-number-2">6</span>
+    <div id="outline-container-org04468b5" class="outline-2">
+      <h2 id="org04468b5"><span class="section-number-2">7.</span>
       Bluetooth</h2>
+      <div class="outline-text-2" id="text-7">
+        <p>Bluetooth is rather complicated. The Bluetooth class
+        takes care of most of the heavy lifting. Key codes have an
+        associated ascii code, these are put into an ascii code
+        map. Note that the over bluetooth (for whatever reason)
+        these keycodes are remapped to different numbers.</p>
+      </div>
+      <div id="outline-container-orgf2d0ba1" class="outline-3">
+        <h3 id="orgf2d0ba1"><span class=
+        "section-number-3">7.1.</span> TODO</h3>
+        <div class="outline-text-3" id="text-7-1">
+          <ul class="org-ul">
+            <li class="off"><code>[&nbsp;]</code> Write a bind
+            method that combines input from both halves and pushes
+            them into a uint8 buffer.</li>
+            <li class="off">
+              <code>[&nbsp;]</code> Write the layouts to a static
+              const array
+              <ul class="org-ul">
+                <li class="off"><code>[&nbsp;]</code> Evaluate
+                whether it is nicer to put separate key pins ids to
+                the switch</li>
+              </ul>
+            </li>
+            <li class="off"><code>[&nbsp;]</code> Convert config to
+            static class</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div id="outline-container-org4467c98" class="outline-2">
-      <h2 id="org4467c98"><span class="section-number-2">7</span>
+    <div id="outline-container-org685bc1e" class="outline-2">
+      <h2 id="org685bc1e"><span class="section-number-2">8.</span>
       OLED Display</h2>
     </div>
-    <div id="outline-container-org94998eb" class="outline-2">
-      <h2 id="org94998eb"><span class="section-number-2">8</span>
+    <div id="outline-container-orgfe19935" class="outline-2">
+      <h2 id="orgfe19935"><span class="section-number-2">9.</span>
       Battery control</h2>
+    </div>
+    <div id="outline-container-org48fffad" class="outline-2">
+      <h2 id="org48fffad"><span class="section-number-2">10.</span>
+      Weird notes</h2>
+      <div class="outline-text-2" id="text-10">
+        <ul class="org-ul">
+          <li>Pressing down a key repeatedly and then another key
+          afterwards, stops sending the initially pressed down key.
+          For example holding down `a` and then pressing any other
+          key (including modifies) stops sending `a`.</li>
+          <li>Figure out bug where `-` is sent repeatedly. This
+          occurs especially when sending `a` key. I think it is
+          related to the ascii code for for `a` and `-`.</li>
+          <li>Figure out bug where ’up arrow’ is sent repeatedly.
+          This occurs when the keyboard is connected to bluetooth.
+          No keys are send on my part.</li>
+        </ul>
+      </div>
     </div>
   </div>
   <div id="postamble" class="status">
     <p class="author">Author: Casper van Elteren</p>
-    <p class="date">Created: 2021-07-12 Mon 08:29</p>
+    <p class="date">Created: 2021-07-26 Mon 14:13</p>
   </div>
 </body>
 </html>

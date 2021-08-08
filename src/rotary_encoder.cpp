@@ -2,28 +2,6 @@
 #include <bitset>
 #include <cstdio>
 
-// // RotaryEncoder::RotaryEncoder(Config *config)
-// //     : AiEsp32RotaryEncoder(config->rot_a_pin, config->rot_b_pin,
-// //                            config->rot_button_pin, config->rot_output_pin,
-// //                            config->rot_encoder_steps) {
-// //
-// this->config = config;
-
-// // setup handlers
-// // this->setup([this] { this->readEncoder_ISR(); },
-// // [this] { this->onButtonClick(); });
-
-// // circle values reset set to false
-// this->setBoundaries(0, 1000, false);
-// this->setAcceleration(config->rot_accel);
-// this->reset();
-
-// //   pinMode(config->rot_a_pin, INPUT_PULLUP);
-// //   pinMode(config->rot_b_pin, INPUT_PULLUP);
-// //   pinMode(config->rot_output_pin, OUTPUT);
-// //   // pinMode(config->rot_button_pin, OUTPUT);
-// }
-
 RotaryEncoder::RotaryEncoder(Config *config) {
   this->config = config;
   pinMode(config->rot_a_pin, INPUT);
@@ -32,20 +10,19 @@ RotaryEncoder::RotaryEncoder(Config *config) {
   pinMode(config->rot_a_pin, INPUT_PULLUP);
   pinMode(config->rot_b_pin, INPUT_PULLUP);
   pinMode(config->rot_output_pin, INPUT);
-  // pinMode(2, INPUT_PULLUP);
 
   this->a_state = digitalRead(this->config->rot_a_pin);
   this->b_state = digitalRead(this->config->rot_b_pin);
   this->counter = 0;
   this->last_active_time = millis();
 
-  this->state = 0;
-  this->counter = 0;
-  // this->prevNextCode = 0;
-  // this->store = 0;
+  this->state = 0;   // holds the current active sequence
+  this->counter = 0; // holds the value of the encoder
 }
 
 void RotaryEncoder::begin() {}
+
+std::vector<int8_t> RotaryEncoder::get_keys() { return this->active_keys; }
 
 void RotaryEncoder::onButtonClick() { Serial.println("button pressed"); }
 
@@ -84,9 +61,16 @@ int8_t RotaryEncoder::read_rotary() {
 
 void RotaryEncoder::update() {
   int8_t val;
+  this->active_keys.clear();
+
+  std::vector<uint8_t> media_key;
+  // add vol
   if ((val = this->read_rotary())) {
+
+    this->active_keys.push_back(val);
     this->counter += val;
     Serial.println("-------------");
+    Serial.printf("active_keys %d\n", this->active_keys.size());
     Serial.printf("%d \t", this->counter);
     Serial.printf("%d %d \n", digitalRead(this->config->rot_a_pin),
                   digitalRead(this->config->rot_b_pin));

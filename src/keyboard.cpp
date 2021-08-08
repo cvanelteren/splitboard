@@ -123,19 +123,6 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // return this->active_layer[keyswitch.row][col];
 }
 
-// void Keyboard::send_keys() {
-//   // read the mesh
-//   // send the keys
-//   if (this->bluetooth->isConnected()) {
-//     // this->bluetooth->print("Hello world");
-//     if (Mesh::buffer[0].active) {
-//       // send a
-//       this->bluetooth->write(0x41);
-//       Mesh::buffer.fill({});
-//     }
-//   }
-// }
-
 void Keyboard::send_keys() {
 
   // read the mesh
@@ -153,13 +140,6 @@ void Keyboard::send_keys() {
   // uint8_t key;
   keyswitch_t *keyswitch;
   uint8_t key;
-
-  // KeyReport keys = {};
-  // uint8_t counter = 0;
-  // uint8_t col;
-  // read matrix state
-  // read the keys from client(s)
-  // merge the keys in a singular key report
 
   // read server active keys
   if (total_keys) {
@@ -192,10 +172,6 @@ void Keyboard::send_keys() {
         this->bluetooth->release(key);
     }
 
-    if (total_keys) {
-      this->last_activity = millis();
-    }
-
     // }
 
     // if (counter > 5) {
@@ -206,6 +182,21 @@ void Keyboard::send_keys() {
     // }
 
     // this->bluetooth->write(keys);
+  }
+  // send encoder
+  for (auto &elem : this->rotaryEncoder->get_keys()) {
+    Serial.printf("Writing vol %d \n", elem);
+    if (elem > 0) {
+      this->bluetooth->write(KEY_MEDIA_VOLUME_UP);
+    } else {
+      this->bluetooth->write(KEY_MEDIA_VOLUME_DOWN);
+    }
+
+    total_keys++;
+  }
+
+  if (total_keys) {
+    this->last_activity = millis();
   }
 }
 

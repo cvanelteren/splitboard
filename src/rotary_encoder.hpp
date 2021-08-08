@@ -2,6 +2,7 @@
 #define ROTARY_ENCODER_H_
 
 #include "config.hpp"
+#include <BleKeyboard.h>
 
 class RotaryEncoder {
   Config *config;
@@ -21,11 +22,14 @@ class RotaryEncoder {
   uint8_t state;
   uint16_t filter;
 
+  std::vector<int8_t> active_keys;
+
 public:
   RotaryEncoder(Config *config);
   void onButtonClick();
   void begin();
   void update();
+  std::vector<int8_t> get_keys();
 };
 
 #endif // ROTARY_ENCODER_H_

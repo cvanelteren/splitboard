@@ -26,10 +26,20 @@ Keyboard::Keyboard(Config *config) {
     this->is_server = true;
   }
 
-  layers_t layers = {key_layers::qwerty};
+  layer_t qwerty = {{KC_TILDE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
+                     KC_9, KC_0, KC_BSPC},
+                    {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
+                     KC_O, KC_P, KC_OBRACKET, KC_CBRACKET},
+                    {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
+                     KC_L, KC_COLON, KC_SQUOTE},
+                    {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
+                     KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+                    {KC_NO, KC_NO, KC_NO, KC_LCTL, KC_ALT, KC_SPC, KC_ENTER,
+                     KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
 
-  this->layers = layers;
-  this->active_layer = &this->layers[0];
+  this->layers = {key_layers::qwerty};
+  this->layers = {qwerty};
+  this->active_layer = &(this->layers[0]);
 
   // setup rotary encoder
   this->rotaryEncoder = new RotaryEncoder(config);
@@ -102,11 +112,14 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // : keyswitch.col + this->matrix->get_cols());
   // uint8_t row = keyswitch.row;
   Serial.printf("row %d %col %d\n", keyswitch.source, keyswitch.sinc);
+  // if (keyswitch.source == 21 && keyswitch.sinc == 13) {
+  // this->sleep();
+  // }
   if (keyswitch.source == 21 && keyswitch.sinc == 26) {
     Serial.println("SENDING SHIFT");
     return SHIFT + 1;
   } else
-    return (*this->active_layer)[0][0];
+    return (*this->active_layer)[2][1];
   // return this->active_layer[keyswitch.row][col];
 }
 
@@ -178,6 +191,11 @@ void Keyboard::send_keys() {
       else
         this->bluetooth->release(key);
     }
+
+    if (total_keys) {
+      this->last_activity = millis();
+    }
+
     // }
 
     // if (counter > 5) {
@@ -199,8 +217,12 @@ void Keyboard::update() {
    *
    */
   // Serial.println("Scanning");
-  this->matrix->update();
+  if ((millis() - this->get_last_activity()) >=
+      this->config->deep_sleep_timeout) {
+    this->sleep();
+  }
 
+  this->matrix->update();
   this->rotaryEncoder->update();
 
   if (this->is_server) {
@@ -255,4 +277,79 @@ void Keyboard::update() {
     }
     // delay(10);
   }
+}
+
+void Keyboard::wake_up() {
+  /**
+   * @brief      Wake-up from deep sleep
+   */
+
+  esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
+  switch (reason) {
+  case ESP_SLEEP_WAKEUP_EXT0:
+    Serial.println("Wake up from ext0");
+    break;
+  case ESP_SLEEP_WAKEUP_EXT1:
+    Serial.println("Wake up from ext1");
+    break;
+  case ESP_SLEEP_WAKEUP_TIMER:
+    Serial.println("Wakeup caused by timer");
+    break;
+  case ESP_SLEEP_WAKEUP_TOUCHPAD:
+    Serial.println("Wakeup touch signal");
+    break;
+  case ESP_SLEEP_WAKEUP_ULP:
+    Serial.println("Wakeup from ULP");
+    break;
+  default:
+    Serial.println("Wakeup not caused by deep sleep");
+    break;
+  }
+
+  // // reinit the pins of the matrix
+  // esp_deep_sleep_stop();
+  // esp_bluedroid_enable();
+  // esp_wifi_start();
+
+  // this->matrix->setup_pin();
+}
+
+void callback() { Serial.println("In touch callback"); };
+
+size_t Keyboard::get_last_activity() { return this->last_activity; }
+void Keyboard::sleep() {
+  /**
+   * @brief      Enter deep sleep
+   */
+
+  Serial.println("Going sleepy time!");
+
+  // threshold = 45 seems to work
+  uint8_t threshold = 45;
+  touchAttachInterrupt(GPIO_NUM_13, callback, threshold);
+  // pinMode(GPIO_NUM_21, INPUT);
+  esp_sleep_enable_touchpad_wakeup();
+  // esp_sleep_enable_ext0_wakeup(GPIO_NUM_13, 0);
+
+  // size_t tmp = 0;
+  // for (auto &pin : this->config->source_pins) {
+  //   tmp += pow(2, pin);
+  // }
+
+  // std::stringstream bitmask = std::hex << bitmask;
+  // esp_sleep_get_ext1_wakeup_status(bitmask, ESP_EXT1_WAKEUP_ANY_HIGH);
+
+  // // control the pullup and pulldown resistors
+  // // rtc_gpio_pullup_en();
+  // // rtc_gpio_pulldown_en();
+
+  // // before entering deep sleep or light sleep WiFi and ble need
+  // // to be powered down
+  // esp_bluedroid_disable();
+  // esp_wifi_stop();
+
+  pinMode(GPIO_NUM_13, INPUT);
+  // FIXME: remove this in final production
+  delay(100); // prevent reading the pressdown state
+  esp_deep_sleep_start();
 }

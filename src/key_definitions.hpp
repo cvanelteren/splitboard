@@ -77,30 +77,29 @@
 #define KC_BSLASH 0x5C   // bslash
 #define KC_CBRACKET 0x5D // ]
 
-#define KC_HAT 0x5E               //^
-#define KC_US 0x2d | SHIFT        // _
-#define KC_BACKTICK 0x35          // `
-#define KC_LCBACKET 0x2f | SHIFT  // {
-#define KC_VMID 0x31 | SHIFT      // |
-#define KC_CCBRACKET 0x30 | SHIFT // }
-#define KC_TILDE 0x35 | SHIFT     // ~
-#define KC_DEL 0                  // DEL
-#define KC_SPC 0x2c               //  ' '
-#define KC_EXCLAIM 0x1e | SHIFT   // !
-#define KC_QUOTE 0x34 | SHIFT     // "
-#define KC_HASH 0x20 | SHIFT      // #
-#define KC_DOLLAR 0x21 | SHIFT    // $
-#define KC_PRCT 0x22 | SHIFT      // %
-#define KC_AND 0x24 | SHIFT       // &
-#define KC_SQUOTE 0x34            // '
-#define KC_OPAREN 0x26 | SHIFT    // (
-#define KC_CPAREN 0x27 | SHIFT    // )
-#define KC_ASTERISK 0x25 | SHIFT  // *
-#define KC_PLUS 0x2e | SHIFT      // +
-#define KC_COMMA 0x36             // ,
-#define KC_DASH 0x2d              // -
-#define KC_DOT 0x37               // .
-#define KC_AT 0x1f | SHIFT        // @
+#define KC_HAT 0x5E       //^
+#define KC_BACKTICK 0x60  // `
+#define KC_LCBACKET 0x2B  // {
+#define KC_VMID 0x7C      // |
+#define KC_CCBRACKET 0x7D // }
+#define KC_TILDE 0x7E     // ~
+#define KC_DEL 0x7F       // DEL
+#define KC_SPC 0x2c       //  ' '
+#define KC_EXCLAIM 0x21   // !
+#define KC_QUOTE 0x27     // "
+#define KC_HASH 0x23      // #
+#define KC_DOLLAR 0x24    // $
+#define KC_PRCT 0x25      // %
+#define KC_AND 0x26       // &
+#define KC_SQUOTE 0x27    // '
+#define KC_OPAREN 0x28    // (
+#define KC_CPAREN 0x29    // )
+#define KC_ASTERISK 0x2A  // *
+#define KC_PLUS 0x2B      // +
+#define KC_COMMA 0x2C     // ,
+#define KC_DASH 0x2D      // -
+#define KC_DOT 0x2E       // .
+#define KC_AT 0x40        // @
 
 // #define KC_NUL 0x00 // NUL
 // #define KC_SOH 0x00 // SOH

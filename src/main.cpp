@@ -8,6 +8,8 @@
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
 
+RTC_DATA_ATTR int bootCount = 0;
+
 void setup() {
 
   // this needs to be here for some reason?
@@ -29,13 +31,20 @@ void setup() {
   //   return;
   // }
 
+  bootCount++;
   keyboard.begin();
+
+  Serial.printf("layers size %d\n", keyboard.layers.size());
+
+  keyboard.wake_up();
+  // Serial.printf("%d\n", keyboard.layers[0][2][1]);
   // The setup has to deal with weird casting of pointers
   // As such the setup has to be performed when an actual object is instantiated
   // It is therefore here
-  keyboard.rotaryEncoder->setup(
-      [] { keyboard.rotaryEncoder->readEncoder_ISR(); },
-      [] { keyboard.rotaryEncoder->onButtonClick(); });
+  // keyboard.rotaryEncoder->setup(
+  //     [] { keyboard.rotaryEncoder->readEncoder_ISR(); },
+  //     [] { keyboard.rotaryEncoder->onButtonClick(); });
+  // keyboard.rotaryEncoder->enable();
 
   // keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
 
@@ -55,42 +64,4 @@ void loop() {
   keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
 
   keyboard.update();
-
-  // strcpy(myData.a, "THIS IS A CHAR");
-  // myData.b = random(1, 20);
-  // myData.c = 1.2;
-  // myData.d = "Hello";
-  // myData.e = false;
-
-  // if (keyboard.is_server) {
-  //   esp_err_t result =
-  //       esp_now_send(config.client_add, (uint8_t *)&myData, sizeof(myData));
-  //   if (result == ESP_OK) {
-  //     Serial.println("Msg send correctly");
-  //   } else {
-  //     Serial.println("Msg failed");
-  //   }
-  // }
-
-  // for (auto i = 0; i < 32; i++) {
-  //   keyboard.display->log.print("this is a very long text line");
-  //   keyboard.display->log.print("\n");
-  // }
-
-  // keyboard.display->clearDisplay();
-
-  // for (auto i = 0; i < 64; i++) {
-  //   keyboard.log->print(millis());
-  //   keyboard.log->print(" ");
-  // }
-
-  // u8g2log.print(millis());
-  // Print a new line, scroll the text window content if required
-  // Refresh the screen
-
-  // u8g2log.print("\n");
-
-  // keyboard.update();
-  // delay(500);
-  // delay(5000);
 }

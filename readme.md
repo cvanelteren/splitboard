@@ -1,30 +1,38 @@
 
 # Table of Contents
 
-1.  [Introduction](#org1117906)
-2.  [Outline](#orgde85c1e)
-3.  [ESP32](#org716d0ab)
-4.  [Matrix scanning](#org5357480)
-    1.  [Ghosting](#org5ae6392)
-    2.  [Key debouncing](#org9d6fe18)
-    3.  [Changes](#org08e8dd8)
-5.  [ESP-Now](#org13bedc9)
-    1.  [Mesh interface class](#org281bd2a)
-    2.  [Changes](#org4c65541)
-6.  [Modifier keys](#orgcbf3146)
-    1.  [Changes](#org2e4ae43)
-7.  [Bluetooth](#orgebca092)
-    1.  [Changes](#orgc331644)
-8.  [Keyboard layers](#orgce4f577)
-    1.  [Changes](#org721c4d9)
-9.  [OLED Display](#orgb2d08dd)
-    1.  [Changes](#orgbea234a)
-10. [Battery control](#org1d8973c)
-    1.  [Changes](#orgdf3dd0c)
-11. [Backlog and weird behavior notes](#org7fb8bf7)
+1.  [Introduction](#orge213c23)
+2.  [Outline](#orgbc26152)
+3.  [ESP32](#org176c340)
+4.  [Matrix scanning](#org4f06290)
+    1.  [Ghosting](#org6b0499c)
+    2.  [Key debouncing](#orgf5e6816)
+    3.  [Changes](#org7da6ed6)
+5.  [ESP-Now](#org6faa870)
+    1.  [Mesh interface class](#org29e1fe7)
+    2.  [Changes](#org7049b41)
+6.  [Modifier keys](#org152b8c8)
+    1.  [Changes](#org6737191)
+7.  [Bluetooth](#org5d1323a)
+    1.  [Changes](#org0ede300)
+8.  [Keyboard layers](#org33cacbb)
+    1.  [Changes](#org8f013bf)
+9.  [Rotary encoder](#org445d97e)
+    1.  [Taming the KY-040 with decoding](#orgfee538e)
+    2.  [Changes](#org87ef7de)
+10. [OLED Display](#org1d4f4ac)
+    1.  [Changes](#org6d2a7e2)
+11. [Battery control](#org14f750c)
+    1.  [Deep sleep](#orga549562)
+    2.  [Changes](#org6e3b1c8)
+12. [Backlog and weird behavior notes](#org729ce9c)
+13. [Final checklist](#org0f2d777)
+
+*This is  work in progress -  the post is updated  as I find
+time to work on it.*
 
 
-<a id="org1117906"></a>
+<a id="orge213c23"></a>
 
 # Introduction
 
@@ -94,7 +102,7 @@ Core feature targets
 -   Rotary encoders
 
 
-<a id="orgde85c1e"></a>
+<a id="orgbc26152"></a>
 
 # Outline
 
@@ -130,7 +138,7 @@ To give a course overview consider the following picture:
 ![img](./figures/overview.png)
 
 
-<a id="org716d0ab"></a>
+<a id="org176c340"></a>
 
 # ESP32
 
@@ -162,7 +170,7 @@ harness to do server-client communication.
 ![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
 
-<a id="org5357480"></a>
+<a id="org4f06290"></a>
 
 # Matrix scanning
 
@@ -189,7 +197,7 @@ The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
 
-<a id="org5ae6392"></a>
+<a id="org6b0499c"></a>
 
 ## Ghosting
 
@@ -213,7 +221,7 @@ and causing ghosting.
 ![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-<a id="org9d6fe18"></a>
+<a id="orgf5e6816"></a>
 
 ## Key debouncing
 
@@ -224,7 +232,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
 &ldquo;press&rdquo; of key switch.
 
 
-<a id="org08e8dd8"></a>
+<a id="org7da6ed6"></a>
 
 ## Changes
 
@@ -235,7 +243,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
         -   [X] filters out erroneous key presses
 
 
-<a id="org13bedc9"></a>
+<a id="org6faa870"></a>
 
 # ESP-Now
 
@@ -253,7 +261,7 @@ foreign attackers. From the website we read:
 > ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
 
 
-<a id="org281bd2a"></a>
+<a id="org29e1fe7"></a>
 
 ## Mesh interface class
 
@@ -275,7 +283,7 @@ from the  col and row,  then they are combined.  This solves
 the issue of sending ascii shifted codes or media keys.
 
 
-<a id="org4c65541"></a>
+<a id="org7049b41"></a>
 
 ## Changes
 
@@ -283,7 +291,7 @@ the issue of sending ascii shifted codes or media keys.
 -   [X] Added server capabilities to join the keys from both half and communicate through bluetooth
 
 
-<a id="orgcbf3146"></a>
+<a id="org152b8c8"></a>
 
 # Modifier keys
 
@@ -301,7 +309,7 @@ well as the  key release; I modified  the debounce mechanism
 to also detect the key release.
 
 
-<a id="org2e4ae43"></a>
+<a id="org6737191"></a>
 
 ## Changes
 
@@ -310,7 +318,7 @@ to also detect the key release.
 -   [X] Fixed wrong indexing in reading the active keys on the server.
 
 
-<a id="orgebca092"></a>
+<a id="org5d1323a"></a>
 
 # Bluetooth
 
@@ -321,7 +329,7 @@ code map. Note that the over bluetooth (for whatever reason)
 these keycodes are remapped to different numbers.
 
 
-<a id="orgc331644"></a>
+<a id="org0ede300"></a>
 
 ## Changes
 
@@ -346,7 +354,7 @@ these keycodes are remapped to different numbers.
         config class steps)
 
 
-<a id="orgce4f577"></a>
+<a id="org33cacbb"></a>
 
 # Keyboard layers
 
@@ -396,7 +404,7 @@ current  active keys.  With transparent  keys I  can imagine
 that this approach will not work.
 
 
-<a id="org721c4d9"></a>
+<a id="org8f013bf"></a>
 
 ## Changes
 
@@ -411,12 +419,378 @@ that this approach will not work.
             holding down this key.
 
 
-<a id="orgb2d08dd"></a>
+<a id="org445d97e"></a>
+
+# Rotary encoder
+
+The keyboard  has two rotary  encoder (one on  each halves).
+The encoders  I added were mostly  as a gimmick, but  can be
+used as slider controls for volume control and or scrolling.
+
+![img](./figures/encoder.png "(left) Schematic rotary encoder. The A and B pin are 90 degrees out of phase and produce a quadrature signal (right). In the rest state both A and B pin register 0. The quadrature encoding for the A and B pin are given in [encoder_scheme](#encoder_scheme).")
+
+The rotary encoder has two  pins that are shifted 90 degrees
+out  of  phase  (see  figure  [fig:encoder](#fig:encoder)).  Each  click
+produces a  quadrature signal  that is fixed.  Unknowingly I
+bought encoders that are  extremely noisy (KY-040). When the
+encoder clicks,  contacts are  moved across a  terminal. The
+signal  produced  are  ideally  two  square  offsets  by  90
+degrees.  In  practice  however, the  signal  debounces  and
+produces  more  signal. They  are  three  traditional ways  of
+taming noisy signals
+
+1.  Hardware filtering
+2.  Digital filtering
+3.  Decoding
+
+I don&rsquo;t know  much about the first method or  last method. I
+initially tried  method 2, i.e. measuring  the pins, waiting
+for  some  time and  measure  again.  This however  did  not
+correctly measure the rotations.  I tried multiple libraries
+that used interrupt  routines that did not  end up correctly
+measuring the  clicks of the  encoder. Finally I  found [this
+blog  post](https://www.best-microcontroller-projects.com/rotary-encoder.html) which  highlighted exactly  the problem  with the
+KY-040. The  decoder method  worked like  a charm,  but took
+some  time to  figure out.  Below is  the exploration  I had
+trying to figure out how this code worked.
+
+
+<a id="orgfee538e"></a>
+
+## Taming the KY-040 with decoding
+
+The quadrature signal per click  produces a fixed output for
+either clockwise or anti-clockwise rotation. The encoder can
+be thought of  as a fixed state machine  that moves between
+different states ([table_transition](#table_transition)).
+
+<table id="org70850d1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Current state</th>
+<th scope="col" class="org-right">&#xa0;</th>
+<th scope="col" class="org-right">New state</th>
+<th scope="col" class="org-right">&#xa0;</th>
+<th scope="col" class="org-left">Direction</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-right">A pin</td>
+<td class="org-right">B pin</td>
+<td class="org-right">A pin</td>
+<td class="org-right">B pin</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-left">clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-left">clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-left">clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-left">clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-left">anti-clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-left">anti-clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-left">anti-clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-left">anti-clockwise</td>
+</tr>
+</tbody>
+</table>
+
+In practice however, a noisy rotary encoder will also output
+some state transitions that are not allowed, e.g. 11->00. In
+order to  correctly read which direction  the rotary encoder
+was turned in, a digital filter can be used. A simple filter
+would be something like
+
+$$ signal = (signal << 1) | digitalRead(A_{pin}) | 0xF000$$
+
+A signal is  only read if the integer value  reaches the all
+ones state, then resets and  waits again. Trying this method
+did not end well for me.  I ended up using sequence decoder;
+the pattern are listed in [encoder_scheme](#encoder_scheme).
+
+We can  group the  current state  and new state  as a  4 bit
+number,  i.e. $\\{a,  b, a',  b'\\}$  where $a$,  $b$ are  the
+current state of the A and B  pin and $a'$, $b'$ are the new
+state of the A  and B pin. This implies that  2<sup>4</sup> = 16 state
+transitions are possible and we only allow for 8 of these to
+occur (see table [table_transition](#table_transition)).
+
+<table id="orga1dc8c6" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">state (bit mask)</th>
+<th scope="col" class="org-left">Allowed</th>
+<th scope="col" class="org-left">Direction</th>
+<th scope="col" class="org-right">State</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-right">0000</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">0</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0001</td>
+<td class="org-left">True</td>
+<td class="org-left">clockwise</td>
+<td class="org-right">1</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0010</td>
+<td class="org-left">True</td>
+<td class="org-left">anti-clockwise</td>
+<td class="org-right">2</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0011</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">3</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0100</td>
+<td class="org-left">True</td>
+<td class="org-left">clockwise</td>
+<td class="org-right">4</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0101</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">5</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0110</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">6</td>
+</tr>
+
+
+<tr>
+<td class="org-right">0111</td>
+<td class="org-left">True</td>
+<td class="org-left">anti-clockwise</td>
+<td class="org-right">7</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1000</td>
+<td class="org-left">True</td>
+<td class="org-left">anti-clockwise</td>
+<td class="org-right">8</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1001</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">9</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1010</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">10</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1011</td>
+<td class="org-left">True</td>
+<td class="org-left">clockwise</td>
+<td class="org-right">11</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1100</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">12</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1101</td>
+<td class="org-left">True</td>
+<td class="org-left">clockwise</td>
+<td class="org-right">13</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1110</td>
+<td class="org-left">True</td>
+<td class="org-left">anti-clockwise</td>
+<td class="org-right">14</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1111</td>
+<td class="org-left">False</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">15</td>
+</tr>
+</tbody>
+</table>
+
+<table id="orgd8584e7" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Bitmask</th>
+<th scope="col" class="org-right">Hex</th>
+<th scope="col" class="org-left">Direction</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">0001 0111</td>
+<td class="org-right">0x17</td>
+<td class="org-left">clockwise</td>
+</tr>
+
+
+<tr>
+<td class="org-left">0010 1011</td>
+<td class="org-right">0x2b</td>
+<td class="org-left">anti-clockwise</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org87ef7de"></a>
+
+## Changes
+
+-   [X] Add rotary encoder to keyboard class
+
+
+<a id="org1d4f4ac"></a>
 
 # OLED Display
 
 
-<a id="orgbea234a"></a>
+<a id="org6d2a7e2"></a>
 
 ## Changes
 
@@ -428,19 +802,180 @@ that this approach will not work.
         -   [ ] Battery level info
 
 
-<a id="org1d8973c"></a>
+<a id="org14f750c"></a>
 
 # Battery control
 
 
-<a id="orgdf3dd0c"></a>
+<a id="orga549562"></a>
+
+## [-] Deep sleep
+
+When not  in use I  aim to put  the keyboard in  deep sleep.
+Some pins  on the esp32 can  be used to wakeup  the keyboard
+from deep  sleep. The  RTC<sub>GPIO</sub> pins and  Touch pins  can be
+used for waking the device from deep sleep. The RTC pins are
+
+<table id="orgdb414e5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">RTC Pin</th>
+<th scope="col" class="org-left">GPIO</th>
+<th scope="col" class="org-left">Comment</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">RTC<sub>GPIO12</sub></td>
+<td class="org-left">GPIO2</td>
+<td class="org-left">had issues with encoder</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO10</sub></td>
+<td class="org-left">GPIO4</td>
+<td class="org-left">OLED SDA</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO15</sub></td>
+<td class="org-left">GPIO12</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO14</sub></td>
+<td class="org-left">GPIO13</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO16</sub></td>
+<td class="org-left">GPIO14</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO13</sub></td>
+<td class="org-left">GPIO15</td>
+<td class="org-left">OLED SLK</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO9</sub></td>
+<td class="org-left">GPIO32</td>
+<td class="org-left">input only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO8</sub></td>
+<td class="org-left">GPIO33</td>
+<td class="org-left">input only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO4</sub></td>
+<td class="org-left">GPIO34</td>
+<td class="org-left">input only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO5</sub></td>
+<td class="org-left">GPIO35</td>
+<td class="org-left">input only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO0</sub></td>
+<td class="org-left">GPIO36</td>
+<td class="org-left">input only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO3</sub></td>
+<td class="org-left">GPIO39</td>
+<td class="org-left">input only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO6</sub></td>
+<td class="org-left">GPIO25</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO7</sub></td>
+<td class="org-left">GPIO26</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO17</sub></td>
+<td class="org-left">GPIO27</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RTC<sub>GPIO11</sub></td>
+<td class="org-left">GPIO0</td>
+<td class="org-left">button pin(?)</td>
+</tr>
+</tbody>
+</table>
+
+The set  GPIO12/13/14/25/26/27 could form a  set for which
+all the columns or rows will  have a key that is connected
+to  deep sleep;  this would  mean either  the rows  or the
+columns are connected to a pin that is reachable from deep
+sleep. I will  have to run some experiments  if that could
+allow the keyboard to wake up from deep sleep, i.e. if the
+the  column or  row  is not  active I  wonder  if the  the
+current will  be low, i.e. if  the pins are in  deep sleep
+and  a small  current is  tested on  the active  pins (set
+above),   does  the   current   go  from   HIGH  to   LOW?
+Alternatively,  I could  connect the  pins to  the set  3x
+range only for deep sleep mode.
+
+There are two sleep modes; light sleep and deep sleep. For
+light sleep the internal state of the system is preserved,
+which is not the case for deep sleep. This would mean that
+for deep sleep the keyboard effectively reboots.
+
+
+<a id="org6e3b1c8"></a>
 
 ## Changes
 
 -   [ ] Implement battery control
+-   [ ] Implement deep sleep
 
 
-<a id="org7fb8bf7"></a>
+<a id="org729ce9c"></a>
 
 # Backlog and weird behavior notes
 
@@ -454,4 +989,46 @@ that this approach will not work.
 -   Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This
     occurs  when the  keyboard is  connected to  bluetooth. No
     keys are send on my part.
+-   Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd
+    symbols to appear when rotating.  In addition, when set in
+    a particular condition it will cause the rotary encoder to
+    fail  to  upload  code.  This   effect  is  gone  with  an
+    additional turn. Apparently, the esp32 has some flaw in it
+    that  some pins  are  sensitive to  inputs when  uploading
+    code.     More     info      can     be     found     here
+    <https://github.com/espressif/arduino-esp32/issues/1497>.  I
+    have changed pin 1 to pin 2 which seemed to have fixed the
+    issue.
+
+
+<a id="org0f2d777"></a>
+
+# Final checklist
+
+Check that the following components work:
+
+-   [ ] Matrix
+    -   [ ] Does scanning work?
+    -   [ ] Does ghosting occur?
+-   [ ] ESPNOW
+    -   [ ] Does the wireless bridge work?
+-   [ ] Bluetooth
+    -   [ ] Is the unit detected as a keyboard?
+-   [ ] Rotary encoder
+    -   [ ] Are single ticks detected?
+    -   [ ] Are both positive as well as negative clicks detected?
+    -   [ ] Does the esp32  flash irregardless of  the rotary
+        encoder position?
+-   [ ] LEDs
+    -   [ ] Can colors be encoded?
+    -   [ ] No shorting to ground?
+-   [ ] Display
+    -   [ ] Do they display the GUI?
+-   [ ] PCB
+    -   [ ] Are all the components connected?
+    -   [ ] Is the ground plate present?
+    -   [ ] Are the pins present with enough clearance?
+-   [ ] Software hardware interface
+    -   [ ] verify that no pins are used that will cause issues,
+        for example input pins in the 3x range.
 

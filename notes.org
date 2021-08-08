@@ -1,5 +1,6 @@
 https://circuitdigest.com/microcontroller-projects/esp32-ble-server-how-to-use-gatt-services-for-battery-level-indication
 
+https://www.tinypico.com/
 * A way towards a wireless keyboard
 A few years ago I got a fascination for mechanical keyboards
 through the subreddit  /r/MechanicalKeyboards. Since my main

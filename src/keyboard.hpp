@@ -53,8 +53,14 @@ public:
   bool is_server;
   double get_battery_level();
 
-private:
   layers_t layers;
+
+  void sleep();
+  void wake_up();
+
+private:
   layer_t *active_layer;
+  size_t last_activity;
+  size_t get_last_activity();
 };
 #endif

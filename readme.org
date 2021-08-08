@@ -1,3 +1,6 @@
+/This is  work in progress -  the post is updated  as I find
+time to work on it./
+
 * Introduction
 <2021-06-21 Mon>
 Mechanical keyboards  are somewhat  of a dated  concept that
@@ -170,6 +173,7 @@ and causing ghosting.
 #+caption: second row, second column etc.
 [[file:./figures/ghosting.png]]
 
+#+name: ghosting
 #+begin_src jupyter-python :exports none :eval never-exports
 import matplotlib.pyplot as plt, cmasher as cmr
 import numpy as np, os, sys, networkx as nx, warnings
@@ -209,8 +213,8 @@ fig.show()
 
 #+end_src
 
-#+RESULTS:
-[[file:./.ob-jupyter/d0b098fc3ba7f3150194b2d6e9501e2d98dfb90b.png]]
+#+caption: testing
+
 
 
 ** Key debouncing
@@ -372,20 +376,125 @@ that this approach will not work.
       these  keys  temporarily   shift  the  key layer  while
       holding down this key.
 * Rotary encoder
+:LOGBOOK:
+CLOCK: [2021-08-07 Sat 13:21]--[2021-08-07 Sat 21:31] =>  8:10
+CLOCK: [2021-08-05 Thu 11:48]--[2021-08-05 Thu 11:54] =>  0:06
+CLOCK: [2021-07-31 Sat 06:01]--[2021-07-31 Sat 08:21] =>  1:20
+:END:
 The keyboard  has two rotary  encoder (one on  each halves).
 The encoders  I added were mostly  as a gimmick, but  can be
 used as slider controls for volume control and or scrolling.
 
-The  AI esp32  rotary encoder  allows  me to  quickly add  a
-(clickable) rotary encoder to  the keyboard. In addition, it
-has acceleration detection which  can enhance scrolling over
-large (rotary) ranges.
+#+name: fig:encoder
+#+caption: (left) Schematic rotary encoder. The A and B pin are 90 degrees out of phase and produce a quadrature signal (right). In the rest state both A and B pin register 0. The quadrature encoding for the A and B pin are given in ref:encoder_scheme.
+[[file:./figures/encoder.png]]
+
+The rotary encoder has two  pins that are shifted 90 degrees
+out  of  phase  (see  figure  ref:fig:encoder).  Each  click
+produces a  quadrature signal  that is fixed.  Unknowingly I
+bought encoders that are  extremely noisy (KY-040). When the
+encoder clicks,  contacts are  moved across a  terminal. The
+signal  produced  are  ideally  two  square  offsets  by  90
+degrees.  In  practice  however, the  signal  debounces  and
+produces  more  signal. They  are  three  traditional ways  of
+taming noisy signals
+
+1. Hardware filtering
+2. Digital filtering
+3. Decoding
+
+I don't know  much about the first method or  last method. I
+initially tried  method 2, i.e. measuring  the pins, waiting
+for  some  time and  measure  again.  This however  did  not
+correctly measure the rotations.  I tried multiple libraries
+that used interrupt  routines that did not  end up correctly
+measuring the  clicks of the  encoder. Finally I  found [[https://www.best-microcontroller-projects.com/rotary-encoder.html][this
+blog  post]] which  highlighted exactly  the problem  with the
+KY-040. The  decoder method  worked like  a charm,  but took
+some  time to  figure out.  Below is  the exploration  I had
+trying to figure out how this code worked.
+
+** Taming the KY-040 with decoding
+
+The quadrature signal per click  produces a fixed output for
+either clockwise or anti-clockwise rotation. The encoder can
+be thought of  as a fixed state machine  that moves between
+different states (ref:table_transition).
+
+#+name:table_transition
+#+label: table_transition
+|---------------+-------+-----------+-------+----------------|
+| Current state |       | New state |       | Direction      |
+|---------------+-------+-----------+-------+----------------|
+|         A pin | B pin |     A pin | B pin |                |
+|---------------+-------+-----------+-------+----------------|
+|             1 |     1 |         0 |     1 | clockwise      |
+|             0 |     1 |         0 |     0 | clockwise      |
+|             0 |     0 |         1 |     0 | clockwise      |
+|             1 |     0 |         1 |     1 | clockwise      |
+|             1 |     1 |         1 |     0 | anti-clockwise |
+|             0 |     1 |         1 |     1 | anti-clockwise |
+|             0 |     0 |         0 |     1 | anti-clockwise |
+|             1 |     0 |         0 |     0 | anti-clockwise |
+|---------------+-------+-----------+-------+----------------|
+
+In practice however, a noisy rotary encoder will also output
+some state transitions that are not allowed, e.g. 11->00. In
+order to  correctly read which direction  the rotary encoder
+was turned in, a digital filter can be used. A simple filter
+would be something like
+
+$$ signal = (signal << 1) | digitalRead(A_{pin}) | 0xF000$$
+
+A signal is  only read if the integer value  reaches the all
+ones state, then resets and  waits again. Trying this method
+did not end well for me.  I ended up using sequence decoder;
+the pattern are listed in ref:encoder_scheme.
+
+We can  group the  current state  and new state  as a  4 bit
+number,  i.e. $\\{a,  b, a',  b'\\}$  where $a$,  $b$ are  the
+current state of the A and B  pin and $a'$, $b'$ are the new
+state of the A  and B pin. This implies that  2^4 = 16 state
+transitions are possible and we only allow for 8 of these to
+occur (see table ref:table_transition).
+
+#+name: table_transition
+| state (bit mask) | Allowed | Direction      | State |
+|------------------+---------+----------------+-------|
+|             0000 | False   |                |     0 |
+|             0001 | True    | clockwise      |     1 |
+|             0010 | True    | anti-clockwise |     2 |
+|             0011 | False   |                |     3 |
+|             0100 | True    | clockwise      |     4 |
+|             0101 | False   |                |     5 |
+|             0110 | False   |                |     6 |
+|             0111 | True    | anti-clockwise |     7 |
+|             1000 | True    | anti-clockwise |     8 |
+|             1001 | False   |                |     9 |
+|             1010 | False   |                |    10 |
+|             1011 | True    | clockwise      |    11 |
+|             1100 | False   |                |    12 |
+|             1101 | True    | clockwise      |    13 |
+|             1110 | True    | anti-clockwise |    14 |
+|             1111 | False   |                |    15 |
+|------------------+---------+----------------+-------|
+
+#+name: encoder_scheme
+|-----------+------+----------------|
+| Bitmask   |  Hex | Direction      |
+|-----------+------+----------------|
+| 0001 0111 | 0x17 | clockwise      |
+| 0010 1011 | 0x2b | anti-clockwise |
+|-----------+------+----------------|
+
+
+
 ** Changes
 :LOGBOOK:
 CLOCK: [2021-07-30 Fri 10:07]--[2021-07-30 Fri 10:08] =>  0:01
 CLOCK: [2021-07-30 Fri 09:00]--[2021-07-30 Fri 10:07] =>  1:07
 :END:
-- [ ] Add rotary encoder to keyboard class
+- [X] Add rotary encoder to keyboard class
 
 * OLED Display
 ** Changes
@@ -395,9 +504,105 @@ CLOCK: [2021-07-30 Fri 09:00]--[2021-07-30 Fri 10:07] =>  1:07
   + [ ] Keyboard status info
     - [ ] Keyboard layer info
     - [ ] Battery level info
+
+* Deep sleep
+:LOGBOOK:
+CLOCK: [2021-08-08 Sun 12:41]--[2021-08-08 Sun 14:19] =>  1:38
+:END:
+When not  in use I  aim to put  the keyboard in  deep sleep.
+Some pins  on the esp32 can  be used to wakeup  the keyboard
+from deep  sleep. The  RTC_GPIO pins and  Touch pins  can be
+used for waking the device from deep sleep. The RTC pins are
+
+#+name: sleep_pins
+|------------+--------+-------------------------|
+| RTC Pin    | GPIO   | Comment                 |
+|------------+--------+-------------------------|
+| RTC GPIO12 | GPIO02 | had issues with encoder |
+| RTC GPIO10 | GPIO04 | OLED SDA                |
+| RTC GPIO15 | GPIO12 |                         |
+| RTC GPIO14 | GPIO13 |                         |
+| RTC GPIO16 | GPIO14 |                         |
+| RTC GPIO13 | GPIO15 | OLED SLK                |
+| RTC GPIO09 | GPIO32 | input only              |
+| RTC GPIO08 | GPIO33 | input only              |
+| RTC GPIO04 | GPIO34 | input only              |
+| RTC GPIO05 | GPIO35 | input only              |
+| RTC GPIO00 | GPIO36 | input only              |
+| RTC GPIO03 | GPIO39 | input only              |
+| RTC GPIO06 | GPIO25 |                         |
+| RTC GPIO07 | GPIO26 |                         |
+| RTC GPIO17 | GPIO27 |                         |
+| RTC GPIO11 | GPIO00 | button pin(?)           |
+|------------+--------+-------------------------|
+
+  The set  GPIO12/13/14/25/26/27 could form a  set for which
+  all the columns or rows will  have a key that is connected
+  to  deep sleep;  this would  mean either  the rows  or the
+  columns are connected to a pin that is reachable from deep
+  sleep. I will  have to run some experiments  if that could
+  allow the keyboard to wake up from deep sleep, i.e. if the
+  the  column or  row  is not  active I  wonder  if the  the
+  current will  be low, i.e. if  the pins are in  deep sleep
+  and  a small  current is  tested on  the active  pins (set
+  above),   does  the   current   go  from   HIGH  to   LOW?
+  Alternatively,  I could  connect the  pins to  the set  3x
+  range only for deep sleep mode.
+
+  There are two sleep modes; light sleep and deep sleep. For
+  light sleep the internal state of the system is preserved,
+  which is not the case for deep sleep. This would mean that
+  for deep sleep the keyboard effectively reboots.
+
+  There are 4 ways to wake up from deep sleep:
+  1. External current
+     a. Either through ext0 or ext1 wake up
+  2. Touch pins
+  3. Timer
+  4. ULP co-processor.
+
+I aim  to be able to  wake up the keyboard  from any regular
+key presses. That is, after some time-out, the user need not
+press a  button. Instead, a  control signal will  monitor if
+some current  changed and then  reboot the device.  Method 1
+would  be suitable  if the  pins are  directly connected  to
+ground. With  the matrix  scan setup,  there are  not enough
+pins to measure  a current difference if one of  the keys in
+the matrix would  be pressed. Method 3 is  also not suitable
+as the input to the keyboard does not happen at a fixed time
+interval. Method 4 requires coding for the ULP co-processor.
+This requires knowledge  of assembly which I do  not have. I
+think it is  possible that this would reduce  the deep sleep
+current even more. However, in the end it still utilizes the
+RTC pins.
+
+Luckily, my  keyboard will  only require  5 +  6 =  11 pins.
+There are  in total 10  touch pins  which would make  this a
+possible target if  they work. Initial testing  shows that a
+touch wake up would work with  a touch threshold of 45. This
+would require either the columns or the rows to be hooked up
+to the  touch sensors. By  monitoring any current  change of
+the rows  or columns would  result in  the board to  wake up
+from sleep (which is ideal).
+
+** Changes
+:LOGBOOK:
+CLOCK: [2021-08-05 Thu 11:58]--[2021-08-05 Thu 12:43] =>  0:45
+:END:
+- [-] Implement deep sleep
+  + [X] added deep sleep time-out to config
+  + [X] Touch pins will be either rows or columns
+  + [ ] Test  matrix scan diodes  with deep  sleep feature,
+    i.e.  does  deep  sleep   current  still  register  with
+    row2column or reverse connection.
+
+
 * Battery control
 ** Changes
 - [ ] Implement battery control
+- [ ] Add power button to PCB design
+  + [ ] Inline to battery directly.
+
 
 * Backlog and weird behavior notes
 - Pressing  down  a  key  repeatedly and  then  another  key
@@ -410,3 +615,39 @@ CLOCK: [2021-07-30 Fri 09:00]--[2021-07-30 Fri 10:07] =>  1:07
 - Figure out bug  where 'up arrow' is  sent repeatedly. This
   occurs  when the  keyboard is  connected to  bluetooth. No
   keys are send on my part.
+- Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd
+  symbols to appear when rotating.  In addition, when set in
+  a particular condition it will cause the rotary encoder to
+  fail  to  upload  code.  This   effect  is  gone  with  an
+  additional turn. Apparently, the esp32 has some flaw in it
+  that  some pins  are  sensitive to  inputs when  uploading
+  code.     More     info      can     be     found     here
+  https://github.com/espressif/arduino-esp32/issues/1497.  I
+  have changed pin 1 to pin 2 which seemed to have fixed the
+  issue.
+* Final checklist
+Check that the following components work:
++ [ ] Matrix
+  - [ ] Does scanning work?
+  - [ ] Does ghosting occur?
++ [ ] ESPNOW
+  - [ ] Does the wireless bridge work?
++ [ ] Bluetooth
+  - [ ] Is the unit detected as a keyboard?
++ [ ] Rotary encoder
+  - [ ] Are single ticks detected?
+  - [ ] Are both positive as well as negative clicks detected?
+  - [ ]  Does the esp32  flash regardless of  the rotary
+    encoder position?
++ [ ] LEDs
+  - [ ] Can colors be encoded?
+  - [ ] No shorting to ground?
++ [ ] Display
+  - [ ] Do they display the GUI?
++ [ ] PCB
+  - [ ] Are all the components connected?
+  - [ ] Is the ground plate present?
+  - [ ] Are the pins present with enough clearance?
++ [ ] Software hardware interface
+  - [ ] verify that no pins are used that will cause issues,
+    for example input pins in the 3x range.

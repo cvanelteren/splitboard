@@ -32,6 +32,8 @@ public:
   // layer_t test = {{18, {{34, "A"}}}};
   // layers_t layers{{1, test}};
 
+  // deep sleep settings
+  const size_t deep_sleep_timeout = 300000;
   uint8_t led_pin = 25;
   uint8_t num_led = 1;
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
@@ -54,26 +56,26 @@ public:
   const u8g2_cb_t *display_rotation = U8G2_R3;
   uint baud_rate = 115200;
 
-  uint8_t rot_a_pin = 1;
-  uint8_t rot_b_pin = 3;
+  uint8_t rot_a_pin = 17;
+  uint8_t rot_b_pin = 2;
   uint8_t rot_button_pin = 37;
-  uint8_t rot_output_pin = 17; // set to -1 to use vcc
+  uint8_t rot_output_pin = 0; // set to -1 to use vcc
 
   uint8_t rot_encoder_steps = 4;
   uint8_t rot_accel = 250;
   // change this for your device
   // const char *server_address = "80:7d:3a:d4:2e:46";
   // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-  // const char *client_address = "80:7D:3A:D4:2E:44";
-  // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
-  const char *server_address = "80:7D:3A:D4:2E:44";
-  uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
+  const char *client_address = "80:7D:3A:D4:2E:44";
+  uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
+  // const char *server_address = "80:7D:3A:D4:2E:44";
+  // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
 
-  // const char *server_address = "80:7D:3A:D4:2C:9C";
-  // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  const char *server_address = "80:7D:3A:D4:2C:9C";
+  uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
 
-  const char *client_address = "80:7D:3A:D4:2C:9C";
-  uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  // const char *client_address = "80:7D:3A:D4:2C:9C";
+  // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
   // const char *client_address = "80:7D:3A:D4:2C:9C";
   // uint8_t client_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 };

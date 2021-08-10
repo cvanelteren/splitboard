@@ -27,7 +27,7 @@ public:
   // std::vector<size_t> col_pins = {18, 23, 19, 22, 21};
   // std::vector<size_t> col_pins = {34, 39, 37, 36};
   std::vector<uint8_t> row_pins = {13, 12, 14, 27, 2};
-  std::string scan_source = "row"; // diode direction
+  std::string scan_source = "col"; // diode direction
 
   // layer_t test = {{18, {{34, "A"}}}};
   // layers_t layers{{1, test}};

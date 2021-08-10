@@ -173,10 +173,11 @@ void Keyboard::send_keys() {
     if (this->bluetooth->isConnected()) {
       if (keyswitch->active) {
         Serial.printf("BLE send\n");
-        this->bluetooth->press(key);
+        // this->bluetooth->press(key);
+        // this->bluetooth->write(97);
       } else {
         Serial.printf("BLE release\n");
-        this->bluetooth->release(key);
+        // this->bluetooth->release(key);
       }
     }
   }

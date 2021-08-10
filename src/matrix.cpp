@@ -4,9 +4,10 @@ Matrix::Matrix(Config *config) {
   // setup pins
   // Serial.println("Setting up matrix");
   Serial.println("Setting up keyboard");
-  this->row2col = config->row2col;
-  this->source_pins = (this->row2col ? config->row_pins : config->col_pins);
-  this->sinc_pins = (this->row2col ? config->col_pins : config->row_pins);
+  this->source_pins =
+      (config->scan_source == "row" ? config->row_pins : config->col_pins);
+  this->sinc_pins =
+      (config->scan_source == "row" ? config->col_pins : config->row_pins);
   this->debounce = config->debounce;
 
   // empty active_keys on init
@@ -28,7 +29,7 @@ void Matrix::setup_keys() {
       // init switch with current time, non-active and pin info
       sinc = this->sinc_pins[col];
       this->keys[source][sinc] =
-          keyswitch_t{millis(), false, source, sinc, col, row};
+          keyswitch_t{millis(), false, 0, source, sinc, col, row};
     }
   }
 }
@@ -80,8 +81,10 @@ void Matrix::scan() {
     }
     // reset source pin
     digitalWrite(source, HIGH);
+    // Serial.println();
   }
 
+  // Serial.println();
   // push into active
   this->determine_change();
 }
@@ -133,7 +136,7 @@ void Matrix::determine_change() {
     }
     if (update_key) {
       // push to bluetooth or other half
-      Serial.println("Pushing a key");
+      // Serial.println("Pushing a key");
       this->active_keys.push_back(this->active_scan_keys[idx]);
     }
   }
@@ -155,8 +158,20 @@ void Matrix::determine_activity(keyswitch_t *key) {
   // check pin state
   auto active = digitalRead(key->sinc) ? false : true;
 
-  // this line doesnot check that it was already active before
-  // if was active just remain active
+  // key->buffer <<= 1;
+  // if (active)
+  //   key->buffer |= 0x01;
+  // // this line doesnot check that it was already active before
+  // // if was active just remain active
+  // if (key->buffer == 0xff) {
+  //   key->buffer = 0x00;
+  //   key->active = true;
+  //   this->active_scan_keys.push_back(*key);
+  // } else if (!active && key->active) {
+  //   key->active = false;
+  //   this->active_keys.push_back(*key);
+  // }
+
   if (active && key->active) {
     if ((millis() - key->time) >= this->debounce) {
       this->active_scan_keys.push_back(*key);
@@ -167,7 +182,6 @@ void Matrix::determine_activity(keyswitch_t *key) {
     key->active = true;
     key->time = millis();
   }
-
   // key switch turned off
   else if (!active && key->active) {
     if ((millis() - key->time) >= this->debounce) {
@@ -176,7 +190,6 @@ void Matrix::determine_activity(keyswitch_t *key) {
       this->active_keys.push_back(*key);
     }
   }
-
   // turn key off
   else {
     key->active = false;
@@ -194,51 +207,37 @@ void Matrix::update() {
   this->scan();
   // this->print_ak();
 
-  // Serial.println("Listing keys");
-  // Serial.println();
-  for (auto key : this->active_keys) {
-    Serial.print("\r");
-    Serial.print(key.source);
-    Serial.print(key.sinc);
-    Serial.println();
-  }
+  // this->print_ak();
+
+  // // Serial.println("Listing keys");
+  // // Serial.println();
+  // for (auto key : this->active_keys) {
+  //   Serial.print("\r");
+  //   Serial.print(key.source);
+  //   Serial.print(key.sinc);
+  //   Serial.println();
+  // }
 }
 
 // debug function
 void Matrix::print_ak() {
-  for (auto source : this->source_pins) {
-    for (auto sinc : this->sinc_pins) {
-      Serial.print(this->keys[source][sinc].active);
-      Serial.print(" ");
-      Serial.print(digitalRead(source));
-      Serial.print(" ");
-      Serial.print(digitalRead(sinc));
-      Serial.print(" ");
-
-      Serial.print("(");
-      Serial.print(source);
-      Serial.print(" ");
-      Serial.print(sinc);
-      Serial.print(")");
-
-      // Serial.print(" ");
-      // Serial.print(digitalRead(source) & digitalRead(sinc));
-      // Serial.print(" ");
-      // Serial.print(digitalRead(sinc));
-      Serial.print(" ");
+  for (auto &source : this->source_pins) {
+    for (auto &sinc : this->sinc_pins) {
+      Serial.printf("%d (%d %d) %d %d ", this->keys[source][sinc].active,
+                    digitalRead(source), digitalRead(sinc), source, sinc);
     }
     Serial.println();
+
+    // Serial.print("\r");
+
+    // Serial.println("Listing active keys");
+    // for (auto el : this->active_keys) {
+    //   Serial.print(el.source);
+    //   Serial.print(" ");
+    //   Serial.print(el.sinc);
+    //   Serial.println();
+    // }
   }
-
-  // Serial.print("\r");
-
-  // Serial.println("Listing active keys");
-  // for (auto el : this->active_keys) {
-  //   Serial.print(el.source);
-  //   Serial.print(" ");
-  //   Serial.print(el.sinc);
-  //   Serial.println();
-  // }
 }
 
 // debug function

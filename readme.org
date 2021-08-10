@@ -649,3 +649,39 @@ Check that the following components work:
 + [ ] Software hardware interface
   - [ ] verify that no pins are used that will cause issues,
     for example input pins in the 3x range.
+
+
+
+* Bk code
+#+name: display printing
+#+begin_src c++
+    // this->mesh->buffer.active_keys = this->matrix->active_keys;
+    // 1. collect message from client
+    // 2. collect active keys
+    // 3. merge the keys
+    // 4. send through bluetooth
+    // if (this->bluetooth->connection->connected) {
+
+    //   this->display->firstPage();
+    //   do {
+    //     this->display->log.println("");
+    //     this->display->log.print("\rhello:)");
+    //     // this->display->log.print(printf("Connected to %s", "test"));
+    //     // this->display->setFont(font);
+    //     // this->display->drawUTF8(1, 30, "hello :)");
+
+    //   } while (this->display->nextPage());
+    // } else {
+    //   // this->display->clearDisplay();
+    //   this->display->firstPage();
+    //   do {
+    //     // this->display->log.println("");
+    //     this->display->log.print("\rNo Bluetooth :(");
+    //     // this->display->setFont(font);
+    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
+
+    //   } while (this->display->nextPage());
+    //   // delay(10);
+    // }
+
+#+end_src

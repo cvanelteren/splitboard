@@ -108,19 +108,35 @@ void Keyboard::begin() {
 uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // encodes pin switch to actual char
 
+  Serial.printf("row %d \t col %d\n", keyswitch.source, keyswitch.sinc);
+  if (keyswitch.active) {
+    Serial.println("Key press");
+  }
+  // release event
+  else {
+    Serial.println("Key release");
+  }
+
   // uint8_t col = (this->is_server ? keyswitch.col
   // : keyswitch.col + this->matrix->get_cols());
   // uint8_t row = keyswitch.row;
-  Serial.printf("row %d %col %d\n", keyswitch.source, keyswitch.sinc);
-  // if (keyswitch.source == 21 && keyswitch.sinc == 13) {
-  // this->sleep();
+  // if (keyswitch.active)
+
+  // if (keyswitch.source == 13 && keyswitch.sinc == 23) {
+  //   // only on key release
+  //   if (!keyswitch.active)
+  //     this->sleep();
   // }
+
   if (keyswitch.source == 21 && keyswitch.sinc == 26) {
     Serial.println("SENDING SHIFT");
-    return SHIFT + 1;
-  } else
-    return (*this->active_layer)[2][1];
-  // return this->active_layer[keyswitch.row][col];
+    // return SHIFT + 1;
+  } else {
+    return (*this->active_layer)[2][1]; // qwerty a
+    // Serial.printf("%d\n",
+    // (*this->active_layer)[keyswitch.row][keyswitch.col]); return
+    // (*this->active_layer)[keyswitch.row][keyswitch.col];
+  }
 }
 
 void Keyboard::send_keys() {
@@ -142,48 +158,29 @@ void Keyboard::send_keys() {
   uint8_t key;
 
   // read server active keys
-  if (total_keys) {
-    Serial.printf("Active keys %d\n", total_keys);
-    Serial.printf("Client keys %d\n", client_keys.size());
-  }
+
+  // if (total_keys) {
+  //   Serial.printf("Active keys %d\n", total_keys);
+  //   Serial.printf("Client keys %d\n", client_keys.size());
+  // }
 
   for (int idx = 0; idx < total_keys; idx++) {
     // read switch
     keyswitch = &(idx < active_keys.size() ? active_keys[idx]
                                            : client_keys[idx - n_server_keys]);
     key = this->read_key(*keyswitch);
-    // add idx to columns
-    // if (this->bluetooth->isConnected()) {
-    // press event
-    if (keyswitch->active) {
-      Serial.println("Key press");
-    }
-    // release event
-    else {
-      Serial.println("Key release");
-
-      // this->bluetooth->release(key);
-    }
-
     if (this->bluetooth->isConnected()) {
-      if (keyswitch->active)
+      if (keyswitch->active) {
+        Serial.printf("BLE send\n");
         this->bluetooth->press(key);
-      else
+      } else {
+        Serial.printf("BLE release\n");
         this->bluetooth->release(key);
+      }
     }
-
-    // }
-
-    // if (counter > 5) {
-    //   // send key report
-    //   this->bluetooth->sendReport(keys);
-    //   keys.keys.fill(0);
-    //   counter = 0;
-    // }
-
-    // this->bluetooth->write(keys);
   }
   // send encoder
+  // FIXME: mv into nice interface
   for (auto &elem : this->rotaryEncoder->get_keys()) {
     Serial.printf("Writing vol %d \n", elem);
     if (elem > 0) {
@@ -191,10 +188,8 @@ void Keyboard::send_keys() {
     } else {
       this->bluetooth->write(KEY_MEDIA_VOLUME_DOWN);
     }
-
     total_keys++;
   }
-
   if (total_keys) {
     this->last_activity = millis();
   }
@@ -208,66 +203,31 @@ void Keyboard::update() {
    *
    */
   // Serial.println("Scanning");
+
+  // update components
+  this->matrix->update();
+  this->rotaryEncoder->update();
+
+  // handle sending keys
+  // handle server
+  if (this->is_server) {
+    this->send_keys();
+  }
+  // handle client
+  else {
+    if (this->matrix->active_keys.size()) {
+      this->mesh->send(this->matrix->active_keys);
+    }
+    // delay(10);
+  }
+
+  // idle check check
   if ((millis() - this->get_last_activity()) >=
       this->config->deep_sleep_timeout) {
     this->sleep();
   }
 
-  this->matrix->update();
-  this->rotaryEncoder->update();
-
-  if (this->is_server) {
-    this->send_keys();
-
-    // this->mesh->buffer.active_keys = this->matrix->active_keys;
-    // 1. collect message from client
-    // 2. collect active keys
-    // 3. merge the keys
-    // 4. send through bluetooth
-    // if (this->bluetooth->connection->connected) {
-
-    //   this->display->firstPage();
-    //   do {
-    //     this->display->log.println("");
-    //     this->display->log.print("\rhello:)");
-    //     // this->display->log.print(printf("Connected to %s", "test"));
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "hello :)");
-
-    //   } while (this->display->nextPage());
-    // } else {
-    //   // this->display->clearDisplay();
-    //   this->display->firstPage();
-    //   do {
-    //     // this->display->log.println("");
-    //     this->display->log.print("\rNo Bluetooth :(");
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
-
-    //   } while (this->display->nextPage());
-    //   // delay(10);
-    // }
-  }
-  // handle client
-  else {
-    // TODO move this into a separate class that deals with this?
-
-    if (this->matrix->active_keys.size()) {
-      // Mesh::buffer.active_keys.resize(this->matrix->active_keys.size());
-      // memcpy(&Mesh::buffer.active_keys, &this->matrix->active_keys,
-      // this->matrix->active_keys.size());
-      // Mesh::buffer = this->matrix->active_keys;
-
-      // Mesh::buffer.active_keys = this->matrix->active_keys;
-      // this->mesh->send();
-
-      this->mesh->send(this->matrix->active_keys);
-
-      // this->mesh->send(KeyData{this->matrix->active_keys});
-      // this->display->log.print("\rI am a client");
-    }
-    // delay(10);
-  }
+  // delay(150);
 }
 
 void Keyboard::wake_up() {
@@ -297,6 +257,8 @@ void Keyboard::wake_up() {
     break;
   }
 
+  // touch_pad_intr_disable();
+
   // // reinit the pins of the matrix
   // esp_deep_sleep_stop();
   // esp_bluedroid_enable();
@@ -313,34 +275,45 @@ void Keyboard::sleep() {
    * @brief      Enter deep sleep
    */
 
-  Serial.println("Going sleepy time!");
-
-  // threshold = 45 seems to work
-  uint8_t threshold = 45;
-  touchAttachInterrupt(GPIO_NUM_13, callback, threshold);
-  // pinMode(GPIO_NUM_21, INPUT);
-  esp_sleep_enable_touchpad_wakeup();
-  // esp_sleep_enable_ext0_wakeup(GPIO_NUM_13, 0);
-
-  // size_t tmp = 0;
-  // for (auto &pin : this->config->source_pins) {
-  //   tmp += pow(2, pin);
+  int n = this->config->row_pins.size() + this->config->col_pins.size();
+  int pin;
+  // for (int idx = 0; idx < n; idx++) {
+  //   pin = (idx < this->config->row_pins.size())
+  //             ? this->config->row_pins[idx]
+  //             : this->config->col_pins[n - idx];
+  //   // pinmode(pin, input_pullup);
+  //   pinmode(pin, output);
+  //   digitalwrite(pin, 0);
+  //   // serial.printf("%d ", digitalread(pin));
+  //   serial.printf("%d %d\n", pin, touchread(pin));
   // }
 
-  // std::stringstream bitmask = std::hex << bitmask;
-  // esp_sleep_get_ext1_wakeup_status(bitmask, ESP_EXT1_WAKEUP_ANY_HIGH);
+  // threshold = 45 seems to work
 
-  // // control the pullup and pulldown resistors
-  // // rtc_gpio_pullup_en();
-  // // rtc_gpio_pulldown_en();
+  uint8_t threshold = 30;
 
-  // // before entering deep sleep or light sleep WiFi and ble need
-  // // to be powered down
-  // esp_bluedroid_disable();
-  // esp_wifi_stop();
+  // while (true) {
 
-  pinMode(GPIO_NUM_13, INPUT);
-  // FIXME: remove this in final production
-  delay(100); // prevent reading the pressdown state
-  esp_deep_sleep_start();
+  //   for (auto pin : this->config->row_pins) {
+  //     Serial.printf("%d %d\n", pin, touchRead(pin));
+  //   }
+  //   delay(30);
+  //   // delay(200);
+  // }
+
+  // for (auto pin : this->config->row_pins) {
+  //   // mask += pow(2, pin);
+  //   touchAttachInterrupt(pin, callback, threshold);
+  //   Serial.printf("%d %d \n", pin, touchRead(pin));
+  // }
+
+  // Serial.println("Going sleepy time!");
+  // Serial.printf("%d\n", mask);
+
+  // // touch_pad_set_group_mask(mask, 0, 0);
+  // touch_pad_intr_enable();
+  // esp_sleep_enable_touchpad_wakeup();
+  // esp_deep_sleep_start();
+  // Serial.println("Sleeping");
+  // shouldn't print
 }

@@ -180,6 +180,8 @@ void Keyboard::send_keys() {
       }
     }
   }
+  this->bluetooth->releaseAll();
+
   // send encoder
   // FIXME: mv into nice interface
   // for (auto &elem : this->rotaryEncoder->get_keys()) {
@@ -274,21 +276,6 @@ void Keyboard::sleep() {
   /**
    * @brief      Enter deep sleep
    */
-
-  int n = this->config->row_pins.size() + this->config->col_pins.size();
-  int pin;
-  // for (int idx = 0; idx < n; idx++) {
-  //   pin = (idx < this->config->row_pins.size())
-  //             ? this->config->row_pins[idx]
-  //             : this->config->col_pins[n - idx];
-  //   // pinmode(pin, input_pullup);
-  //   pinmode(pin, output);
-  //   digitalwrite(pin, 0);
-  //   // serial.printf("%d ", digitalread(pin));
-  //   serial.printf("%d %d\n", pin, touchread(pin));
-  // }
-
-  // threshold = 45 seems to work
 
   uint8_t threshold = 30;
 

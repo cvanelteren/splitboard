@@ -38,7 +38,7 @@ public:
   Matrix *matrix;
   Mesh *mesh;
   Display *display;
-  BleKeyboard *bluetooth;
+  BleKeyboard bluetooth;
 
   RotaryEncoder *rotaryEncoder;
 

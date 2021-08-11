@@ -37,7 +37,6 @@ void Matrix::setup_pins() {
   // set output pins to low by default
   for (auto source : this->source_pins) {
     pinMode(source, OUTPUT);
-    // digitalWrite(source, LOW);
   }
   // initialize input pins
   for (auto sinc : this->sinc_pins) {
@@ -174,6 +173,7 @@ void Matrix::determine_activity(keyswitch_t *key) {
 
   if (active && key->active) {
     if ((millis() - key->time) >= this->debounce) {
+      // this->active_keys.push_back(*key);
       this->active_scan_keys.push_back(*key);
     }
   }
@@ -188,6 +188,7 @@ void Matrix::determine_activity(keyswitch_t *key) {
       key->active = false;
       // key->time = millis();
       this->active_keys.push_back(*key);
+      // this->active_scan_keys.push_back(*key);
     }
   }
   // turn key off

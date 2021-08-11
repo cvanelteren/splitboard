@@ -1,6 +1,8 @@
 #include "keyboard.hpp"
 #include <WiFi.h>
 
+#include "driver/rtc_io.h"
+
 Keyboard::Keyboard(Config *config) {
 
   this->config = config;
@@ -19,9 +21,12 @@ Keyboard::Keyboard(Config *config) {
   this->is_server = false;
   if (WiFi.macAddress() == config->server_address) {
     Serial.println("Setting up bluetooth");
+    // this->bluetooth =
+    // new BleKeyboard(config->device_name, config->device_manufacturer,
+    // this->get_battery_level());
     this->bluetooth =
-        new BleKeyboard(config->device_name, config->device_manufacturer,
-                        this->get_battery_level());
+        BleKeyboard(config->device_name, config->device_manufacturer,
+                    this->get_battery_level());
     // this->bluetooth = new Bluetooth(config);
     this->is_server = true;
   }
@@ -85,7 +90,8 @@ void Keyboard::begin() {
   // start bluetooth when server
   if (this->is_server) {
     Serial.println("Starting bluetooth");
-    this->bluetooth->begin();
+    this->bluetooth.begin();
+    this->bluetooth.releaseAll();
   }
 
   // if (this->rotaryEncoder != NULL) {
@@ -123,7 +129,7 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   // uint8_t row = keyswitch.row;
   // if (keyswitch.active)
 
-  if (keyswitch.source == 13 && keyswitch.sinc == 23) {
+  if (keyswitch.source == 21 && keyswitch.sinc == 13) {
     // only on key release
     if (!keyswitch.active)
       this->sleep();
@@ -133,10 +139,10 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
     Serial.println("SENDING SHIFT");
     // return SHIFT + 1;
   } else {
-    return (*this->active_layer)[2][1]; // qwerty a
+    // return (*this->active_layer)[2][1]; // qwerty a
     // Serial.printf("%d\n",
-    // (*this->active_layer)[keyswitch.row][keyswitch.col]); return
-    // (*this->active_layer)[keyswitch.row][keyswitch.col];
+    // (*this->active_layer)[keyswitch.row][keyswitch.col]);
+    return (*this->active_layer)[keyswitch.row][keyswitch.col];
   }
 }
 
@@ -170,18 +176,17 @@ void Keyboard::send_keys() {
                                            : client_keys[idx - n_server_keys]);
     key = this->read_key(*keyswitch);
 
-    if (this->bluetooth->isConnected()) {
+    if (this->bluetooth.isConnected()) {
       if (keyswitch->active) {
         Serial.printf("BLE send\n");
-        // this->bluetooth->press(key);
+        this->bluetooth.press(key);
         // this->bluetooth->write(97);
       } else {
         Serial.printf("BLE release\n");
-        // this->bluetooth->release(key);
+        this->bluetooth.release(key);
       }
     }
   }
-  this->bluetooth->releaseAll();
 
   // send encoder
   // FIXME: mv into nice interface
@@ -262,7 +267,10 @@ void Keyboard::wake_up() {
     break;
   }
 
-  touch_pad_intr_disable();
+  this->matrix->setup_keys();
+
+  // esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TOUCHPAD);
+  // touch_pad_intr_disable();
   // // reinit the pins of the matrix
   // esp_bluedroid_enable();
   // esp_wifi_start();
@@ -270,7 +278,10 @@ void Keyboard::wake_up() {
   // this->matrix->setup_pin();
 }
 
-void callback() { Serial.println("In touch callback"); };
+void callback(){
+    // callback stuff
+    // Serial.println("In touch callback");
+};
 
 size_t Keyboard::get_last_activity() { return this->last_activity; }
 void Keyboard::sleep() {
@@ -278,29 +289,55 @@ void Keyboard::sleep() {
    * @brief      Enter deep sleep
    */
 
-  uint8_t threshold = 30;
-
-  // while (true) {
-
-  //   for (auto pin : this->config->row_pins) {
-  //     Serial.printf("%d %d\n", pin, touchRead(pin));
-  //   }
-  //   delay(30);
-  //   // delay(200);
-  // }
-
-  for (auto pin : this->config->row_pins) {
-    // mask += pow(2, pin);
-    touchAttachInterrupt(pin, callback, threshold);
+  for (auto pin : this->config->col_pins) {
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
     Serial.printf("%d %d \n", pin, touchRead(pin));
   }
 
-  // Serial.println("Going sleepy time!");
+  uint8_t threshold = 20;
+  // IMPORTANT: set sleep pins high(!)
+  for (auto pin : this->config->row_pins) {
+    // mask += pow(2, pin);
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+    // gpio_pullup_en((gpio_num_t)pin);
+    // pinMode(pin, INPUT_PULLUP);
+    // digitalWrite(pin, HIGH);
+    // gpio_hold_en(GPIO_NUM_13);
+    touchAttachInterrupt(pin, callback, threshold);
+    // rtc_gpio_wakeup_enable((gpio_num_t)pin, GPIO_INTR_LOW_LEVEL);
+    Serial.printf("%d %d \n", pin, touchRead(pin));
+  }
+
+  // for (auto pin : this->config->row_pins) {
+  // esp_sleep_enable_ext0_wakeup((gpio_num_t)pin, LOW);
+  // }
+
+  // // // debug code
+  // while (true) {
+  //   for (auto pin : this->config->row_pins) {
+  //     Serial.printf("%d %d %d\n", pin, digitalRead(pin), touchRead(pin));
+  //   }
+  //   delay(60);
+  //   // delay(200);
+  // }
+
   // Serial.printf("%d\n", mask);
 
   // // touch_pad_set_group_mask(mask, 0, 0);
   // touch_pad_intr_enable();
+  //
+  // pinMode(GPIO_NUM_12, OUTPUT);
+  // digitalWrite(GPIO_NUM_12, 1);
+  // Serial.printf("%d \n", digitalRead(GPIO_NUM_12));
+  // esp_sleep_enable_ext0_wakeup(GPIO_NUM_12, 1);
+  // esp_sleep_enable_ext1_wakeup(0x000C, ESP_EXT1_WAKEUP_ANY_HIGH);
+  // gpio_deep_sleep_hold_en();
+  // touch_pad_intr_enable();
   esp_sleep_enable_touchpad_wakeup();
-  esp_deep_sleep_start();
+  Serial.println("Going sleepy time!");
+  esp_light_sleep_start();
+  // esp_deep_sleep_start();
   Serial.println("Sleeping"); // shouldn't print
 }

@@ -22,7 +22,7 @@ public:
   Config();
 
   // pin configuration
-  std::vector<uint8_t> col_pins = {23, 18, 19, 22, 21, 26};
+  std::vector<uint8_t> col_pins = {18, 19, 5, 22, 21, 26};
   // std::vector<size_t> row_pins = {13, 12, 14, 27, 26};
   // std::vector<size_t> col_pins = {18, 23, 19, 22, 21};
   // std::vector<size_t> col_pins = {34, 39, 37, 36};
@@ -34,12 +34,12 @@ public:
 
   // deep sleep settings
   const size_t deep_sleep_timeout = 300000; // 5 minutes
-  uint8_t led_pin = 25;
+  uint8_t led_pin = 5;
   uint8_t num_led = 1;
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
 
-  uint8_t debounce = 5;
+  uint8_t debounce = 40;
 
   // size_t debounce = 30;
 
@@ -57,7 +57,7 @@ public:
   uint baud_rate = 115200;
 
   uint8_t rot_a_pin = 17;
-  uint8_t rot_b_pin = 5;
+  uint8_t rot_b_pin = 23;
   uint8_t rot_button_pin = 37;
   uint8_t rot_output_pin = 0; // set to -1 to use vcc
 
@@ -71,12 +71,17 @@ public:
   // const char *server_address = "80:7D:3A:D4:2E:44";
   // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
 
-  const char *server_address = "80:7D:3A:D4:2C:9C";
-  uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  // const char *server_address = "80:7D:3A:D4:2C:9C";
+  // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
 
   // const char *client_address = "80:7D:3A:D4:2C:9C";
   // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
-  // const char *client_address = "80:7D:3A:D4:2C:9C";
-  // uint8_t client_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+  const char *server_address = "80:7D:3A:D4:2C:9C";
+  uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+  //
+  //
+  // const char *server_address = "7C:9E:BD:FB:DA:D4";
+  // uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
 };
 #endif

@@ -35,6 +35,7 @@ class Matrix {
   std::vector<keyswitch_t> past_scan_keys;
 
   void determine_change();
+  void add_key(keyswitch_t &key);
 
 public:
   // scans the pins

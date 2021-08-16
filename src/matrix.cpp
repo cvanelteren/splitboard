@@ -142,6 +142,22 @@ void Matrix::determine_change() {
   this->active_scan_keys.swap(this->past_scan_keys);
 }
 
+void Matrix::add_key(keyswitch_t &key) {
+  bool add = true;
+  for (auto &elem : this->active_keys) {
+    if (elem.source == key.source && elem.sinc == key.sinc) {
+      if (elem.active == key.active) {
+        add = false;
+      }
+      break;
+    }
+  }
+  if (add) {
+    // this->active_scan_keys.push_back(key);
+    this->active_keys.push_back(key);
+  }
+}
+
 void Matrix::determine_activity(keyswitch_t *key) {
   /**
    * @brief      Debounce keys
@@ -173,8 +189,9 @@ void Matrix::determine_activity(keyswitch_t *key) {
 
   if (active && key->active) {
     if ((millis() - key->time) >= this->debounce) {
+      this->add_key(*key);
       // this->active_keys.push_back(*key);
-      this->active_scan_keys.push_back(*key);
+      // this->active_scan_keys.push_back(*key);
     }
   }
   // key switch turned on with debounce
@@ -186,8 +203,9 @@ void Matrix::determine_activity(keyswitch_t *key) {
   else if (!active && key->active) {
     if ((millis() - key->time) >= this->debounce) {
       key->active = false;
+      this->add_key(*key);
       // key->time = millis();
-      this->active_keys.push_back(*key);
+      // this->active_keys.push_back(*key);
       // this->active_scan_keys.push_back(*key);
     }
   }

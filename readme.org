@@ -651,6 +651,15 @@ Check that the following components work:
     for example input pins in the 3x range.
 
 
+* Unittests
+Start writing unittests
+- [ ] matrix scanner
+  + [ ] Pin modes
+  + [ ] Debouncing
+  + [ ] Registry of multiple keys simultaneously
+
+- [ ] Keyboard
+  + [ ] Sending of messages without being connected to bluetooth
 
 * Bk code
 #+name: display printing

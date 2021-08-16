@@ -18,7 +18,8 @@ struct hash_pair {
 typedef struct {
   size_t time;
   bool active;
-  uint16_t buffer;
+  uint8_t buffer;
+  // uint8_t a_buff;
   uint8_t source;
   uint8_t sinc;
   uint8_t col;

@@ -31,11 +31,9 @@ class Matrix {
   void show_switch(keyswitch_t *key);
 
   std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>> keys;
-  std::vector<keyswitch_t> active_scan_keys;
-  std::vector<keyswitch_t> past_scan_keys;
 
-  void determine_change();
   void add_key(keyswitch_t &key);
+  void remove_key(uint8_t idx);
 
 public:
   // scans the pins

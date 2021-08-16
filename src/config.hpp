@@ -39,9 +39,7 @@ public:
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
 
-  uint8_t debounce = 40;
-
-  // size_t debounce = 30;
+  uint8_t debounce = 5;
 
   // info advertising bluetooth
   std::string device_manufacturer = "Casper van Elteren";

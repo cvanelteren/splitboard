@@ -1,5 +1,13 @@
 #include "matrix.hpp"
 // need to figure out some configuration
+void print_byte(uint8_t value) {
+  for (byte i = 0; i < 8; i++) {
+    Serial.print((value & (1 << i)) ? 1 : 0);
+    // Serial.print(!!(value & (1 << i))); //this should also work
+  }
+  Serial.println();
+}
+
 Matrix::Matrix(Config *config) {
   // setup pins
   // Serial.println("Setting up matrix");
@@ -66,7 +74,6 @@ void Matrix::scan() {
   /* Determines the activity of the pins */
   keyswitch_t *key;
   this->active_keys.clear();
-  this->active_scan_keys.clear();
   // Serial.println(this->active_keys.size());
   // check switch by setting source pin to high
   for (auto source : this->source_pins) {
@@ -82,67 +89,13 @@ void Matrix::scan() {
     digitalWrite(source, HIGH);
     // Serial.println();
   }
-
-  // Serial.println();
-  // push into active
-  this->determine_change();
-}
-
-void Matrix::determine_change() {
-  /**
-   * @brief Debounces the active_scan_keys to prevent double
-   * presses.
-   *
-   * @details Keys  need debouncing  as the activation  of a
-   * key is  not a perfect  square wave. The  debounced keys
-   * are activated when  a change of signal  occurs. That is
-   * at  the onset  of a  signal. This  results in  repeated
-   * button  presses. This  function filters  those repeated
-   * button presses out, and resends  a key after the key is
-   * pressed down for some threshold.
-   *
-   * This function pushes a key into active_keys.
-   */
-  bool update_key = false;
-
-  // keep track of overlap
-  size_t delta;
-  keyswitch_t key, old_key;
-  // TODO: move back to range based loops?
-  for (size_t idx = 0; idx < this->active_scan_keys.size(); idx++) {
-    update_key = true;
-    key = this->active_scan_keys[idx];
-
-    for (size_t jdx = 0; jdx < this->past_scan_keys.size(); jdx++) {
-      old_key = this->past_scan_keys[jdx];
-      if ((key.source == old_key.source) && (key.sinc == old_key.sinc)) {
-        // compare debounce on keys
-
-        delta = millis() - key.time;
-        // FIXME: left number is when the debounce will be repeated
-        // bit of a magic number, move into config?
-        if ((delta >= 500) && (!(delta % (this->debounce * 10)))) {
-          update_key = true;
-        } else {
-          // don't
-          update_key = false;
-          // keep the old activation time
-          this->active_scan_keys[idx] = this->past_scan_keys[jdx];
-        }
-        // break out  the loop
-        break;
-      }
-    }
-    if (update_key) {
-      // push to bluetooth or other half
-      // Serial.println("Pushing a key");
-      this->active_keys.push_back(this->active_scan_keys[idx]);
-    }
-  }
-  this->active_scan_keys.swap(this->past_scan_keys);
 }
 
 void Matrix::add_key(keyswitch_t &key) {
+  /**
+   * @brief      Checks if key is already in active keys.
+   * If key is not foud, adds the key to @active_scan_keys.
+   */
   bool add = true;
   for (auto &elem : this->active_keys) {
     if (elem.source == key.source && elem.sinc == key.sinc) {
@@ -171,47 +124,25 @@ void Matrix::determine_activity(keyswitch_t *key) {
    */
 
   // check pin state
-  auto active = digitalRead(key->sinc) ? false : true;
+  auto active = !digitalRead(key->sinc);
 
-  // key->buffer <<= 1;
-  // if (active)
-  //   key->buffer |= 0x01;
-  // // this line doesnot check that it was already active before
-  // // if was active just remain active
-  // if (key->buffer == 0xff) {
-  //   key->buffer = 0x00;
-  //   key->active = true;
-  //   this->active_scan_keys.push_back(*key);
-  // } else if (!active && key->active) {
-  //   key->active = false;
-  //   this->active_keys.push_back(*key);
-  // }
-
-  if (active && key->active) {
-    if ((millis() - key->time) >= this->debounce) {
-      this->add_key(*key);
-      // this->active_keys.push_back(*key);
-      // this->active_scan_keys.push_back(*key);
-    }
+  // fill filter
+  key->buffer <<= 1;
+  if (active) {
+    key->buffer |= 0x01;
   }
-  // key switch turned on with debounce
-  else if (active && !key->active) {
+
+  // check if rising edge
+  if ((key->buffer == 0xff) && (!key->active)) {
     key->active = true;
     key->time = millis();
+    this->add_key(*key);
   }
-  // key switch turned off
-  else if (!active && key->active) {
-    if ((millis() - key->time) >= this->debounce) {
-      key->active = false;
-      this->add_key(*key);
-      // key->time = millis();
-      // this->active_keys.push_back(*key);
-      // this->active_scan_keys.push_back(*key);
-    }
-  }
-  // turn key off
-  else {
+  // check falling edge
+  else if ((key->buffer == 0x00) && (key->active)) {
+    // key->a_buff = 0;
     key->active = false;
+    this->add_key(*key);
   }
 }
 

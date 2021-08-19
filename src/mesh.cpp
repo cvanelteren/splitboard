@@ -1,5 +1,8 @@
 #include "mesh.hpp"
 
+// TODO: write a keycode msg buffer
+// remove the static class property
+// add return types to the send functions
 // needs functions on data received for server
 // and for client; in this case let's focus only on the
 // server
@@ -26,17 +29,6 @@ void Mesh::add_peer(const uint8_t *peer_addr) {
   this->peer.channel = 0;
   this->peer.encrypt = false;
 
-  // for (auto i = 0; i < 6; i++) {
-  //   Serial.print(this->peer.peer_addr[i]);
-  //   Serial.print(" ");
-  // }
-  // Serial.println();
-
-  // this->peer.ifidx = WIFI_IF_AP;
-
-  // Serial.println(printf("%s", this->peer.peer_addr));
-  // Serial.println(printf("%d", this->peer.channel));
-
   if (esp_now_add_peer(&(this->peer)) != ESP_OK) {
     Serial.println("Failed to add peer");
   } else {
@@ -47,7 +39,10 @@ void Mesh::add_peer(const uint8_t *peer_addr) {
 void Mesh::begin() {
   this->init_esp_now();
   // add peer
-  if (WiFi.macAddress() == this->config->server_address) {
+
+  uint8_t mac_addr[6];
+  WiFi.macAddress(mac_addr);
+  if (mac_addr == this->config->serv_add) {
     // init client stuff
     Serial.println("Setting handle_input on server");
     // this->add_peer(this->config->client_add);
@@ -87,7 +82,7 @@ void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
 
   for (keyswitch_t it : Mesh::buffer) {
     // print only non-empty
-    if (it.active) {
+    if (it.pressed_down) {
       Serial.print(it.source);
       Serial.print(" ");
       Serial.print(it.sinc);
@@ -134,7 +129,6 @@ void Mesh::send(std::vector<keyswitch_t> &data) {
 }
 
 void Mesh::send() {
-
   Serial.println(printf("Size of data %d \n", sizeof(Mesh::buffer)));
   Serial.println(Mesh::buffer.size() * sizeof(Mesh::buffer[0]));
   // Serial.println(printf("Size of keys %d\n",

@@ -30,15 +30,17 @@ class Matrix {
   // friend Layout;
   void show_switch(keyswitch_t *key);
 
-  std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>> keys;
-
   void add_key(keyswitch_t &key);
   void remove_key(uint8_t idx);
+
+  std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>> keys;
 
 public:
   // scans the pins
   //
   // std::unordered_map<keyswitch_t, keyswitch_t> active_keys;
+  //
+  Matrix(Config *config);
   std::vector<keyswitch_t> active_keys;
   void scan();
   void print_ak();
@@ -51,6 +53,14 @@ public:
 
   uint8_t get_cols();
   uint8_t get_rows();
-  Matrix(Config *config);
+
+  std::vector<uint8_t> get_source_pins();
+  std::vector<uint8_t> get_sinc_pins();
+  void sleep();
+
+#ifdef UNIT_TEST
+  friend void test_zero_state_keys();
+  friend void test_ghosting();
+#endif
 };
 #endif

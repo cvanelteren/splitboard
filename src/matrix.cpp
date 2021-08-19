@@ -18,10 +18,6 @@ Matrix::Matrix(Config *config) {
       (config->scan_source == "row" ? config->col_pins : config->row_pins);
   this->debounce = config->debounce;
 
-  // empty active_keys on init
-  // this->active_keys.clear();
-  //
-
   // activate pins
   this->setup_pins();
   // initialize keys
@@ -99,7 +95,7 @@ void Matrix::add_key(keyswitch_t &key) {
   bool add = true;
   for (auto &elem : this->active_keys) {
     if (elem.source == key.source && elem.sinc == key.sinc) {
-      if (elem.active == key.active) {
+      if (elem.pressed_down == key.pressed_down) {
         add = false;
       }
       break;
@@ -117,13 +113,15 @@ void Matrix::determine_activity(keyswitch_t *key) {
    *
    * @details  Debouces the  keys,  i.e.  determine a  key's
    * activitiy through multiple time samples. This functions
-   * pushes a debounced key into active_scan_keys
+   * pushes a debounced key into active_scan_keys.
    *
-   * @param      key, current matrix vertex being checked.
+   * @param      ke, current matrix vertex being checked.
    *
    */
 
   // check pin state
+  // @future me: the digital read needs to be reversed to the current being
+  // opposite. See @scan method
   auto active = !digitalRead(key->sinc);
 
   // fill filter
@@ -133,15 +131,15 @@ void Matrix::determine_activity(keyswitch_t *key) {
   }
 
   // check if rising edge
-  if ((key->buffer == 0xff) && (!key->active)) {
-    key->active = true;
+  if ((key->buffer == 0xff) && (!key->pressed_down)) {
+    key->pressed_down = true;
     key->time = millis();
     this->add_key(*key);
   }
   // check falling edge
-  else if ((key->buffer == 0x00) && (key->active)) {
+  else if ((key->buffer == 0x00) && (key->pressed_down)) {
     // key->a_buff = 0;
-    key->active = false;
+    key->pressed_down = false;
     this->add_key(*key);
   }
 }
@@ -169,24 +167,41 @@ void Matrix::update() {
   // }
 }
 
+void callback(){
+    // callback stuff
+    // Serial.println("In touch callback");
+};
+
+void Matrix::sleep() {
+  /**
+   * @brief      prepare pins for sleeping.
+   * @detail Note: This does not initiate the sleep
+   */
+  for (auto pin : this->source_pins) {
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+    Serial.printf("%d %d \n", pin, touchRead(pin));
+  }
+
+  uint8_t threshold = 20;
+  // IMPORTANT: set sleep pins high(!)
+  for (auto pin : this->sinc_pins) {
+    // mask += pow(2, pin);
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+    touchAttachInterrupt(pin, callback, threshold);
+    Serial.printf("%d %d \n", pin, touchRead(pin));
+  }
+}
+
 // debug function
 void Matrix::print_ak() {
   for (auto &source : this->source_pins) {
     for (auto &sinc : this->sinc_pins) {
-      Serial.printf("%d (%d %d) %d %d ", this->keys[source][sinc].active,
+      Serial.printf("%d (%d %d) %d %d ", this->keys[source][sinc].pressed_down,
                     digitalRead(source), digitalRead(sinc), source, sinc);
     }
     Serial.println();
-
-    // Serial.print("\r");
-
-    // Serial.println("Listing active keys");
-    // for (auto el : this->active_keys) {
-    //   Serial.print(el.source);
-    //   Serial.print(" ");
-    //   Serial.print(el.sinc);
-    //   Serial.println();
-    // }
   }
 }
 
@@ -203,3 +218,6 @@ void Matrix::show_switch(keyswitch_t *key) {
 
 uint8_t Matrix::get_cols() { return this->source_pins.size(); }
 uint8_t Matrix::get_rows() { return this->sinc_pins.size(); }
+
+std::vector<uint8_t> Matrix::get_source_pins() { return this->source_pins; }
+std::vector<uint8_t> Matrix::get_sinc_pins() { return this->sinc_pins; }

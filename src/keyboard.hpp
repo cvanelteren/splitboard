@@ -1,5 +1,5 @@
-#ifndef KEYBOARD_CPP
-#define KEYBOARD_CPP
+#ifndef KEYBOARD_HPP
+#define KEYBOARD_HPP
 #include <Arduino.h>
 
 // bluetooth keyboard holding

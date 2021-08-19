@@ -1,5 +1,5 @@
-#ifndef types_hpp
-#define types_hpp
+#ifndef TYPES_HPP
+#define TYPES_HPP
 #include <array>
 #include <cstddef>
 #include <inttypes.h>
@@ -15,16 +15,21 @@ struct hash_pair {
   }
 };
 
+class AbstractMessage {};
+
+class AbstractInput {
+public:
+  virtual AbstractMessage create_msg() const = 0;
+};
+
 typedef struct {
-  size_t time;
-  bool active;
-  uint8_t buffer;
-  // uint8_t a_buff;
+  size_t time;       // activation time
+  bool pressed_down; // key up or key down
+  uint8_t buffer;    // debounce filter
   uint8_t source;
   uint8_t sinc;
   uint8_t col;
   uint8_t row;
-  // size_t activation_time;
 } keyswitch_t;
 
 // typedef std::pair<size_t, size_t> switch_t;

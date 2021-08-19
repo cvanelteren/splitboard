@@ -4,6 +4,7 @@
 
 RotaryEncoder::RotaryEncoder(Config *config) {
   this->config = config;
+
   pinMode(config->rot_a_pin, INPUT);
   pinMode(config->rot_b_pin, INPUT);
 
@@ -66,7 +67,6 @@ void RotaryEncoder::update() {
   std::vector<uint8_t> media_key;
   // add vol
   if ((val = this->read_rotary())) {
-
     this->active_keys.push_back(val);
     this->counter += val;
     Serial.println("-------------");

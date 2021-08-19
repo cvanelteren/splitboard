@@ -1,10 +1,10 @@
-
+#ifndef UNIT_TEST
 #include <WiFi.h>
 #include <esp_now.h>
 
-#include "config.hpp"
-#include "key_definitions.hpp"
-#include "keyboard.hpp"
+#include <config.hpp>
+#include <key_definitions.hpp>
+#include <keyboard.hpp>
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
 
@@ -57,3 +57,5 @@ void loop() {
   // digitalWrite(led_pin, HIGH);
   // digitalWrite(led_pin, LOW);
 }
+
+#endif

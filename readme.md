@@ -1,38 +1,43 @@
-
-# Table of Contents
-
-1.  [Introduction](#orge213c23)
-2.  [Outline](#orgbc26152)
-3.  [ESP32](#org176c340)
-4.  [Matrix scanning](#org4f06290)
-    1.  [Ghosting](#org6b0499c)
-    2.  [Key debouncing](#orgf5e6816)
-    3.  [Changes](#org7da6ed6)
-5.  [ESP-Now](#org6faa870)
-    1.  [Mesh interface class](#org29e1fe7)
-    2.  [Changes](#org7049b41)
-6.  [Modifier keys](#org152b8c8)
-    1.  [Changes](#org6737191)
-7.  [Bluetooth](#org5d1323a)
-    1.  [Changes](#org0ede300)
-8.  [Keyboard layers](#org33cacbb)
-    1.  [Changes](#org8f013bf)
-9.  [Rotary encoder](#org445d97e)
-    1.  [Taming the KY-040 with decoding](#orgfee538e)
-    2.  [Changes](#org87ef7de)
-10. [OLED Display](#org1d4f4ac)
-    1.  [Changes](#org6d2a7e2)
-11. [Battery control](#org14f750c)
-    1.  [Deep sleep](#orga549562)
-    2.  [Changes](#org6e3b1c8)
-12. [Backlog and weird behavior notes](#org729ce9c)
-13. [Final checklist](#org0f2d777)
-
 *This is  work in progress -  the post is updated  as I find
 time to work on it.*
 
+![img](./figures/logo.png)
 
-<a id="orge213c23"></a>
+
+# Table of Contents
+
+1.  [Introduction](#org958f933)
+2.  [Outline](#org5022a20)
+3.  [ESP32](#orgd3832fc)
+4.  [Matrix scanning](#org78674f1)
+    1.  [Ghosting](#orge100550)
+    2.  [Key debouncing](#org376025e)
+    3.  [Changes](#org3b0cdcd)
+5.  [ESP-Now](#org371f195)
+    1.  [Mesh interface class](#org001e688)
+    2.  [Changes](#org4c89b95)
+6.  [Modifier keys](#orgf21163f)
+    1.  [Changes](#org73ecafd)
+7.  [Bluetooth](#org2ae7f65)
+    1.  [Changes](#org0451d7f)
+8.  [Keyboard layers](#org663f557)
+    1.  [Changes](#org17ce2f4)
+9.  [Rotary encoder](#org49da9e3)
+    1.  [Taming the KY-040 with decoding](#org40ad2eb)
+    2.  [Changes](#org2f74173)
+10. [OLED Display](#orgf088ca5)
+    1.  [Changes](#orga8bc74e)
+11. [Deep sleep](#orgccff1b6)
+    1.  [Changes](#orgdab0dea)
+12. [Battery control](#orgebfef91)
+    1.  [Changes](#orgd988165)
+13. [Backlog and weird behavior notes](#org719b1b6)
+14. [Final checklist](#org20b5dd3)
+15. [Unittests](#org4acc9b1)
+16. [Bk code](#orgb278b05)
+
+
+<a id="org958f933"></a>
 
 # Introduction
 
@@ -102,7 +107,7 @@ Core feature targets
 -   Rotary encoders
 
 
-<a id="orgbc26152"></a>
+<a id="org5022a20"></a>
 
 # Outline
 
@@ -138,7 +143,7 @@ To give a course overview consider the following picture:
 ![img](./figures/overview.png)
 
 
-<a id="org176c340"></a>
+<a id="orgd3832fc"></a>
 
 # ESP32
 
@@ -170,7 +175,7 @@ harness to do server-client communication.
 ![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
 
-<a id="org4f06290"></a>
+<a id="org78674f1"></a>
 
 # Matrix scanning
 
@@ -197,7 +202,7 @@ The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
 
-<a id="org6b0499c"></a>
+<a id="orge100550"></a>
 
 ## Ghosting
 
@@ -221,7 +226,7 @@ and causing ghosting.
 ![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-<a id="orgf5e6816"></a>
+<a id="org376025e"></a>
 
 ## Key debouncing
 
@@ -232,7 +237,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
 &ldquo;press&rdquo; of key switch.
 
 
-<a id="org7da6ed6"></a>
+<a id="org3b0cdcd"></a>
 
 ## Changes
 
@@ -243,7 +248,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
         -   [X] filters out erroneous key presses
 
 
-<a id="org6faa870"></a>
+<a id="org371f195"></a>
 
 # ESP-Now
 
@@ -261,7 +266,7 @@ foreign attackers. From the website we read:
 > ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
 
 
-<a id="org29e1fe7"></a>
+<a id="org001e688"></a>
 
 ## Mesh interface class
 
@@ -283,7 +288,7 @@ from the  col and row,  then they are combined.  This solves
 the issue of sending ascii shifted codes or media keys.
 
 
-<a id="org7049b41"></a>
+<a id="org4c89b95"></a>
 
 ## Changes
 
@@ -291,7 +296,7 @@ the issue of sending ascii shifted codes or media keys.
 -   [X] Added server capabilities to join the keys from both half and communicate through bluetooth
 
 
-<a id="org152b8c8"></a>
+<a id="orgf21163f"></a>
 
 # Modifier keys
 
@@ -309,7 +314,7 @@ well as the  key release; I modified  the debounce mechanism
 to also detect the key release.
 
 
-<a id="org6737191"></a>
+<a id="org73ecafd"></a>
 
 ## Changes
 
@@ -318,7 +323,7 @@ to also detect the key release.
 -   [X] Fixed wrong indexing in reading the active keys on the server.
 
 
-<a id="org5d1323a"></a>
+<a id="org2ae7f65"></a>
 
 # Bluetooth
 
@@ -329,7 +334,7 @@ code map. Note that the over bluetooth (for whatever reason)
 these keycodes are remapped to different numbers.
 
 
-<a id="org0ede300"></a>
+<a id="org0451d7f"></a>
 
 ## Changes
 
@@ -354,7 +359,7 @@ these keycodes are remapped to different numbers.
         config class steps)
 
 
-<a id="org33cacbb"></a>
+<a id="org663f557"></a>
 
 # Keyboard layers
 
@@ -404,7 +409,7 @@ current  active keys.  With transparent  keys I  can imagine
 that this approach will not work.
 
 
-<a id="org8f013bf"></a>
+<a id="org17ce2f4"></a>
 
 ## Changes
 
@@ -419,7 +424,7 @@ that this approach will not work.
             holding down this key.
 
 
-<a id="org445d97e"></a>
+<a id="org49da9e3"></a>
 
 # Rotary encoder
 
@@ -455,7 +460,7 @@ some  time to  figure out.  Below is  the exploration  I had
 trying to figure out how this code worked.
 
 
-<a id="orgfee538e"></a>
+<a id="org40ad2eb"></a>
 
 ## Taming the KY-040 with decoding
 
@@ -464,7 +469,7 @@ either clockwise or anti-clockwise rotation. The encoder can
 be thought of  as a fixed state machine  that moves between
 different states ([table_transition](#table_transition)).
 
-<table id="org70850d1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org2746bcb" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -592,7 +597,7 @@ state of the A  and B pin. This implies that  2<sup>4</sup> = 16 state
 transitions are possible and we only allow for 8 of these to
 occur (see table [table_transition](#table_transition)).
 
-<table id="orga1dc8c6" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org1bf5666" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -743,7 +748,7 @@ occur (see table [table_transition](#table_transition)).
 </tbody>
 </table>
 
-<table id="orgd8584e7" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org038b59d" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -778,19 +783,19 @@ occur (see table [table_transition](#table_transition)).
 </table>
 
 
-<a id="org87ef7de"></a>
+<a id="org2f74173"></a>
 
 ## Changes
 
 -   [X] Add rotary encoder to keyboard class
 
 
-<a id="org1d4f4ac"></a>
+<a id="orgf088ca5"></a>
 
 # OLED Display
 
 
-<a id="org6d2a7e2"></a>
+<a id="orga8bc74e"></a>
 
 ## Changes
 
@@ -802,21 +807,16 @@ occur (see table [table_transition](#table_transition)).
         -   [ ] Battery level info
 
 
-<a id="org14f750c"></a>
+<a id="orgccff1b6"></a>
 
-# Battery control
-
-
-<a id="orga549562"></a>
-
-## [-] Deep sleep
+# Deep sleep
 
 When not  in use I  aim to put  the keyboard in  deep sleep.
 Some pins  on the esp32 can  be used to wakeup  the keyboard
 from deep  sleep. The  RTC<sub>GPIO</sub> pins and  Touch pins  can be
 used for waking the device from deep sleep. The RTC pins are
 
-<table id="orgdb414e5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org19882c6" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -836,113 +836,113 @@ used for waking the device from deep sleep. The RTC pins are
 
 <tbody>
 <tr>
-<td class="org-left">RTC<sub>GPIO12</sub></td>
-<td class="org-left">GPIO2</td>
+<td class="org-left">RTC GPIO12</td>
+<td class="org-left">GPIO02</td>
 <td class="org-left">had issues with encoder</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO10</sub></td>
-<td class="org-left">GPIO4</td>
+<td class="org-left">RTC GPIO10</td>
+<td class="org-left">GPIO04</td>
 <td class="org-left">OLED SDA</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO15</sub></td>
+<td class="org-left">RTC GPIO15</td>
 <td class="org-left">GPIO12</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO14</sub></td>
+<td class="org-left">RTC GPIO14</td>
 <td class="org-left">GPIO13</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO16</sub></td>
+<td class="org-left">RTC GPIO16</td>
 <td class="org-left">GPIO14</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO13</sub></td>
+<td class="org-left">RTC GPIO13</td>
 <td class="org-left">GPIO15</td>
 <td class="org-left">OLED SLK</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO9</sub></td>
+<td class="org-left">RTC GPIO09</td>
 <td class="org-left">GPIO32</td>
 <td class="org-left">input only</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO8</sub></td>
+<td class="org-left">RTC GPIO08</td>
 <td class="org-left">GPIO33</td>
 <td class="org-left">input only</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO4</sub></td>
+<td class="org-left">RTC GPIO04</td>
 <td class="org-left">GPIO34</td>
 <td class="org-left">input only</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO5</sub></td>
+<td class="org-left">RTC GPIO05</td>
 <td class="org-left">GPIO35</td>
 <td class="org-left">input only</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO0</sub></td>
+<td class="org-left">RTC GPIO00</td>
 <td class="org-left">GPIO36</td>
 <td class="org-left">input only</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO3</sub></td>
+<td class="org-left">RTC GPIO03</td>
 <td class="org-left">GPIO39</td>
 <td class="org-left">input only</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO6</sub></td>
+<td class="org-left">RTC GPIO06</td>
 <td class="org-left">GPIO25</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO7</sub></td>
+<td class="org-left">RTC GPIO07</td>
 <td class="org-left">GPIO26</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO17</sub></td>
+<td class="org-left">RTC GPIO17</td>
 <td class="org-left">GPIO27</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
-<td class="org-left">RTC<sub>GPIO11</sub></td>
-<td class="org-left">GPIO0</td>
+<td class="org-left">RTC GPIO11</td>
+<td class="org-left">GPIO00</td>
 <td class="org-left">button pin(?)</td>
 </tr>
 </tbody>
@@ -966,16 +966,66 @@ light sleep the internal state of the system is preserved,
 which is not the case for deep sleep. This would mean that
 for deep sleep the keyboard effectively reboots.
 
+There are 4 ways to wake up from deep sleep:
 
-<a id="org6e3b1c8"></a>
+1.  External current
+    1.  Either through ext0 or ext1 wake up
+2.  Touch pins
+3.  Timer
+4.  ULP co-processor.
+
+I aim  to be able to  wake up the keyboard  from any regular
+key presses. That is, after some time-out, the user need not
+press a  button. Instead, a  control signal will  monitor if
+some current  changed and then  reboot the device.  Method 1
+would  be suitable  if the  pins are  directly connected  to
+ground. With  the matrix  scan setup,  there are  not enough
+pins to measure  a current difference if one of  the keys in
+the matrix would  be pressed. Method 3 is  also not suitable
+as the input to the keyboard does not happen at a fixed time
+interval. Method 4 requires coding for the ULP co-processor.
+This requires knowledge  of assembly which I do  not have. I
+think it is  possible that this would reduce  the deep sleep
+current even more. However, in the end it still utilizes the
+RTC pins.
+
+Luckily, my  keyboard will  only require  5 +  6 =  11 pins.
+There are  in total 10  touch pins  which would make  this a
+possible target if  they work. Initial testing  shows that a
+touch wake up would work with  a touch threshold of 45. This
+would require either the columns or the rows to be hooked up
+to the  touch sensors. By  monitoring any current  change of
+the rows  or columns would  result in  the board to  wake up
+from sleep (which is ideal).
+
+
+<a id="orgdab0dea"></a>
+
+## Changes
+
+-   [-] Implement deep sleep
+    -   [X] added deep sleep time-out to config
+    -   [X] Touch pins will be either rows or columns
+    -   [ ] Test  matrix scan diodes  with deep  sleep feature,
+        i.e.  does  deep  sleep   current  still  register  with
+        row2column or reverse connection.
+
+
+<a id="orgebfef91"></a>
+
+# Battery control
+
+
+<a id="orgd988165"></a>
 
 ## Changes
 
 -   [ ] Implement battery control
--   [ ] Implement deep sleep
+-   [ ] Add power button to PCB design
+    -   [ ] Inline to battery directly.
 
 
-<a id="org729ce9c"></a>
+<a id="org719b1b6"></a>
 
 # Backlog and weird behavior notes
 
@@ -1001,7 +1051,7 @@ for deep sleep the keyboard effectively reboots.
     issue.
 
 
-<a id="org0f2d777"></a>
+<a id="org20b5dd3"></a>
 
 # Final checklist
 
@@ -1017,7 +1067,7 @@ Check that the following components work:
 -   [ ] Rotary encoder
     -   [ ] Are single ticks detected?
     -   [ ] Are both positive as well as negative clicks detected?
-    -   [ ] Does the esp32  flash irregardless of  the rotary
+    -   [ ] Does the esp32  flash regardless of  the rotary
         encoder position?
 -   [ ] LEDs
     -   [ ] Can colors be encoded?
@@ -1031,4 +1081,53 @@ Check that the following components work:
 -   [ ] Software hardware interface
     -   [ ] verify that no pins are used that will cause issues,
         for example input pins in the 3x range.
+
+
+<a id="org4acc9b1"></a>
+
+# Unittests
+
+Start writing unittests
+
+-   [ ] matrix scanner
+    -   [ ] Pin modes
+    -   [ ] Debouncing
+    -   [ ] Registry of multiple keys simultaneously
+
+-   [ ] Keyboard
+    -   [ ] Sending of messages without being connected to bluetooth
+
+
+<a id="orgb278b05"></a>
+
+# Bk code
+
+    // this->mesh->buffer.active_keys = this->matrix->active_keys;
+    // 1. collect message from client
+    // 2. collect active keys
+    // 3. merge the keys
+    // 4. send through bluetooth
+    // if (this->bluetooth->connection->connected) {
+    
+    //   this->display->firstPage();
+    //   do {
+    //     this->display->log.println("");
+    //     this->display->log.print("\rhello:)");
+    //     // this->display->log.print(printf("Connected to %s", "test"));
+    //     // this->display->setFont(font);
+    //     // this->display->drawUTF8(1, 30, "hello :)");
+    
+    //   } while (this->display->nextPage());
+    // } else {
+    //   // this->display->clearDisplay();
+    //   this->display->firstPage();
+    //   do {
+    //     // this->display->log.println("");
+    //     this->display->log.print("\rNo Bluetooth :(");
+    //     // this->display->setFont(font);
+    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
+    
+    //   } while (this->display->nextPage());
+    //   // delay(10);
+    // }
 

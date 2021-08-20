@@ -17,7 +17,6 @@ Keyboard::Keyboard(Config *config) {
   // setup display
   this->display = new Display(config);
 
-  // default to client
   byte mac_addr[6];
   WiFi.macAddress(mac_addr);
   this->is_server = true;
@@ -27,16 +26,16 @@ Keyboard::Keyboard(Config *config) {
       break;
     }
   }
-  if (mac_addr == config->serv_add) {
+
+  // default to client
+  if (this->is_server) {
     Serial.println("Setting up bluetooth");
     // this->bluetooth =
     // new BleKeyboard(config->device_name, config->device_manufacturer,
     // this->get_battery_level());
-    this->bluetooth =
-        BleKeyboard(config->device_name, config->device_manufacturer,
-                    this->get_battery_level());
+    this->bluetooth = BleKeyboard(
+        config->device_name, config->device_manufacturer, get_battery_level());
     // this->bluetooth = new Bluetooth(config);
-    this->is_server = true;
   }
 
   // layer_t qwerty = {{KC_TILDE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7,
@@ -67,7 +66,12 @@ Keyboard::Keyboard(Config *config) {
   this->active_layer = &(this->layers[0]);
 
   // setup rotary encoder
-  this->rotaryEncoder = new RotaryEncoder(config);
+  this->rotary_encoder = new RotaryEncoder(config);
+  this->encoder_codes = {
+      {"LEFT",
+       {{"UP", &KEY_MEDIA_VOLUME_UP}, {"DOWN", &KEY_MEDIA_VOLUME_DOWN}}},
+      {"RIGHT",
+       {{"UP", &KEY_MEDIA_VOLUME_UP}, {"DOWN", &KEY_MEDIA_VOLUME_DOWN}}}};
   // this->ble = BleKeyboard(config->name);
 
   // this->fb = std::vector<uint8_t>(this->display->getDisplayHeight() *
@@ -114,7 +118,7 @@ void Keyboard::begin() {
   }
 
   // if (this->rotaryEncoder != NULL) {
-  this->rotaryEncoder->begin();
+  this->rotary_encoder->begin();
   // }
   // this->display->setFont(u8g2_font_tom_thumb_4x6_mf);
   // this->display->setFont(u8g2_font_7x14B_mr);
@@ -174,55 +178,58 @@ void Keyboard::send_keys() {
   // Mesh::buffer.fill({});
   // read server keys
   auto &active_keys = this->matrix->active_keys;
+  std::copy(client_keys.begin(), client_keys.end(),
+            std::back_inserter(active_keys));
 
   // join the two lists
   uint8_t n_server_keys = active_keys.size();
   uint8_t total_keys = client_keys.size() + n_server_keys;
-
-  // init report & counter
-  // uint8_t key;
-  keyswitch_t *keyswitch;
-  uint8_t key;
 
   // read server active keys
 
   if (total_keys) {
     Serial.printf("Active keys %d\n", total_keys);
     Serial.printf("Client keys %d\n", client_keys.size());
+    this->last_activity = millis();
   }
 
+  keyswitch_t *keyswitch;
+  uint8_t key;
+  const MediaKeyReport *encoder_code;
   for (int idx = 0; idx < total_keys; idx++) {
     // read switch
     keyswitch = &(idx < active_keys.size() ? active_keys[idx]
                                            : client_keys[idx - n_server_keys]);
-    key = this->read_key(*keyswitch);
-
-    if (this->bluetooth.isConnected()) {
-      if (keyswitch->pressed_down) {
-        Serial.printf("BLE send\n");
-        this->bluetooth.press(key);
-        // this->bluetooth->write(97);
+    // read encoder state
+    if (keyswitch->source == config->rot_a_pin) {
+      // server encoder
+      if (keyswitch->buffer == 1) {
+        encoder_code =
+            (idx < active_keys.size() ? encoder_codes["LEFT"]["UP"]
+                                      : encoder_codes["RIGHT"]["UP"]);
       } else {
-        Serial.printf("BLE release\n");
-        this->bluetooth.release(key);
+        encoder_code =
+            (idx < active_keys.size() ? encoder_codes["LEFT"]["DOWN"]
+                                      : encoder_codes["RIGHT"]["DOWN"]);
+      }
+      if (this->bluetooth.isConnected()) {
+        bluetooth.write(*encoder_code);
       }
     }
-  }
-
-  // send encoder
-  // FIXME: mv into nice interface
-  // for (auto &elem : this->rotaryEncoder->get_keys()) {
-  //   Serial.printf("Writing vol %d \n", elem);
-  //   if (elem > 0) {
-  //     this->bluetooth->write(KEY_MEDIA_VOLUME_UP);
-  //   } else {
-  //     this->bluetooth->write(KEY_MEDIA_VOLUME_DOWN);
-  //   }
-  //   total_keys++;
-  // }
-
-  if (total_keys) {
-    this->last_activity = millis();
+    // read keycode
+    else {
+      key = this->read_key(*keyswitch);
+      if (this->bluetooth.isConnected()) {
+        if (keyswitch->pressed_down) {
+          Serial.printf("BLE send\n");
+          this->bluetooth.press(key);
+          // this->bluetooth->write(97);
+        } else {
+          Serial.printf("BLE release\n");
+          this->bluetooth.release(key);
+        }
+      }
+    }
   }
 }
 
@@ -237,7 +244,11 @@ void Keyboard::update() {
 
   // update components
   this->matrix->update();
-  this->rotaryEncoder->update();
+  this->rotary_encoder->update();
+  // add rotary encoder key to matrix buffer
+  for (auto &elem : this->rotary_encoder->active_keys) {
+    this->matrix->active_keys.push_back(elem);
+  }
 
   // handle sending keys
   // handle server

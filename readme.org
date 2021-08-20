@@ -1,5 +1,12 @@
+#+options: toc:nil
 /This is  work in progress -  the post is updated  as I find
 time to work on it./
+
+
+#+attr_html: :alt  :align left :class img
+[[file:./figures/logo.png]]
+
+#+toc: headlines 2
 
 * Introduction
 <2021-06-21 Mon>
@@ -97,6 +104,7 @@ To give a course overview consider the following picture:
 
 #+attr_html: :alt   :class img
 [[file:./figures/overview.png]]
+
 
 * ESP32
 <2021-07-12 Mon>-

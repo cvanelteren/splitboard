@@ -19,11 +19,16 @@ RotaryEncoder::RotaryEncoder(Config *config) {
 
   this->state = 0;   // holds the current active sequence
   this->counter = 0; // holds the value of the encoder
+  this->encoder_state = {.time = 0,
+                         .pressed_down = false,
+                         .buffer = 0,
+                         .source = config->rot_a_pin,
+                         .sinc = config->rot_b_pin,
+                         .col = 255,
+                         .row = 255};
 }
 
 void RotaryEncoder::begin() {}
-
-std::vector<int8_t> RotaryEncoder::get_keys() { return this->active_keys; }
 
 void RotaryEncoder::onButtonClick() { Serial.println("button pressed"); }
 
@@ -63,11 +68,14 @@ int8_t RotaryEncoder::read_rotary() {
 void RotaryEncoder::update() {
   int8_t val;
   this->active_keys.clear();
-
-  std::vector<uint8_t> media_key;
   // add vol
   if ((val = this->read_rotary())) {
-    this->active_keys.push_back(val);
+    if (val == -1) {
+      this->encoder_state.buffer = 2;
+    } else {
+      this->encoder_state.buffer = 1;
+    }
+    this->active_keys.push_back(this->encoder_state);
     this->counter += val;
     Serial.println("-------------");
     Serial.printf("active_keys %d\n", this->active_keys.size());

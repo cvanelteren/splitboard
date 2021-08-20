@@ -40,7 +40,7 @@ public:
   Display *display;
   BleKeyboard bluetooth;
 
-  RotaryEncoder *rotaryEncoder;
+  RotaryEncoder *rotary_encoder;
 
   Keyboard(Config *config);
   void begin();
@@ -61,6 +61,10 @@ public:
 private:
   layer_t *active_layer;
   size_t last_activity;
+  std::unordered_map<std::string,
+                     std::unordered_map<std::string, const MediaKeyReport *>>
+      encoder_codes;
+
   size_t get_last_activity();
 };
 #endif

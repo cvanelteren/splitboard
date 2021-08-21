@@ -70,6 +70,7 @@ void RotaryEncoder::update() {
   this->active_keys.clear();
   // add vol
   if ((val = this->read_rotary())) {
+    this->encoder_state.time = millis();
     if (val == -1) {
       this->encoder_state.buffer = 2;
     } else {

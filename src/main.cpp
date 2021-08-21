@@ -18,8 +18,8 @@ void setup() {
   Serial.printf("------------SPLITBOARD------------\n");
   keyboard.begin();
   Serial.printf("layers size %d\n", keyboard.layers.size());
-  keyboard.wake_up();
-  keyboard.sleep();
+  // keyboard.wake_up();
+  // keyboard.sleep();
   // pinMode(led_pin, OUTPUT);
   // Serial.printf("%d\n", keyboard.layers[0][2][1]);
   // The setup has to deal with weird casting of pointers

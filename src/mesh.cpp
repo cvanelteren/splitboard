@@ -145,11 +145,17 @@ void Mesh::send() {
 }
 
 std::vector<keyswitch_t> Mesh::get_buffer() {
+  /**
+   * @brief     Returns non-empty mesh keys.
+   */
   std::vector<keyswitch_t> buffer;
+
+  // buffer is an array of 6 and can be empty
   for (auto &elem : Mesh::buffer) {
     if (elem.time)
       buffer.push_back(elem);
   }
+
   Mesh::buffer.fill({});
   return buffer;
 }

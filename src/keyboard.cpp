@@ -201,16 +201,19 @@ void Keyboard::send_keys() {
     keyswitch = &(idx < active_keys.size() ? active_keys[idx]
                                            : client_keys[idx - n_server_keys]);
     // read encoder state
-    if (keyswitch->source == config->rot_a_pin) {
+    Serial.printf("%d %d\n", keyswitch->source, keyswitch->sinc);
+    if (keyswitch->source == config->rot_a_pin or
+        keyswitch->source == config->rot_b_pin) {
+      Serial.printf("Received encoder key!\n");
       // server encoder
       if (keyswitch->buffer == 1) {
         encoder_code =
-            (idx < active_keys.size() ? encoder_codes["LEFT"]["UP"]
-                                      : encoder_codes["RIGHT"]["UP"]);
+            (idx < active_keys.size() ? this->encoder_codes["LEFT"]["UP"]
+                                      : this->encoder_codes["RIGHT"]["UP"]);
       } else {
         encoder_code =
-            (idx < active_keys.size() ? encoder_codes["LEFT"]["DOWN"]
-                                      : encoder_codes["RIGHT"]["DOWN"]);
+            (idx < active_keys.size() ? this->encoder_codes["LEFT"]["DOWN"]
+                                      : this->encoder_codes["RIGHT"]["DOWN"]);
       }
       if (this->bluetooth.isConnected()) {
         bluetooth.write(*encoder_code);
@@ -246,8 +249,12 @@ void Keyboard::update() {
   this->matrix->update();
   this->rotary_encoder->update();
   // add rotary encoder key to matrix buffer
-  for (auto &elem : this->rotary_encoder->active_keys) {
+  for (auto elem : this->rotary_encoder->active_keys) {
+    Serial.printf("%d\n", this->matrix->active_keys.size());
+    Serial.printf("ROTARY ENCODER\n");
+    Serial.printf("%d %d \n", elem.source, elem.sinc);
     this->matrix->active_keys.push_back(elem);
+    Serial.printf("%d\n", this->matrix->active_keys.size());
   }
 
   // handle sending keys

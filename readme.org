@@ -3,8 +3,9 @@
 time to work on it./
 
 
-#+attr_html: :alt  :align left :class img
-[[file:./figures/logo.png]]
+#+begin_export md
+<img src="./figures/logo.svg" width = "100%"></img>
+#+end_export
 
 #+toc: headlines 2
 

@@ -1,43 +1,43 @@
 *This is  work in progress -  the post is updated  as I find
 time to work on it.*
 
-![img](./figures/logo.png)
+<img src="./figures/logo.svg" width = "100%"></img>
 
 
 # Table of Contents
 
-1.  [Introduction](#org958f933)
-2.  [Outline](#org5022a20)
-3.  [ESP32](#orgd3832fc)
-4.  [Matrix scanning](#org78674f1)
-    1.  [Ghosting](#orge100550)
-    2.  [Key debouncing](#org376025e)
-    3.  [Changes](#org3b0cdcd)
-5.  [ESP-Now](#org371f195)
-    1.  [Mesh interface class](#org001e688)
-    2.  [Changes](#org4c89b95)
-6.  [Modifier keys](#orgf21163f)
-    1.  [Changes](#org73ecafd)
-7.  [Bluetooth](#org2ae7f65)
-    1.  [Changes](#org0451d7f)
-8.  [Keyboard layers](#org663f557)
-    1.  [Changes](#org17ce2f4)
-9.  [Rotary encoder](#org49da9e3)
-    1.  [Taming the KY-040 with decoding](#org40ad2eb)
-    2.  [Changes](#org2f74173)
-10. [OLED Display](#orgf088ca5)
-    1.  [Changes](#orga8bc74e)
-11. [Deep sleep](#orgccff1b6)
-    1.  [Changes](#orgdab0dea)
-12. [Battery control](#orgebfef91)
-    1.  [Changes](#orgd988165)
-13. [Backlog and weird behavior notes](#org719b1b6)
-14. [Final checklist](#org20b5dd3)
-15. [Unittests](#org4acc9b1)
-16. [Bk code](#orgb278b05)
+1.  [Introduction](#orgca8fb8a)
+2.  [Outline](#orga709682)
+3.  [ESP32](#org78f7a52)
+4.  [Matrix scanning](#org8b65e0b)
+    1.  [Ghosting](#orgfcc4e45)
+    2.  [Key debouncing](#orga28d15d)
+    3.  [Changes](#org17c5a42)
+5.  [ESP-Now](#orgcf2db37)
+    1.  [Mesh interface class](#org7b6731d)
+    2.  [Changes](#org5c30823)
+6.  [Modifier keys](#orgdc25762)
+    1.  [Changes](#org4cfd854)
+7.  [Bluetooth](#org11fa77c)
+    1.  [Changes](#org37f73ef)
+8.  [Keyboard layers](#org34bfea1)
+    1.  [Changes](#org066ea17)
+9.  [Rotary encoder](#org71de4f2)
+    1.  [Taming the KY-040 with decoding](#orgdbd0480)
+    2.  [Changes](#orgdb5f22e)
+10. [OLED Display](#orga926eb7)
+    1.  [Changes](#org3f58890)
+11. [Deep sleep](#org660556f)
+    1.  [Changes](#orgc4f8b96)
+12. [Battery control](#orgbcaa4a9)
+    1.  [Changes](#org2807c80)
+13. [Backlog and weird behavior notes](#org1fbbbac)
+14. [Final checklist](#org4dd433c)
+15. [Unittests](#orgadd9a82)
+16. [Bk code](#org02a4822)
 
 
-<a id="org958f933"></a>
+<a id="orgca8fb8a"></a>
 
 # Introduction
 
@@ -107,7 +107,7 @@ Core feature targets
 -   Rotary encoders
 
 
-<a id="org5022a20"></a>
+<a id="orga709682"></a>
 
 # Outline
 
@@ -143,7 +143,7 @@ To give a course overview consider the following picture:
 ![img](./figures/overview.png)
 
 
-<a id="orgd3832fc"></a>
+<a id="org78f7a52"></a>
 
 # ESP32
 
@@ -175,7 +175,7 @@ harness to do server-client communication.
 ![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
 
-<a id="org78674f1"></a>
+<a id="org8b65e0b"></a>
 
 # Matrix scanning
 
@@ -202,7 +202,7 @@ The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
 
-<a id="orge100550"></a>
+<a id="orgfcc4e45"></a>
 
 ## Ghosting
 
@@ -226,7 +226,7 @@ and causing ghosting.
 ![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-<a id="org376025e"></a>
+<a id="orga28d15d"></a>
 
 ## Key debouncing
 
@@ -237,7 +237,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
 &ldquo;press&rdquo; of key switch.
 
 
-<a id="org3b0cdcd"></a>
+<a id="org17c5a42"></a>
 
 ## Changes
 
@@ -248,7 +248,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
         -   [X] filters out erroneous key presses
 
 
-<a id="org371f195"></a>
+<a id="orgcf2db37"></a>
 
 # ESP-Now
 
@@ -266,7 +266,7 @@ foreign attackers. From the website we read:
 > ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
 
 
-<a id="org001e688"></a>
+<a id="org7b6731d"></a>
 
 ## Mesh interface class
 
@@ -288,7 +288,7 @@ from the  col and row,  then they are combined.  This solves
 the issue of sending ascii shifted codes or media keys.
 
 
-<a id="org4c89b95"></a>
+<a id="org5c30823"></a>
 
 ## Changes
 
@@ -296,7 +296,7 @@ the issue of sending ascii shifted codes or media keys.
 -   [X] Added server capabilities to join the keys from both half and communicate through bluetooth
 
 
-<a id="orgf21163f"></a>
+<a id="orgdc25762"></a>
 
 # Modifier keys
 
@@ -314,7 +314,7 @@ well as the  key release; I modified  the debounce mechanism
 to also detect the key release.
 
 
-<a id="org73ecafd"></a>
+<a id="org4cfd854"></a>
 
 ## Changes
 
@@ -323,7 +323,7 @@ to also detect the key release.
 -   [X] Fixed wrong indexing in reading the active keys on the server.
 
 
-<a id="org2ae7f65"></a>
+<a id="org11fa77c"></a>
 
 # Bluetooth
 
@@ -334,7 +334,7 @@ code map. Note that the over bluetooth (for whatever reason)
 these keycodes are remapped to different numbers.
 
 
-<a id="org0451d7f"></a>
+<a id="org37f73ef"></a>
 
 ## Changes
 
@@ -359,7 +359,7 @@ these keycodes are remapped to different numbers.
         config class steps)
 
 
-<a id="org663f557"></a>
+<a id="org34bfea1"></a>
 
 # Keyboard layers
 
@@ -409,7 +409,7 @@ current  active keys.  With transparent  keys I  can imagine
 that this approach will not work.
 
 
-<a id="org17ce2f4"></a>
+<a id="org066ea17"></a>
 
 ## Changes
 
@@ -424,7 +424,7 @@ that this approach will not work.
             holding down this key.
 
 
-<a id="org49da9e3"></a>
+<a id="org71de4f2"></a>
 
 # Rotary encoder
 
@@ -460,7 +460,7 @@ some  time to  figure out.  Below is  the exploration  I had
 trying to figure out how this code worked.
 
 
-<a id="org40ad2eb"></a>
+<a id="orgdbd0480"></a>
 
 ## Taming the KY-040 with decoding
 
@@ -469,7 +469,7 @@ either clockwise or anti-clockwise rotation. The encoder can
 be thought of  as a fixed state machine  that moves between
 different states ([table_transition](#table_transition)).
 
-<table id="org2746bcb" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org1829892" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -597,7 +597,7 @@ state of the A  and B pin. This implies that  2<sup>4</sup> = 16 state
 transitions are possible and we only allow for 8 of these to
 occur (see table [table_transition](#table_transition)).
 
-<table id="org1bf5666" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org82136dc" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -748,7 +748,7 @@ occur (see table [table_transition](#table_transition)).
 </tbody>
 </table>
 
-<table id="org038b59d" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org270aba9" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -783,19 +783,19 @@ occur (see table [table_transition](#table_transition)).
 </table>
 
 
-<a id="org2f74173"></a>
+<a id="orgdb5f22e"></a>
 
 ## Changes
 
 -   [X] Add rotary encoder to keyboard class
 
 
-<a id="orgf088ca5"></a>
+<a id="orga926eb7"></a>
 
 # OLED Display
 
 
-<a id="orga8bc74e"></a>
+<a id="org3f58890"></a>
 
 ## Changes
 
@@ -807,7 +807,7 @@ occur (see table [table_transition](#table_transition)).
         -   [ ] Battery level info
 
 
-<a id="orgccff1b6"></a>
+<a id="org660556f"></a>
 
 # Deep sleep
 
@@ -816,7 +816,7 @@ Some pins  on the esp32 can  be used to wakeup  the keyboard
 from deep  sleep. The  RTC<sub>GPIO</sub> pins and  Touch pins  can be
 used for waking the device from deep sleep. The RTC pins are
 
-<table id="org19882c6" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org424eb17" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -999,7 +999,7 @@ the rows  or columns would  result in  the board to  wake up
 from sleep (which is ideal).
 
 
-<a id="orgdab0dea"></a>
+<a id="orgc4f8b96"></a>
 
 ## Changes
 
@@ -1011,12 +1011,12 @@ from sleep (which is ideal).
         row2column or reverse connection.
 
 
-<a id="orgebfef91"></a>
+<a id="orgbcaa4a9"></a>
 
 # Battery control
 
 
-<a id="orgd988165"></a>
+<a id="org2807c80"></a>
 
 ## Changes
 
@@ -1025,7 +1025,7 @@ from sleep (which is ideal).
     -   [ ] Inline to battery directly.
 
 
-<a id="org719b1b6"></a>
+<a id="org1fbbbac"></a>
 
 # Backlog and weird behavior notes
 
@@ -1051,7 +1051,7 @@ from sleep (which is ideal).
     issue.
 
 
-<a id="org20b5dd3"></a>
+<a id="org4dd433c"></a>
 
 # Final checklist
 
@@ -1083,7 +1083,7 @@ Check that the following components work:
         for example input pins in the 3x range.
 
 
-<a id="org4acc9b1"></a>
+<a id="orgadd9a82"></a>
 
 # Unittests
 
@@ -1098,7 +1098,7 @@ Start writing unittests
     -   [ ] Sending of messages without being connected to bluetooth
 
 
-<a id="orgb278b05"></a>
+<a id="org02a4822"></a>
 
 # Bk code
 

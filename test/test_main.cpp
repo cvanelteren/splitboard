@@ -30,6 +30,20 @@ void test_zero_state_keys() {
   }
 }
 
+uint8_t number_of_pressed_keys() {
+  static uint8_t key_pressed_down;
+  matrix->update();
+  for (auto elem : matrix->active_keys) {
+    if (elem.pressed_down) {
+      key_pressed_down += 1;
+    } else {
+      key_pressed_down -= 1;
+    }
+  }
+  // delay(100);
+  return key_pressed_down;
+}
+
 void test_ghosting() {
   /**
    * @brief      Test artificial ghosting signal
@@ -37,12 +51,30 @@ void test_ghosting() {
    * Current flows back into a channel that is not acivated.
    */
 
-  for (auto idx = 0; idx < 2; idx++) {
-    digitalWrite(matrix->source_pins[idx], HIGH);
-    digitalWrite(matrix->sinc_pins[idx], HIGH);
+  uint8_t threshold, num_keys;
+  threshold = 3;
+  // wait for button press
+  Serial.println("Please hold three keys");
+  Serial.println("Waiting..");
+
+  size_t last_state = 0;
+
+  while ((num_keys = number_of_pressed_keys()) < threshold) {
+    // if ((millis() - last_state) > 1000) {
+    //   Serial.printf("%d num_keys\n", num_keys);
+    //   last_state = millis();
+    // }
   }
-  digitalWrite(matrix->sinc_pins[1], LOW);
-  TEST_ASSERT_EQUAL(digitalRead(matrix->sinc_pins[1]), HIGH);
+
+  for (auto source : matrix->source_pins) {
+    pinMode(source, OUTPUT);
+    digitalWrite(source, LOW);
+  }
+
+  for (auto sinc : matrix->sinc_pins) {
+    pinMode(sinc, INPUT_PULLUP);
+  }
+  TEST_ASSERT_EQUAL(number_of_pressed_keys(), threshold);
 }
 
 // end Matrix tests

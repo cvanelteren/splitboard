@@ -11,14 +11,19 @@ Matrix *matrix = new Matrix(config);
 
 // Matrix tests
 void test_source_pin_mode() {
-  for (auto pin : matrix->get_source_pins()) {
-    TEST_ASSERT_EQUAL(get_pin_mode(pin), OUTPUT);
+  uint8_t state = 5; // output?
+  for (uint8_t pin : matrix->source_pins) {
+    TEST_ASSERT_EQUAL(get_pin_mode(pin), state);
   }
 };
 
 void test_sinc_pin_mode() {
-  for (auto pin : matrix->get_sinc_pins()) {
-    TEST_ASSERT_EQUAL(get_pin_mode(pin), INPUT_PULLUP);
+  uint8_t state = 2; // input_pullup
+
+  Serial.printf("pullup \t %d input \t %d output \t %d \n", INPUT_PULLUP, INPUT,
+                OUTPUT);
+  for (uint8_t pin : matrix->sinc_pins) {
+    TEST_ASSERT_EQUAL(get_pin_mode(pin), state);
   }
 };
 
@@ -57,13 +62,8 @@ void test_ghosting() {
   Serial.println("Please hold three keys");
   Serial.println("Waiting..");
 
-  size_t last_state = 0;
-
   while ((num_keys = number_of_pressed_keys()) < threshold) {
-    // if ((millis() - last_state) > 1000) {
-    //   Serial.printf("%d num_keys\n", num_keys);
-    //   last_state = millis();
-    // }
+    Serial.printf("\r num_key: \t s%d ", num_keys);
   }
 
   for (auto source : matrix->source_pins) {
@@ -79,11 +79,12 @@ void test_ghosting() {
 
 // end Matrix tests
 void setup() {
+  matrix->setup_pins();
   UNITY_BEGIN();
 
   // test the matrix
-  RUN_TEST(test_source_pin_mode);
-  RUN_TEST(test_sinc_pin_mode);
+  RUN_TEST(test_source_pin_mode); // doesn't work atm; not sure why
+  RUN_TEST(test_sinc_pin_mode);   // doesn't work atm; not sure why
   RUN_TEST(test_zero_state_keys);
   RUN_TEST(test_ghosting);
 }

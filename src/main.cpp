@@ -8,9 +8,8 @@
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
 
-#define led_pin 0
-
 void setup() {
+
   // this needs to be here for some reason?
   WiFi.mode(WIFI_STA);
   Serial.begin(config.baud_rate);
@@ -18,8 +17,8 @@ void setup() {
   Serial.printf("------------SPLITBOARD------------\n");
   keyboard.begin();
   Serial.printf("layers size %d\n", keyboard.layers.size());
-  // keyboard.wake_up();
-  // keyboard.sleep();
+  keyboard.wakeup();
+  keyboard.sleep();
   // pinMode(led_pin, OUTPUT);
   // Serial.printf("%d\n", keyboard.layers[0][2][1]);
   // The setup has to deal with weird casting of pointers
@@ -44,10 +43,20 @@ void setup() {
 }
 
 void loop() {
+
+  // leds[0] = CRGB::Red;
+  // FastLED.show();
+  // delay(500);
+  // leds[0] = CRGB::Black;
+  // FastLED.show();
+  // delay(500);
+  // }
+
   // Print a number on the U8g2log window
   keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
 
   keyboard.update();
+  keyboard.led->cycle();
   // if (keyboard.bluetooth.isConnected()) {
   //   keyboard.bluetooth.print("A");
 

@@ -17,6 +17,10 @@ Keyboard::Keyboard(Config *config) {
   // setup display
   this->display = new Display(config);
 
+  this->led = new LED(config);
+
+  // pinMode(config->led_pin, OUTPUT);
+
   byte mac_addr[6];
   WiFi.macAddress(mac_addr);
   this->is_server = true;
@@ -99,16 +103,17 @@ void Keyboard::begin() {
   this->mesh->begin();
 
   // setup start display
-  this->display->begin();
+  if (this->display != nullptr) {
+    this->display->begin();
+    // FIXME: move this to display somehow
+    auto width = 32;
+    auto height = 10;
 
-  // FIXME: move this to display somehow
-  auto width = 32;
-  auto height = 10;
-
-  this->display->log_buffer.resize(width * height);
-  this->display->log.begin(*this->display, width, height,
-                           &(this->display->log_buffer)[0]);
-  this->display->log.setRedrawMode(0);
+    this->display->log_buffer.resize(width * height);
+    this->display->log.begin(*this->display, width, height,
+                             &(this->display->log_buffer)[0]);
+    this->display->log.setRedrawMode(0);
+  }
 
   // start bluetooth when server
   if (this->is_server) {
@@ -117,6 +122,9 @@ void Keyboard::begin() {
     this->bluetooth.releaseAll();
   }
 
+  if (this->led != nullptr) {
+    this->led->begin();
+  }
   // if (this->rotaryEncoder != NULL) {
   this->rotary_encoder->begin();
   // }
@@ -185,13 +193,11 @@ void Keyboard::send_keys() {
   uint8_t n_server_keys = active_keys.size();
   uint8_t total_keys = client_keys.size() + n_server_keys;
 
-  // read server active keys
-
   if (total_keys) {
     Serial.printf("Active keys %d\n", total_keys);
     Serial.printf("Client keys %d\n", client_keys.size());
-    this->last_activity = millis();
   }
+  // read server active keys
 
   keyswitch_t *keyswitch;
   uint8_t key;
@@ -236,6 +242,7 @@ void Keyboard::send_keys() {
   }
 }
 
+static size_t last_led_time = 0;
 void Keyboard::update() {
   /**
    * @brief     keyboard updater
@@ -245,17 +252,27 @@ void Keyboard::update() {
    */
   // Serial.println("Scanning");
 
+  bool state;
+
+  // if (millis() - last_led_time > 100) {
+  //   state = (digitalRead(this->config->led_pin) ? LOW : HIGH);
+  //   digitalWrite(this->config->led_pin, state);
+  //   Serial.printf("Writing state as %d \n", state);
+  //   last_led_time = millis();
+  // }
+
   // update components
   this->matrix->update();
   this->rotary_encoder->update();
   // add rotary encoder key to matrix buffer
   for (auto elem : this->rotary_encoder->active_keys) {
-    Serial.printf("%d\n", this->matrix->active_keys.size());
-    Serial.printf("ROTARY ENCODER\n");
-    Serial.printf("%d %d \n", elem.source, elem.sinc);
     this->matrix->active_keys.push_back(elem);
-    Serial.printf("%d\n", this->matrix->active_keys.size());
   }
+
+  if (this->matrix->active_keys.size()) {
+    this->last_activity = millis();
+  }
+  // Serial.printf("%d %d\n", last_activity, millis() - last_activity);
 
   // handle sending keys
   // handle server
@@ -275,11 +292,9 @@ void Keyboard::update() {
       this->config->deep_sleep_timeout) {
     this->sleep();
   }
-
-  // delay(150);
 }
 
-void Keyboard::wake_up() {
+void Keyboard::wakeup() {
   /**
    * @brief      Wake-up from deep sleep
    */
@@ -306,16 +321,28 @@ void Keyboard::wake_up() {
     break;
   }
 
-  this->matrix->setup_keys();
+  this->matrix->wakeup();
+  this->led->wakeup();
+  this->last_activity = millis();
 }
 
 size_t Keyboard::get_last_activity() { return this->last_activity; }
 
+void sleep_all_pin() {
+  // tmp function to set all pins to low before sleeping
+  auto pins = {0,  2,  4,  5,  12, 13, 14, 15, 16, 17, 18, 19, 21,
+               22, 23, 25, 26, 27, 32, 33, 34, 36, 37, 38, 39};
+  for (auto pin : pins) {
+    Serial.printf("Turning %d off\n", pin);
+    pinMode(pin, INPUT);
+    digitalWrite(pin, LOW);
+  }
+}
 void Keyboard::sleep() {
   /**
    * @brief      Enter deep sleep
    */
-
+  this->led->sleep();
   // prepare pins for sleep
   this->matrix->sleep();
   esp_sleep_enable_touchpad_wakeup();
@@ -326,4 +353,5 @@ void Keyboard::sleep() {
   // gpio_deep_sleep_hold_en();
   // esp_deep_sleep_start();
   Serial.println("Sleeping"); // shouldn't print
+  this->wakeup();
 }

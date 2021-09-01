@@ -18,6 +18,7 @@
 #include "display.hpp"
 #include "keymap.hpp"
 #include "layout.hpp"
+#include "led_driver.hpp"
 #include "mesh.hpp"
 #include "rotary_encoder.hpp"
 #include "types.hpp"
@@ -38,6 +39,7 @@ public:
   Matrix *matrix;
   Mesh *mesh;
   Display *display;
+  LED *led;
   BleKeyboard bluetooth;
 
   RotaryEncoder *rotary_encoder;
@@ -56,7 +58,7 @@ public:
   layers_t layers;
 
   void sleep();
-  void wake_up();
+  void wakeup();
 
 private:
   layer_t *active_layer;

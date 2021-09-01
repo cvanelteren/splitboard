@@ -22,11 +22,11 @@ public:
   Config();
 
   // pin configuration
-  std::vector<uint8_t> col_pins = {18, 19, 5, 22, 21, 26};
+  std::vector<uint8_t> col_pins = {18, 23, 19, 22, 21, 26};
   // std::vector<size_t> row_pins = {13, 12, 14, 27, 26};
   // std::vector<size_t> col_pins = {18, 23, 19, 22, 21};
   // std::vector<size_t> col_pins = {34, 39, 37, 36};
-  std::vector<uint8_t> row_pins = {13, 12, 14, 27, 2};
+  std::vector<uint8_t> row_pins = {13, 12, 14, 27, 0};
   std::string scan_source = "col"; // diode direction
 
   // layer_t test = {{18, {{34, "A"}}}};
@@ -34,7 +34,8 @@ public:
 
   // deep sleep settings
   const size_t deep_sleep_timeout = 300000; // 5 minutes
-  uint8_t led_pin = 5;
+  // const size_t deep_sleep_timeout = 6000; // 5 minutes
+  static const uint8_t led_pin = 25;
   uint8_t num_led = 1;
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
@@ -55,7 +56,7 @@ public:
   uint baud_rate = 115200;
 
   uint8_t rot_a_pin = 17;
-  uint8_t rot_b_pin = 23;
+  uint8_t rot_b_pin = 5;
   uint8_t rot_button_pin = 37;
   uint8_t rot_output_pin = 0; // set to -1 to use vcc
 

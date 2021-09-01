@@ -1,7 +1,7 @@
 #include "utils.hpp"
 #include <Arduino.h>
 
-uint8_t get_pin_mode(uint8_t pin) {
+int8_t get_pin_mode(uint8_t pin) {
   if (pin >= NUM_DIGITAL_PINS)
     return (-1);
 

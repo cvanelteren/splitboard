@@ -172,6 +172,11 @@ void callback(){
     // Serial.println("In touch callback");
 };
 
+void Matrix::wakeup() {
+  setup_pins();
+  setup_keys();
+}
+
 void Matrix::sleep() {
   /**
    * @brief      prepare pins for sleeping.
@@ -183,12 +188,12 @@ void Matrix::sleep() {
     Serial.printf("%d %d \n", pin, touchRead(pin));
   }
 
-  uint8_t threshold = 20;
+  uint8_t threshold = 1;
   // IMPORTANT: set sleep pins high(!)
   for (auto pin : this->sinc_pins) {
     // mask += pow(2, pin);
     pinMode(pin, OUTPUT);
-    digitalWrite(pin, LOW);
+    // digitalWrite(pin, LOW);
     touchAttachInterrupt(pin, callback, threshold);
     Serial.printf("%d %d \n", pin, touchRead(pin));
   }

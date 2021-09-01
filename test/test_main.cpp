@@ -77,9 +77,15 @@ void test_ghosting() {
   TEST_ASSERT_EQUAL(number_of_pressed_keys(), threshold);
 }
 
+#include <FastLED.h>
+#define DATA_PIN 2
+#define n_leds 1
+
 // end Matrix tests
 void setup() {
-  matrix->setup_pins();
+
+  // // starting tests
+  // matrix->setup_pins();
   UNITY_BEGIN();
 
   // test the matrix

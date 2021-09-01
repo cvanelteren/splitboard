@@ -57,10 +57,14 @@ public:
   std::vector<uint8_t> get_source_pins();
   std::vector<uint8_t> get_sinc_pins();
   void sleep();
+  void wakeup();
 
 #ifdef UNIT_TEST
   friend void test_zero_state_keys();
+  friend void test_source_pin_mode();
+  friend void test_sinc_pin_mode();
   friend void test_ghosting();
+  friend uint8_t number_of_keys_pressed();
 #endif
 };
 #endif

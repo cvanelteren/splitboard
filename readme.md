@@ -6,38 +6,43 @@ time to work on it.*
 
 # Table of Contents
 
-1.  [Introduction](#orgca8fb8a)
-2.  [Outline](#orga709682)
-3.  [ESP32](#org78f7a52)
-4.  [Matrix scanning](#org8b65e0b)
-    1.  [Ghosting](#orgfcc4e45)
-    2.  [Key debouncing](#orga28d15d)
-    3.  [Changes](#org17c5a42)
-5.  [ESP-Now](#orgcf2db37)
-    1.  [Mesh interface class](#org7b6731d)
-    2.  [Changes](#org5c30823)
-6.  [Modifier keys](#orgdc25762)
-    1.  [Changes](#org4cfd854)
-7.  [Bluetooth](#org11fa77c)
-    1.  [Changes](#org37f73ef)
-8.  [Keyboard layers](#org34bfea1)
-    1.  [Changes](#org066ea17)
-9.  [Rotary encoder](#org71de4f2)
-    1.  [Taming the KY-040 with decoding](#orgdbd0480)
-    2.  [Changes](#orgdb5f22e)
-10. [OLED Display](#orga926eb7)
-    1.  [Changes](#org3f58890)
-11. [Deep sleep](#org660556f)
-    1.  [Changes](#orgc4f8b96)
-12. [Battery control](#orgbcaa4a9)
-    1.  [Changes](#org2807c80)
-13. [Backlog and weird behavior notes](#org1fbbbac)
-14. [Final checklist](#org4dd433c)
-15. [Unittests](#orgadd9a82)
-16. [Bk code](#org02a4822)
+1.  [Introduction](#orgd4032f2)
+2.  [Outline](#org90401e6)
+3.  [ESP32](#orgcbcf110)
+4.  [Matrix scanning](#org86486a0)
+    1.  [Ghosting](#orge70f096)
+    2.  [Key debouncing](#org7acf371)
+    3.  [Changes](#org8699dbe)
+5.  [ESP-Now](#org9ef4b15)
+    1.  [Mesh interface class](#org50c127e)
+    2.  [Changes](#org6249645)
+6.  [Modifier keys](#orga027db5)
+    1.  [Changes](#org93dd80f)
+7.  [Bluetooth](#orgd52e4ab)
+    1.  [Changes](#org8e42bf1)
+8.  [Keyboard layers](#orgf8500c6)
+    1.  [Changes](#org7b35bb6)
+9.  [Rotary encoder](#orga0da5f4)
+    1.  [Taming the KY-040 with decoding](#org6927c92)
+    2.  [Changes](#orgc9cbc50)
+10. [LED driver: FastLED](#orge2ef258)
+    1.  [Changes](#orgc0aab11)
+11. [OLED Display](#org49840ac)
+    1.  [Changes](#org5a46f9e)
+12. [Deep sleep](#orgd4c2a71)
+    1.  [Changes](#org771cdb2)
+13. [Battery control](#orgbf1d3c1)
+    1.  [Changes](#org3d7ac16)
+14. [Backlog and weird behavior notes](#org01eb7be)
+    1.  [Pressing  down  a  key  repeatedly and  then  another  key](#org50b8c95)
+    2.  [Figure out bug  where \`-\` is sent  repeatedly. This occurs](#org4062a26)
+    3.  [Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This](#orgecb99e2)
+    4.  [Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd symbol to appear  when  rotating](#org755abbb)
+15. [Final checklist](#org26b8fd3)
+16. [Unit tests](#orgbc82269)
 
 
-<a id="orgca8fb8a"></a>
+<a id="orgd4032f2"></a>
 
 # Introduction
 
@@ -107,7 +112,7 @@ Core feature targets
 -   Rotary encoders
 
 
-<a id="orga709682"></a>
+<a id="org90401e6"></a>
 
 # Outline
 
@@ -143,7 +148,7 @@ To give a course overview consider the following picture:
 ![img](./figures/overview.png)
 
 
-<a id="org78f7a52"></a>
+<a id="orgcbcf110"></a>
 
 # ESP32
 
@@ -175,17 +180,16 @@ harness to do server-client communication.
 ![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
 
-<a id="org8b65e0b"></a>
+<a id="org86486a0"></a>
 
 # Matrix scanning
 
-<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-07-12 Mon&gt;</span></span>
-A keyboard  matrix scanning circuit  is used to  enhance the
-number  of keys,  while keeping  the number  of pins  low. A
-micro-controller  uses general  pin  input/output (GPIO)  to
-register currents.  If a singular  key switch is wired  to a
-single pin, 96 pins would be needed for a 104 sized keyboard
-(full-size). This would be unpractical.
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-07-12 Mon&gt; </span></span> A keyboard  matrix scanning circuit is used
+to enhance the  number of keys, while keeping  the number of
+pins low.  A micro-controller uses general  pin input/output
+(GPIO) to  register currents.  If a  singular key  switch is
+wired to  a single pin,  96 pins would  be needed for  a 104
+sized keyboard (full-size). This would be unpractical.
 
 As an alternative  one could apply matrix  scanning. In this
 method,  the keys  are wired  as  a grid  where each  column
@@ -202,7 +206,7 @@ The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
 
-<a id="orgfcc4e45"></a>
+<a id="orge70f096"></a>
 
 ## Ghosting
 
@@ -226,7 +230,7 @@ and causing ghosting.
 ![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-<a id="orga28d15d"></a>
+<a id="org7acf371"></a>
 
 ## Key debouncing
 
@@ -234,10 +238,14 @@ Key  debounce is  a mechanism  to filter  out erroneous  key
 activity.  When  two metal  plates  come  into contact,  the
 signal does not form a clean  square wave. In order to clean
 up  this  signal, key  debouncing  is  used to  reflect  the
-&ldquo;press&rdquo; of key switch.
+&ldquo;press&rdquo;  of  key switch.  Initially  I  used a  simple  time
+filter, i.e.  ensuring that  the keyswitch was  pressed down
+between  x ms.  This ended  up being  a bit  noisy with  the
+switches I  was using; I  ended up writing a  digital filter
+that worked fairly well.
 
 
-<a id="org17c5a42"></a>
+<a id="org8699dbe"></a>
 
 ## Changes
 
@@ -248,7 +256,7 @@ up  this  signal, key  debouncing  is  used to  reflect  the
         -   [X] filters out erroneous key presses
 
 
-<a id="orgcf2db37"></a>
+<a id="org9ef4b15"></a>
 
 # ESP-Now
 
@@ -266,7 +274,7 @@ foreign attackers. From the website we read:
 > ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
 
 
-<a id="org7b6731d"></a>
+<a id="org50c127e"></a>
 
 ## Mesh interface class
 
@@ -288,7 +296,7 @@ from the  col and row,  then they are combined.  This solves
 the issue of sending ascii shifted codes or media keys.
 
 
-<a id="org5c30823"></a>
+<a id="org6249645"></a>
 
 ## Changes
 
@@ -296,7 +304,7 @@ the issue of sending ascii shifted codes or media keys.
 -   [X] Added server capabilities to join the keys from both half and communicate through bluetooth
 
 
-<a id="orgdc25762"></a>
+<a id="orga027db5"></a>
 
 # Modifier keys
 
@@ -314,7 +322,7 @@ well as the  key release; I modified  the debounce mechanism
 to also detect the key release.
 
 
-<a id="org4cfd854"></a>
+<a id="org93dd80f"></a>
 
 ## Changes
 
@@ -323,7 +331,7 @@ to also detect the key release.
 -   [X] Fixed wrong indexing in reading the active keys on the server.
 
 
-<a id="org11fa77c"></a>
+<a id="orgd52e4ab"></a>
 
 # Bluetooth
 
@@ -334,7 +342,7 @@ code map. Note that the over bluetooth (for whatever reason)
 these keycodes are remapped to different numbers.
 
 
-<a id="org37f73ef"></a>
+<a id="org8e42bf1"></a>
 
 ## Changes
 
@@ -359,7 +367,7 @@ these keycodes are remapped to different numbers.
         config class steps)
 
 
-<a id="org34bfea1"></a>
+<a id="orgf8500c6"></a>
 
 # Keyboard layers
 
@@ -409,7 +417,7 @@ current  active keys.  With transparent  keys I  can imagine
 that this approach will not work.
 
 
-<a id="org066ea17"></a>
+<a id="org7b35bb6"></a>
 
 ## Changes
 
@@ -424,7 +432,7 @@ that this approach will not work.
             holding down this key.
 
 
-<a id="org71de4f2"></a>
+<a id="orga0da5f4"></a>
 
 # Rotary encoder
 
@@ -460,7 +468,7 @@ some  time to  figure out.  Below is  the exploration  I had
 trying to figure out how this code worked.
 
 
-<a id="orgdbd0480"></a>
+<a id="org6927c92"></a>
 
 ## Taming the KY-040 with decoding
 
@@ -469,7 +477,7 @@ either clockwise or anti-clockwise rotation. The encoder can
 be thought of  as a fixed state machine  that moves between
 different states ([table_transition](#table_transition)).
 
-<table id="org1829892" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org896bb32" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -597,7 +605,7 @@ state of the A  and B pin. This implies that  2<sup>4</sup> = 16 state
 transitions are possible and we only allow for 8 of these to
 occur (see table [table_transition](#table_transition)).
 
-<table id="org82136dc" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgd37ee80" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -748,7 +756,7 @@ occur (see table [table_transition](#table_transition)).
 </tbody>
 </table>
 
-<table id="org270aba9" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org0e12c29" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -783,19 +791,54 @@ occur (see table [table_transition](#table_transition)).
 </table>
 
 
-<a id="orgdb5f22e"></a>
+<a id="orgc9cbc50"></a>
 
 ## Changes
 
 -   [X] Add rotary encoder to keyboard class
 
 
-<a id="orga926eb7"></a>
+<a id="orge2ef258"></a>
+
+# LED driver: FastLED
+
+I generally don&rsquo;t care  for LED under keyboard. However, as  this was a &ldquo;bigger&rdquo;
+project, I  decided to play  around with LED  support. Different LEDs  types are
+possible, I  ended up  going with  the SK6812  which offer  RGB support  and are
+generally easier  to hand  solder than the  popular WS2812(B).  After purchasing
+however, I turned out that finding a LED  driver posed to be a bit cumbersome. I
+tried a few different code bases and they  ended up not working out the box. Not
+sure  why.  After  some  searching,  I stumbled  on  the  library  FastLED.  The
+documentation  does not  explicitly  support  the SK6812.  The  git issue  page,
+however, showed  that there  is some support  for it. In  addition, some  of the
+example code had mentions of it. Anyhoozle, after some tweaking around (and some
+ugly soldering) I achieved:
+
+ <video width="320" height="240" controls>
+  <source src="./figures/leds_cycle.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+
+Happy days! The  LED driver was one of  the last parts of the  list, which means
+that the end is  in sight! The coming week I will integrate  the driver with the
+keyboard class and check the box below.
+
+
+<a id="orgc0aab11"></a>
+
+## Changes
+
+-   [X] LED driver
+    -   [X] Initialize LED driver
+    -   [X] Make LED wrapper in keyboard class
+
+
+<a id="org49840ac"></a>
 
 # OLED Display
 
 
-<a id="org3f58890"></a>
+<a id="org5a46f9e"></a>
 
 ## Changes
 
@@ -807,7 +850,7 @@ occur (see table [table_transition](#table_transition)).
         -   [ ] Battery level info
 
 
-<a id="org660556f"></a>
+<a id="orgd4c2a71"></a>
 
 # Deep sleep
 
@@ -816,7 +859,7 @@ Some pins  on the esp32 can  be used to wakeup  the keyboard
 from deep  sleep. The  RTC<sub>GPIO</sub> pins and  Touch pins  can be
 used for waking the device from deep sleep. The RTC pins are
 
-<table id="org424eb17" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org839fc33" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -999,24 +1042,24 @@ the rows  or columns would  result in  the board to  wake up
 from sleep (which is ideal).
 
 
-<a id="orgc4f8b96"></a>
+<a id="org771cdb2"></a>
 
 ## Changes
 
--   [-] Implement deep sleep
+-   [X] Implement deep sleep
     -   [X] added deep sleep time-out to config
     -   [X] Touch pins will be either rows or columns
-    -   [ ] Test  matrix scan diodes  with deep  sleep feature,
+    -   [X] Test matrix  scan diodes  with deep  sleep feature,
         i.e.  does  deep  sleep   current  still  register  with
         row2column or reverse connection.
 
 
-<a id="orgbcaa4a9"></a>
+<a id="orgbf1d3c1"></a>
 
 # Battery control
 
 
-<a id="org2807c80"></a>
+<a id="org3d7ac16"></a>
 
 ## Changes
 
@@ -1025,33 +1068,68 @@ from sleep (which is ideal).
     -   [ ] Inline to battery directly.
 
 
-<a id="org1fbbbac"></a>
+<a id="org01eb7be"></a>
 
 # Backlog and weird behavior notes
 
--   Pressing  down  a  key  repeatedly and  then  another  key
-    afterwards, stops sending the  initially pressed down key.
-    For example holding down \`a\` and then pressing any other
-    key (including modifies) stops sending \`a\`.
--   Figure out bug  where \`-\` is sent  repeatedly. This occurs
-    especially when sending \`a\` key.  I think it is related to
-    the ascii code for for \`a\` and \`-\`.
--   Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This
-    occurs  when the  keyboard is  connected to  bluetooth. No
-    keys are send on my part.
--   Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd
-    symbols to appear when rotating.  In addition, when set in
-    a particular condition it will cause the rotary encoder to
-    fail  to  upload  code.  This   effect  is  gone  with  an
-    additional turn. Apparently, the esp32 has some flaw in it
-    that  some pins  are  sensitive to  inputs when  uploading
-    code.     More     info      can     be     found     here
-    <https://github.com/espressif/arduino-esp32/issues/1497>.  I
-    have changed pin 1 to pin 2 which seemed to have fixed the
-    issue.
+
+<a id="org50b8c95"></a>
+
+## DONE Pressing  down  a  key  repeatedly and  then  another  key
+
+afterwards, stops  sending the  initially pressed  down key.
+For example holding down \`a\` and then pressing any other key
+(including modifies) stops sending \`a\`.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
 
 
-<a id="org4dd433c"></a>
+<a id="org4062a26"></a>
+
+## DONE Figure out bug  where \`-\` is sent  repeatedly. This occurs
+
+especially when  sending \`a\` key.  I think it is  related to
+the ascii code for for \`a\` and \`-\`.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+
+<a id="orgecb99e2"></a>
+
+## DONE Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This
+
+occurs when the keyboard is  connected to bluetooth. No keys
+are send on my part.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+
+<a id="org755abbb"></a>
+
+## DONE Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd symbol to appear  when  rotating
+
+In  addition, when  set in  a particular  condition it  will
+cause the rotary encoder to fail to upload code. This effect
+is gone with  an additional turn. Apparently,  the esp32 has
+some flaw in it that some  pins are sensitive to inputs when
+uploading   code.    More   info    can   be    found   here
+<https://github.com/espressif/arduino-esp32/issues/1497>.    I
+have changed pin  1 to pin 2 which seemed  to have fixed the
+issue.
+
+GPIO0, GPIO02  seemed to both  be sensitive to  noise. Don&rsquo;t
+use these pins for sensitive  operations. Moving the GPIO to
+another  range   (currently  25   for  LED)   is  relatively
+noiseless.
+
+
+<a id="org26b8fd3"></a>
 
 # Final checklist
 
@@ -1060,7 +1138,7 @@ Check that the following components work:
 -   [ ] Matrix
     -   [ ] Does scanning work?
     -   [ ] Does ghosting occur?
--   [ ] ESPNOW
+-   [ ] ESPNOW [hard to write unit test for]
     -   [ ] Does the wireless bridge work?
 -   [ ] Bluetooth
     -   [ ] Is the unit detected as a keyboard?
@@ -1083,51 +1161,17 @@ Check that the following components work:
         for example input pins in the 3x range.
 
 
-<a id="orgadd9a82"></a>
+<a id="orgbc82269"></a>
 
-# Unittests
+# Unit tests
 
-Start writing unittests
+Start writing unit tests
 
--   [ ] matrix scanner
+-   [-] matrix scanner
     -   [ ] Pin modes
-    -   [ ] Debouncing
-    -   [ ] Registry of multiple keys simultaneously
+    -   [X] Debouncing
+    -   [X] Registry of multiple keys simultaneously
 
 -   [ ] Keyboard
     -   [ ] Sending of messages without being connected to bluetooth
-
-
-<a id="org02a4822"></a>
-
-# Bk code
-
-    // this->mesh->buffer.active_keys = this->matrix->active_keys;
-    // 1. collect message from client
-    // 2. collect active keys
-    // 3. merge the keys
-    // 4. send through bluetooth
-    // if (this->bluetooth->connection->connected) {
-    
-    //   this->display->firstPage();
-    //   do {
-    //     this->display->log.println("");
-    //     this->display->log.print("\rhello:)");
-    //     // this->display->log.print(printf("Connected to %s", "test"));
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "hello :)");
-    
-    //   } while (this->display->nextPage());
-    // } else {
-    //   // this->display->clearDisplay();
-    //   this->display->firstPage();
-    //   do {
-    //     // this->display->log.println("");
-    //     this->display->log.print("\rNo Bluetooth :(");
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
-    
-    //   } while (this->display->nextPage());
-    //   // delay(10);
-    // }
 

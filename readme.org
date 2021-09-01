@@ -137,13 +137,12 @@ harness to do server-client communication.
 [[file:./figures/pinout.jpg]]
 
 * Matrix scanning
-<2021-07-12 Mon>
-A keyboard  matrix scanning circuit  is used to  enhance the
-number  of keys,  while keeping  the number  of pins  low. A
-micro-controller  uses general  pin  input/output (GPIO)  to
-register currents.  If a singular  key switch is wired  to a
-single pin, 96 pins would be needed for a 104 sized keyboard
-(full-size). This would be unpractical.
+<2021-07-12 Mon> A keyboard  matrix scanning circuit is used
+to enhance the  number of keys, while keeping  the number of
+pins low.  A micro-controller uses general  pin input/output
+(GPIO) to  register currents.  If a  singular key  switch is
+wired to  a single pin,  96 pins would  be needed for  a 104
+sized keyboard (full-size). This would be unpractical.
 
 As an alternative  one could apply matrix  scanning. In this
 method,  the keys  are wired  as  a grid  where each  column
@@ -158,7 +157,6 @@ column form  an open circuit.  That is,  if a key  switch is
 pressed down, current  can flow between the  row and column.
 The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
-
 ** Ghosting
 Matrix  scanning  forms  an excellent  idea  to  efficiently
 represent our electronic  switches. However, merely scanning
@@ -225,13 +223,16 @@ fig.show()
 #+caption: testing
 
 
-
 ** Key debouncing
 Key  debounce is  a mechanism  to filter  out erroneous  key
 activity.  When  two metal  plates  come  into contact,  the
 signal does not form a clean  square wave. In order to clean
 up  this  signal, key  debouncing  is  used to  reflect  the
-"press" of key switch.
+"press"  of  key switch.  Initially  I  used a  simple  time
+filter, i.e.  ensuring that  the keyswitch was  pressed down
+between  x ms.  This ended  up being  a bit  noisy with  the
+switches I  was using; I  ended up writing a  digital filter
+that worked fairly well.
 
 ** Changes
 - [X] Added matrix class
@@ -504,6 +505,34 @@ CLOCK: [2021-07-30 Fri 10:07]--[2021-07-30 Fri 10:08] =>  0:01
 CLOCK: [2021-07-30 Fri 09:00]--[2021-07-30 Fri 10:07] =>  1:07
 :END:
 - [X] Add rotary encoder to keyboard class
+* LED driver: FastLED
+I generally don't care  for LED under keyboard. However, as  this was a "bigger"
+project, I  decided to play  around with LED  support. Different LEDs  types are
+possible, I  ended up  going with  the SK6812  which offer  RGB support  and are
+generally easier  to hand  solder than the  popular WS2812(B).  After purchasing
+however, I turned out that finding a LED  driver posed to be a bit cumbersome. I
+tried a few different code bases and they  ended up not working out the box. Not
+sure  why.  After  some  searching,  I stumbled  on  the  library  FastLED.  The
+documentation  does not  explicitly  support  the SK6812.  The  git issue  page,
+however, showed  that there  is some support  for it. In  addition, some  of the
+example code had mentions of it. Anyhoozle, after some tweaking around (and some
+ugly soldering) I achieved:
+
+#+begin_export md
+ <video width="320" height="240" controls>
+  <source src="./figures/leds_cycle.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+#+end_export
+
+Happy days! The  LED driver was one of  the last parts of the  list, which means
+that the end is  in sight! The coming week I will integrate  the driver with the
+keyboard class and check the box below.
+
+** Changes
+- [X] LED driver
+  - [X] Initialize LED driver
+  - [X] Make LED wrapper in keyboard class
 
 * OLED Display
 ** Changes
@@ -598,10 +627,10 @@ from sleep (which is ideal).
 :LOGBOOK:
 CLOCK: [2021-08-05 Thu 11:58]--[2021-08-05 Thu 12:43] =>  0:45
 :END:
-- [-] Implement deep sleep
+- [X] Implement deep sleep
   + [X] added deep sleep time-out to config
   + [X] Touch pins will be either rows or columns
-  + [ ] Test  matrix scan diodes  with deep  sleep feature,
+  + [X]  Test matrix  scan diodes  with deep  sleep feature,
     i.e.  does  deep  sleep   current  still  register  with
     row2column or reverse connection.
 
@@ -612,32 +641,53 @@ CLOCK: [2021-08-05 Thu 11:58]--[2021-08-05 Thu 12:43] =>  0:45
   + [ ] Inline to battery directly.
 
 * Backlog and weird behavior notes
-- Pressing  down  a  key  repeatedly and  then  another  key
-  afterwards, stops sending the  initially pressed down key.
-  For example holding down `a` and then pressing any other
-  key (including modifies) stops sending `a`.
-- Figure out bug  where `-` is sent  repeatedly. This occurs
-  especially when sending `a` key.  I think it is related to
-  the ascii code for for `a` and `-`.
-- Figure out bug  where 'up arrow' is  sent repeatedly. This
-  occurs  when the  keyboard is  connected to  bluetooth. No
-  keys are send on my part.
-- Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd
-  symbols to appear when rotating.  In addition, when set in
-  a particular condition it will cause the rotary encoder to
-  fail  to  upload  code.  This   effect  is  gone  with  an
-  additional turn. Apparently, the esp32 has some flaw in it
-  that  some pins  are  sensitive to  inputs when  uploading
-  code.     More     info      can     be     found     here
-  https://github.com/espressif/arduino-esp32/issues/1497.  I
-  have changed pin 1 to pin 2 which seemed to have fixed the
-  issue.
+** DONE Pressing  down  a  key  repeatedly and  then  another  key
+afterwards, stops  sending the  initially pressed  down key.
+For example holding down `a` and then pressing any other key
+(including modifies) stops sending `a`.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+** DONE Figure out bug  where `-` is sent  repeatedly. This occurs
+especially when  sending `a` key.  I think it is  related to
+the ascii code for for `a` and `-`.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+** DONE Figure out bug  where 'up arrow' is  sent repeatedly. This
+occurs when the keyboard is  connected to bluetooth. No keys
+are send on my part.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+** DONE Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd symbol to appear  when  rotating
+In  addition, when  set in  a particular  condition it  will
+cause the rotary encoder to fail to upload code. This effect
+is gone with  an additional turn. Apparently,  the esp32 has
+some flaw in it that some  pins are sensitive to inputs when
+uploading   code.    More   info    can   be    found   here
+https://github.com/espressif/arduino-esp32/issues/1497.    I
+have changed pin  1 to pin 2 which seemed  to have fixed the
+issue.
+
+GPIO0, GPIO02  seemed to both  be sensitive to  noise. Don't
+use these pins for sensitive  operations. Moving the GPIO to
+another  range   (currently  25   for  LED)   is  relatively
+noiseless.
+
+
 * Final checklist
 Check that the following components work:
 + [ ] Matrix
   - [ ] Does scanning work?
   - [ ] Does ghosting occur?
-+ [ ] ESPNOW
++ [ ] ESPNOW [hard to write unit test for]
   - [ ] Does the wireless bridge work?
 + [ ] Bluetooth
   - [ ] Is the unit detected as a keyboard?
@@ -660,17 +710,17 @@ Check that the following components work:
     for example input pins in the 3x range.
 
 
-* Unittests
-Start writing unittests
-- [ ] matrix scanner
+* Unit tests
+Start writing unit tests
+- [-] matrix scanner
   + [ ] Pin modes
-  + [ ] Debouncing
-  + [ ] Registry of multiple keys simultaneously
+  + [X] Debouncing
+  + [X] Registry of multiple keys simultaneously
 
 - [ ] Keyboard
   + [ ] Sending of messages without being connected to bluetooth
 
-* Bk code
+* Bk code :noexport:
 #+name: display printing
 #+begin_src c++
     // this->mesh->buffer.active_keys = this->matrix->active_keys;
@@ -703,3 +753,435 @@ Start writing unittests
     // }
 
 #+end_src
+
+* PCB layout design
+** DONE figure out building
+ - PIO building:
+   - set environment to esp32
+
+** DONE Fixed layout with diodes
+** DONE Coordinates
+ #+begin_src jupyter-python
+from matplotlib import style
+
+style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt, sys, os
+
+sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+import pcbnew
+from itertools import product
+
+board_fp = "miniv2/mini.kicad_pcb"
+base = os.path.expanduser("~/projects/mini_ble")
+pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+unit = 1
+scale = 2e7
+nrows, ncols = 5, 6
+
+row_offset = [0, 0, 1.3, 1.7, 0.9, 0]  # cm
+rows = np.arange(0, nrows)  # - nrows / 2
+cols = np.arange(0, ncols) * unit
+
+key = {}
+modules = {m.GetReference(): m for m in pcb.GetModules()}
+fig, ax = plt.subplots()
+
+degs = dict(K54=5, K55=10, K56=15)
+center = np.array((10.25, 0.76))  # center of work area
+for idx, (col, offset) in enumerate(zip(cols, row_offset)):
+    for jdx, row in enumerate(rows[::-1]):
+        pos = np.array((col, row + offset / 4))
+        gp = f"{jdx + 1}{idx + 1}"
+        # plot
+        ax.scatter(*pos)
+        ax.annotate(gp, pos, ha="center", va="bottom")
+
+        switch = f"K{gp}"
+        deg = degs.get(switch, 0)
+        switch_pos = dict(pos=(center + pos) * scale, deg=deg)
+        key[switch] = switch_pos
+
+        diode = f"D{gp}"
+        tmp = 180
+        diode_pos = dict(
+            pos=(pos + +center + np.array([0, unit / 2.25])) * scale, deg=tmp
+        )
+        key[diode] = diode_pos
+
+        led = f"LED{gp}"
+        # led_pos = dict(pos=(pos + center + np.array([0, -unit * 0.27])) * scale, deg=0)
+        led_pos = dict(pos=(pos + center + np.array([0, -unit * 0.27])) * scale, deg=0)
+        key[led] = led_pos
+
+md = 1 / 8
+
+
+def move_angle(pos, r, theta):
+    x = np.exp(theta * 1j) * r
+    update = np.array([x.real, x.imag])
+    pos += update
+    return pos
+
+
+for k, v in key.items():
+    if m := modules.get(k):
+        pos = v.get("pos")
+        deg = v.get("deg")
+
+        # deal with leds
+        if k.startswith("L"):
+            p = k[-2:]
+            n = f"K{p}"
+            keysw = modules.get(n)
+            deg = keysw.GetOrientationDegrees()
+            keypos = key.get(n).get("pos")
+            # magic number is empirically determined.
+            # I don't understand why it is not possible to move it by
+            # x units
+
+            pos = move_angle(keypos, -5.625* unit * 1e6, (90 - deg) * 2 * np.pi / 360)
+
+        if k == "K54":
+            pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
+            m.SetOrientationDegrees(deg)
+        if k == "K55":
+            pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
+            m.SetOrientationDegrees(deg)
+        if k == "K56":
+            pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
+            m.SetOrientationDegrees(deg)
+
+        point = pcbnew.wxPoint(*pos)
+        m.SetPosition(point)
+        m.SetOrientationDegrees(deg)
+        if not m.IsFlipped():
+            m.Flip(aCentre=point)
+
+# for k, v in key.items():
+#     if k.startswith("D"):
+#         if k[-2:] in "54 55 56":
+#             sw = modules.get(k)
+#             n = f"K{k[-2:]}"
+#             keypos = key.get(n).get('pos')
+#             deg = key.get(n).get('deg')
+
+# pos  = move_angle(keypos, -18 * unit * 1e6, (270) * 2* np.pi / 360)
+# sw.SetPosition(pcbnew.wxPoint(*pos))
+# sw.SetOrientationDegrees(deg)
+
+import shapely.geometry
+
+ps = np.zeros((1, 2))
+for m, v in modules.items():
+    points = None
+
+    # stand off for top plate
+    if m == "C11":
+        # gather top left
+        points = "K11 K12 K22 K21".split()
+    if m == "C15":
+        # gather bottom left
+        points = "K31 K32 K42 K41".split()
+    if m == "C33":
+        # gather center
+        points = "K23 K24 K34 K33".split()
+    if m == "C51":
+        # gather top right
+        points = "K15 K16 K26 K25".split()
+    if m == "C55":
+        # gather bottom right
+        points = "K45 K46 K56 K55".split()
+
+    if points:
+        points = np.array([modules.get(k).GetPosition() for k in points])
+        shape = shapely.geometry.Polygon(points)
+        center = list(shape.centroid.coords)[0]
+        v.SetPosition(pcbnew.wxPoint(*center))
+    # microcontrollers
+    if m.lower().startswith("u2"):
+        # get inner key top
+        top = modules.get("K46")
+
+        pos = list(top.GetCenter())
+        # pos = move_angle(pos, 1.1 * scale * unit, 0)
+        pos = move_angle(pos, 1.1 * scale * unit, 0)
+
+        # pos = move_angle(pos, 0.9 * scale * unit, 0)
+        top = top.GetBoundingBox().GetHeight()
+        h = v.GetBoundingBox().GetHeight()
+        target = pos[1]
+
+        # pos[1] = target - 0.25 * h
+        pos[1] = target + 0.32 * h
+        v.SetOrientationDegrees(90)
+        if m.lower().endswith("right1"):
+            # if not v.IsFlipped():
+            # v.Flip(v.GetPosition())
+            # pos[0] += .075 *  scale
+            w = v.GetBoundingBox().GetWidth()
+            pos = move_angle(pos, 2 / 16 * w * unit, theta=0)
+            print(pos)
+
+        v.SetPosition(pcbnew.wxPoint(*pos))
+    if m.lower().startswith("rot"):
+        ks = modules.get("K56")
+        point = np.array(list(ks.GetPosition()), dtype=float)
+        point = move_angle(point, 1.25 * unit * scale, 0)
+
+        point = pcbnew.wxPoint(*point)
+        v.SetPosition(point)
+
+        v.SetOrientationDegrees(ks.GetOrientationDegrees())
+        # v.SetOrientationDegrees(90)
+
+    p = np.array(list(v.GetPosition())).reshape(-1, 2)
+    ps = np.concatenate((ps, p), axis=0)
+
+for m, v in modules.items():
+
+    if m == "EC11":
+        esp = modules.get("U2_LEFT1")
+
+        pos = esp.GetPosition()
+        bb = esp.GetBoundingBox()
+        width = bb.GetWidth()
+        height = bb.GetHeight()
+
+        pos = np.array([pos.x - width / 4, height * 0.4], dtype = float)
+        print(pos)
+        pos = pcbnew.wxPoint(*pos)
+        v.SetPosition(pos)
+    elif m == "EC12":
+        esp = modules.get("U2_RIGHT1")
+
+        pos = esp.GetPosition()
+        bb = esp.GetBoundingBox()
+        width = bb.GetWidth()
+        height = bb.GetHeight()
+
+        pos = np.array([pos.x + width / 4, height * 0.4], dtype = float)
+        print(pos)
+        pos = pcbnew.wxPoint(*pos)
+        v.SetPosition(pos)
+
+m = modules.get("DROT1")
+print(m)
+rot = modules.get("ROT1")
+pos  = rot.GetPosition()
+other = modules.get("D56").GetPosition()
+pos = np.array([pos.x, other.y * .7], dtype = float)
+pos = pcbnew.wxPoint(*pos)
+
+m.SetPosition(pos)
+
+
+# center = np.array((62.5, 47.6)) # center of work area
+# for k, v in modules.items():
+#     pos = v.GetPosition()
+#     #recenter
+#     rc = [i - j for i, j in zip(pos, center)]
+#     v.SetPosition(pcbnew.wxPoint(*rc))
+
+# print(pos)
+ps = ps[1:]
+from scipy.spatial import ConvexHull as ch
+
+h = ps[ch(ps).simplices]
+pcb.Save(os.path.join(base, board_fp))
+
+fig.show()
+ #+end_src
+
+ #+RESULTS:
+ :RESULTS:
+ : [3.30285556e+08 5.32982838e+07]
+ : [3.36856668e+08 2.26228548e+07]
+ : [3.20395138e+08 2.26228548e+07]
+ : <pcbnew.MODULE; proxy of <Swig Object of type 'MODULE *' at 0x7fca468338a0> >
+ [[file:./.ob-jupyter/e568b79430a8f2ed531cabc1ac22dac5e06f22fd.png]]
+ :END:
+
+#+name: edgecuts
+#+begin_src jupyter-python
+import matplotlib.pyplot as plt, cmasher as cmr
+import numpy as np, os, sys, networkx as nx, warnings
+from plexsim import models
+from imi import infcy
+warnings.simplefilter("ignore"); plt.style.use("fivethirtyeight spooky".split())
+
+sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+import pcbnew
+board_fp = "miniv2/mini.kicad_pcb"
+base = os.path.expanduser("~/projects/mini_ble")
+pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+
+bb = pcb.GetBoundingBox()
+ec = pcb.GetLayerID("Edge.Cuts")
+
+
+rect = bb.getWxRect()
+modules = {m.GetReference(): m for m in pcb.GetModules()}
+def get_outline(module):
+    bbox = module.GetBoundingBox()
+    x, width, y, height = (bbox.GetX(), bbox.GetWidth(), bbox.GetY(), bbox.GetHeight())
+
+    # if abs(x + width) > abs(x):
+        # x = x+width
+    # if abs(y + height) > abs(y):
+        # y = y + height
+
+    return x, y, width, height
+
+pos = []
+for idx, (k, v) in enumerate(modules.items()):
+    # print(k)
+    if k.lower().startswith("k") or k.lower().startswith("rot") or k.lower().startswith("u2"):
+        # print(k)
+        x, y, w, h = get_outline(v)
+        # print(k, x, y)
+        pos.append((x, y))
+        pos.append((x + w, y))
+        pos.append((x, y + h))
+        pos.append((x + w, y + h))
+pos = np.array(pos)
+import alphashape
+from shapely import geometry
+from descartes import PolygonPatch
+print(pos.shape)
+alpha = 0
+alpha = alphashape.alphashape(pos, alpha = alpha)
+fig, ax = plt.subplots()
+ax.scatter(*pos.T)
+# ax.scatter(*pos[:, [0, 2]].T)
+# ax.scatter(*pos[:, [1, 2]].T)
+# ax.scatter(*pos[:, [1, 3]].T)
+
+# ax.add_patch(alpha)
+ax.plot(*alpha.exterior.xy)
+fig.show()
+
+ec_id = pcb.GetLayerID("Edge.Cuts")
+
+def move_angle(pos, r, theta):
+    x = np.exp(theta * 1j) * r
+    update = np.array([x.real, x.imag])
+    pos += update
+    return pos
+
+
+def rescale(xy, r = 1.1):
+    # theta = np.arctan2(xy[1] / xy[0])
+    theta = np.arctan2(xy[1], xy[0]) #* 180 / np.pi
+    p = np.exp(1j * theta) * r
+    return xy + np.array([p.real, p.imag])
+
+
+from shapely import affinity as aff
+r = 1.01
+alpha = aff.scale(alpha, xfact = r, yfact = r)
+xy = np.array(alpha.exterior.xy).T
+for idx in range(xy.shape[0]):
+    tmp = np.roll(xy, idx, axis = 0)
+    start, end = tmp[0], tmp[1]
+    # start = rescale(start, r = r)
+    # end   = rescale(end, r = r)
+    x1 = pcbnew.wxPoint(*start.astype(float))
+    x2 = pcbnew.wxPoint(*end.astype(float))
+    ec = pcbnew.DRAWSEGMENT(pcb)
+    pcb.Add(ec)
+    ec.SetStart(x1)
+    ec.SetEnd(x2)
+    ec.SetLayer(ec_id)
+    ax.scatter(*start, color = 'red', s = 30)
+pcb.Save(os.path.join(base, board_fp))
+ #+end_src
+
+ #+RESULTS: edgecuts
+ :RESULTS:
+ : (120, 2)
+ : True
+ [[file:./.ob-jupyter/668fdaafe1699269bd24231e56b1a7f7bad6921b.png]]
+ :END:
+
+** DONE Place diodes
+** DONE Change footprints to hot swappable footprintg
+** DONE Layout TTGO_oled
+ #+begin_src jupyter-python
+from matplotlib import style; style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt
+import sys, os; sys.path.insert(0, '/usr/lib/python3.9/site-packages')
+fp = os.path.expanduser('~/projects/mini_ble/miniv2/esp32.kicad_pcb')
+
+import pcbnew;
+from shapely import geometry as geom
+
+class BoardConverter:
+    def __init__(self, fp):
+        self.board  = pcbnew.LoadBoard(fp)
+
+        self.layers = {44 : "F.SilkS",
+                       0 : "F.Cu",
+                       31 : "B.Cu"}
+
+        # self.layers = {"F.SilkS" : 44, "F.Cu" : 0, "B.Cu" : 31,
+                       # }
+        self.mod = pcbnew.FootPrint("test.mode_pretty")
+    def convert(self):
+        self.get_silks()
+
+    def get_silks(self):
+        for segment in self.board.GetDrawings():
+            if self.layers.get(pcbnew.DRAWSEGMENT_ClassOf(segment), None) == "F.SilkS":
+                pass
+    def create_arc(self, start, end, angle):
+        return geom.LineString(xy)
+    def get_tracks(self):
+        for track in self.board.GetTracks():
+            if self.layers.get(track.GetLayer(), "").endswith('.Cu'):
+                start, end  = track.GetStart(), track.GetEnd()
+
+                poly = Line(start = start, end = end, layer = layer, width = 0.15)
+                self.mod.append(poly)
+
+
+bc = BoardConverter(fp)
+
+bc.convert()
+
+ #+end_src
+ Got the layout from LC2EDA
+** DONE Attach rotary encoder
+** DONE Fix board edge cuts
+** TODO add power switch
+** DONE Center diodes around keycaps
+** DONE Add switch leds
+** TODO Wire board
+** TODO Check wiring with code
+** DONE determine layout
+** encoder pins
+ from x32k keyboard config
+*** rotary encoder
+ #define ENCODER_A_PIN GPIO_NUM_17 // encoder phase A pin
+ #define ENCODER_B_PIN GPIO_NUM_34// encoder phase B pin
+ #define ENCODER_S_PIN GPIO_NUM_16// encoder switch pin
+** oled pins
+ # these thos works`
+ #define OLED_SDA_PIN GPIO_NUM_4
+ #define OLED_SCL_PIN GPIO_NUM_15
+** TODO implement hid_le_env
+
+   https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
+ The hid_le_env seems to control the bluetooth stuff at the low-end
+ - What are its functions?
+ - Do I need to bind them or just wrap them?
+ - It contains a lot of definitions and spans multiple files; worth it?
+
+** misc
+ - http://amasci.com/miscon/whyhard2.html
+ - https://wiki.liutyi.info/display/ARDUINO/ESP32+TTGO+V2.0+OLED+Drawing+Demo
+ - https://github.com/ThingPulse/esp8266-oled-ssd1306
+ - https://complexityexplained.github.io/
+ - https://www.math.uh.edu/~dblecher/pf2.html
+ - https://hbr.org/2019/02/how-big-a-problem-is-it-that-a-few-shareholders-own-stock-in-so-many-competing-companies

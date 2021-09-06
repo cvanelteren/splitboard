@@ -146,8 +146,9 @@ void Mesh::send() {
 
 std::vector<keyswitch_t> Mesh::get_buffer() {
   /**
-   * @brief     Returns non-empty mesh keys.
+   * @brief     Returns non-empty mesh keys
    */
+  // std::vector<keyswitch_t> buffer = Mesh::buffer;
   std::vector<keyswitch_t> buffer;
 
   // buffer is an array of 6 and can be empty

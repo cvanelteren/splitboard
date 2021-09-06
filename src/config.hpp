@@ -26,7 +26,7 @@ public:
   // std::vector<size_t> row_pins = {13, 12, 14, 27, 26};
   // std::vector<size_t> col_pins = {18, 23, 19, 22, 21};
   // std::vector<size_t> col_pins = {34, 39, 37, 36};
-  std::vector<uint8_t> row_pins = {13, 12, 14, 27, 0};
+  std::vector<uint8_t> row_pins = {0, 13, 12, 14, 27};
   std::string scan_source = "col"; // diode direction
 
   // layer_t test = {{18, {{34, "A"}}}};
@@ -36,11 +36,9 @@ public:
   const size_t deep_sleep_timeout = 300000; // 5 minutes
   // const size_t deep_sleep_timeout = 6000; // 5 minutes
   static const uint8_t led_pin = 25;
-  uint8_t num_led = 1;
+  uint8_t num_led = 2;
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
-
-  uint8_t debounce = 5;
 
   // info advertising bluetooth
   std::string device_manufacturer = "Casper van Elteren";

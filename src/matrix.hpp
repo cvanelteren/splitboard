@@ -20,7 +20,6 @@
 
 class Matrix {
   // properties
-  size_t debounce;
   std::vector<uint8_t> source_pins;
   std::vector<uint8_t> sinc_pins;
 

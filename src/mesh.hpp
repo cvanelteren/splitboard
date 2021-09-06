@@ -5,6 +5,13 @@
 #include "types.hpp"
 #include <WiFi.h>
 #include <esp_now.h>
+
+typedef struct {
+  uint16_t keys;
+  uint8_t layer;
+
+} msg_t;
+
 class Mesh {
 public:
   Mesh();

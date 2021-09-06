@@ -703,11 +703,22 @@ Check that the following components work:
   - [ ] Do they display the GUI?
 + [ ] PCB
   - [ ] Are all the components connected?
-  - [ ] Is the ground plate present?
+    + [ ] Are touch pins  connected to the pins that go high
+      in the code? (sinc pins)
+    + [ ] Are the leds VSS connected to the 5v line?
+    + [ ] Are the rotary encoder pins A and B matching
+      what is defined in the Code base to be A and B?
+    + [ ] Do the LEDS go from DIN to DOUT in series?
+      - [ ]  is the first  LED connected  to DIN pin  on the
+        micro controller?
+  - [ ]  Is the  ground plate present  and connected  to all
+    ground pins?
   - [ ] Are the pins present with enough clearance?
+    - [ ] Use the clearance guide at  https://jlcpcb.com/capabilities/Capabilities
 + [ ] Software hardware interface
   - [ ] verify that no pins are used that will cause issues,
     for example input pins in the 3x range.
+  Good luck :)!
 
 
 * Unit tests
@@ -761,7 +772,8 @@ Start writing unit tests
 
 ** DONE Fixed layout with diodes
 ** DONE Coordinates
- #+begin_src jupyter-python
+#+name: board layout
+#+begin_src jupyter-python
 from matplotlib import style
 
 style.use("fivethirtyeight".split())
@@ -776,7 +788,7 @@ base = os.path.expanduser("~/projects/mini_ble")
 pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
 
 unit = 1
-scale = 2e7
+scale = 19e6
 nrows, ncols = 5, 6
 
 row_offset = [0, 0, 1.3, 1.7, 0.9, 0]  # cm
@@ -788,9 +800,14 @@ modules = {m.GetReference(): m for m in pcb.GetModules()}
 fig, ax = plt.subplots()
 
 degs = dict(K54=5, K55=10, K56=15)
-center = np.array((10.25, 0.76))  # center of work area
+center = np.array((15.25, 0.76))  # center of work area
+# center = modules.get("K11").GetCenter()
+# center = np.array((center.x, center.y))
 for idx, (col, offset) in enumerate(zip(cols, row_offset)):
     for jdx, row in enumerate(rows[::-1]):
+        # the offset was determined based on my hand.
+        # it contains the entire length from one finger to the next.
+        # The /4 here refers to the quarter that a full length would be
         pos = np.array((col, row + offset / 4))
         gp = f"{jdx + 1}{idx + 1}"
         # plot
@@ -805,7 +822,7 @@ for idx, (col, offset) in enumerate(zip(cols, row_offset)):
         diode = f"D{gp}"
         tmp = 180
         diode_pos = dict(
-            pos=(pos + +center + np.array([0, unit / 2.25])) * scale, deg=tmp
+            pos=(pos + center + np.array([0, unit / 2.25])) * scale, deg=tmp
         )
         key[diode] = diode_pos
 
@@ -836,11 +853,24 @@ for k, v in key.items():
             keysw = modules.get(n)
             deg = keysw.GetOrientationDegrees()
             keypos = key.get(n).get("pos")
-            # magic number is empirically determined.
-            # I don't understand why it is not possible to move it by
-            # x units
 
-            pos = move_angle(keypos, -5.625* unit * 1e6, (90 - deg) * 2 * np.pi / 360)
+            keysw.SetOrientationDegrees(0)
+            center_bb = keysw.GetBoundingBox()
+            center_sw = center_bb.GetCenter()
+            height_sw = center_bb.GetHeight()
+
+            # keypos = np.array([center_sw.x, center_sw.y - heigth_sw / 2 ])
+
+            keypos = np.array([center_sw.x, center_sw.y], dtype = float)
+            # print(m.GetOrientationDegrees(), deg)
+            # pos = move_angle(keypos, (2.5 + 1.8) * unit * 1e6, m.GetOrientation())
+            # 1.4mm refers to half the width of the SK6812mini-e
+
+            distance_edge = modules.get("K11").GetBoundingBox().GetHeight() / 2 - (2.5 + 1.4  + .4) * 1e6
+
+
+            pos = move_angle(keypos, distance_edge , (270 - deg) * 2 * np.pi / 360)
+            keysw.SetOrientationDegrees(deg)
 
         if k == "K54":
             pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
@@ -891,7 +921,8 @@ for m, v in modules.items():
         points = "K15 K16 K26 K25".split()
     if m == "C55":
         # gather bottom right
-        points = "K45 K46 K56 K55".split()
+        # points = "K45 K46 K56 K55".split()
+        points = "K44 K45 K55 K54".split()
 
     if points:
         points = np.array([modules.get(k).GetPosition() for k in points])
@@ -900,34 +931,38 @@ for m, v in modules.items():
         v.SetPosition(pcbnew.wxPoint(*center))
     # microcontrollers
     if m.lower().startswith("u2"):
-        # get inner key top
-        top = modules.get("K46")
+        # move the rotary encoder next to k46
+        keyswitch = modules.get("K46")
+        bb = keyswitch.GetBoundingBox()
+        pos = np.array(list(keyswitch.GetCenter()), dtype = float)
 
-        pos = list(top.GetCenter())
         # pos = move_angle(pos, 1.1 * scale * unit, 0)
-        pos = move_angle(pos, 1.1 * scale * unit, 0)
 
-        # pos = move_angle(pos, 0.9 * scale * unit, 0)
-        top = top.GetBoundingBox().GetHeight()
-        h = v.GetBoundingBox().GetHeight()
-        target = pos[1]
-
-        # pos[1] = target - 0.25 * h
-        pos[1] = target + 0.32 * h
         v.SetOrientationDegrees(90)
+        pos = move_angle(pos, bb.GetWidth() / 2 + v.GetBoundingBox().GetWidth() / 2, 0)
+        pos[1] += v.GetBoundingBox().GetHeight() / 2
+        # pos = move_angle(pos, 0.9 * scale * unit, 0)
+
         if m.lower().endswith("right1"):
             # if not v.IsFlipped():
             # v.Flip(v.GetPosition())
             # pos[0] += .075 *  scale
             w = v.GetBoundingBox().GetWidth()
-            pos = move_angle(pos, 2 / 16 * w * unit, theta=0)
+            pos = move_angle(pos, 3.5e6, theta=0)
             print(pos)
 
         v.SetPosition(pcbnew.wxPoint(*pos))
     if m.lower().startswith("rot"):
         ks = modules.get("K56")
-        point = np.array(list(ks.GetPosition()), dtype=float)
-        point = move_angle(point, 1.25 * unit * scale, 0)
+        # point = np.array(list(ks.GetPosition()), dtype=float)
+        point = np.array(list(ks.GetCenter()), dtype = float)
+        deg = ks.GetOrientationDegrees()
+        # print(deg, type(deg))
+        ks.SetOrientationDegrees(0)
+        width = ks.GetBoundingBox().GetWidth()
+        ks.SetOrientationDegrees(deg)
+        point = move_angle(point, width + 8e6, 0)
+        # point = move_angle(point, 1.25 * unit * scale, 0)
 
         point = pcbnew.wxPoint(*point)
         v.SetPosition(point)
@@ -938,17 +973,18 @@ for m, v in modules.items():
     p = np.array(list(v.GetPosition())).reshape(-1, 2)
     ps = np.concatenate((ps, p), axis=0)
 
+# add columns pillars to the rotary encoder
 for m, v in modules.items():
 
     if m == "EC11":
         esp = modules.get("U2_LEFT1")
 
-        pos = esp.GetPosition()
+        pos = esp.GetCenter()
         bb = esp.GetBoundingBox()
         width = bb.GetWidth()
         height = bb.GetHeight()
 
-        pos = np.array([pos.x - width / 4, height * 0.4], dtype = float)
+        pos = np.array([pos.x - width / 4, pos.y - height / 2 - 6e6], dtype = float)
         print(pos)
         pos = pcbnew.wxPoint(*pos)
         v.SetPosition(pos)
@@ -960,19 +996,21 @@ for m, v in modules.items():
         width = bb.GetWidth()
         height = bb.GetHeight()
 
-        pos = np.array([pos.x + width / 4, height * 0.4], dtype = float)
+        pos = np.array([pos.x + width / 4, pos.y - height / 2 - 6e6], dtype = float)
         print(pos)
         pos = pcbnew.wxPoint(*pos)
         v.SetPosition(pos)
 
+
+print("adding rot")
 m = modules.get("DROT1")
 print(m)
 rot = modules.get("ROT1")
+rot.SetOrientationDegrees(modules.get("K56").GetOrientationDegrees() )
 pos  = rot.GetPosition()
 other = modules.get("D56").GetPosition()
 pos = np.array([pos.x, other.y * .7], dtype = float)
 pos = pcbnew.wxPoint(*pos)
-
 m.SetPosition(pos)
 
 
@@ -989,26 +1027,135 @@ from scipy.spatial import ConvexHull as ch
 
 h = ps[ch(ps).simplices]
 pcb.Save(os.path.join(base, board_fp))
-
 fig.show()
  #+end_src
 
- #+RESULTS:
+
+
+
+
+
+ #+name: edgecuts
+ #+begin_src jupyter-python
+ import matplotlib.pyplot as plt, cmasher as cmr
+ import numpy as np, os, sys, networkx as nx, warnings
+ from plexsim import models
+ from imi import infcy
+ warnings.simplefilter("ignore"); plt.style.use("fivethirtyeight spooky".split())
+
+ sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+ import pcbnew
+ board_fp = "miniv2/mini.kicad_pcb"
+ base = os.path.expanduser("~/projects/mini_ble")
+ pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+
+ bb = pcb.GetBoundingBox()
+ ec = pcb.GetLayerID("Edge.Cuts")
+
+
+ rect = bb.getWxRect()
+ modules = {m.GetReference(): m for m in pcb.GetModules()}
+ def get_outline(module):
+     bbox = module.GetBoundingBox()
+     x, width, y, height = (bbox.GetX(), bbox.GetWidth(), bbox.GetY(), bbox.GetHeight())
+
+     # if abs(x + width) > abs(x):
+         # x = x+width
+     # if abs(y + height) > abs(y):
+         # y = y + height
+
+     return x, y, width, height
+
+ pos = []
+ for idx, (k, v) in enumerate(modules.items()):
+     # print(k)
+     if k.lower().startswith("k") or k.lower().startswith("rot") or k.lower().startswith("u2"):
+         # print(k)
+         x, y, w, h = get_outline(v)
+         # print(k, x, y)
+         pos.append((x, y))
+         pos.append((x + w, y))
+         pos.append((x, y + h))
+         pos.append((x + w, y + h))
+ pos = np.array(pos)
+ import alphashape
+ from shapely import geometry
+ from descartes import PolygonPatch
+ print(pos.shape)
+ alpha = 0
+ alpha = alphashape.alphashape(pos, alpha = alpha)
+ fig, ax = plt.subplots()
+ ax.scatter(*pos.T, s = 10)
+ # ax.scatter(*pos[:, [0, 2]].T)
+ # ax.scatter(*pos[:, [1, 2]].T)
+ # ax.scatter(*pos[:, [1, 3]].T)
+
+ # ax.add_patch(alpha)
+ ax.plot(*alpha.exterior.xy)
+ fig.show()
+
+ ec_id = pcb.GetLayerID("Edge.Cuts")
+
+ def move_angle(pos, r, theta):
+     x = np.exp(theta * 1j) * r
+     update = np.array([x.real, x.imag])
+     pos += update
+     return pos
+
+
+ def rescale(xy, r = 1.1):
+     # theta = np.arctan2(xy[1] / xy[0])
+     theta = np.arctan2(xy[1], xy[0]) #* 180 / np.pi
+     p = np.exp(1j * theta) * r
+     return xy + np.array([p.real, p.imag])
+
+
+ from shapely import affinity as aff
+ r = 1.0
+ alpha = aff.scale(alpha, xfact = r, yfact = r)
+ xy = np.array(alpha.exterior.xy).T
+ for idx in range(xy.shape[0]):
+     tmp = np.roll(xy, idx, axis = 0)
+     start, end = tmp[0], tmp[1]
+     # start = rescale(start, r = r)
+     # end   = rescale(end, r = r)
+     x1 = pcbnew.wxPoint(*start.astype(float))
+     x2 = pcbnew.wxPoint(*end.astype(float))
+     ec = pcbnew.DRAWSEGMENT(pcb)
+     pcb.Add(ec)
+     ec.SetStart(x1)
+     ec.SetEnd(x2)
+     ec.SetLayer(ec_id)
+     ax.scatter(*start, color = 'red', s = 30)
+
+
+ax.axis('off')
+# fig.savefig("/home/casper/Documents/PlatformIO/Projects/arduino_esp32/figures/test.svg")
+ # k1 = modules.get("K11")
+ # k2 = modules.get("K21")
+ # c1 = k1.GetBoundingBox().GetCenter()
+ # k2.SetPosition(pcbnew.wxPoint(c1.x, c1.y - 1 * unit * 1e6))
+
+ # ax.set_xscale("log")
+ # ax.set_yscale("log")
+ pcb.Save(os.path.join(base, board_fp))
+ #+end_src
+
+ #+RESULTS: edgecuts
  :RESULTS:
- : [3.30285556e+08 5.32982838e+07]
- : [3.36856668e+08 2.26228548e+07]
- : [3.20395138e+08 2.26228548e+07]
- : <pcbnew.MODULE; proxy of <Swig Object of type 'MODULE *' at 0x7fca468338a0> >
- [[file:./.ob-jupyter/e568b79430a8f2ed531cabc1ac22dac5e06f22fd.png]]
+ : (120, 2)
+ | 66295826.65 | 229187618.35 | 36491603.05 | 170876313.95 |
+ [[file:./.ob-jupyter/d039ec756cd964603dce5d41f357bd2d33a49b67.png]]
  :END:
 
-#+name: edgecuts
+
+#+name: moving c55
 #+begin_src jupyter-python
-import matplotlib.pyplot as plt, cmasher as cmr
-import numpy as np, os, sys, networkx as nx, warnings
-from plexsim import models
-from imi import infcy
-warnings.simplefilter("ignore"); plt.style.use("fivethirtyeight spooky".split())
+# this code moves the C55 column to the center of the middle half left keys.
+from matplotlib import style
+style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt, sys, os
 
 sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
 import pcbnew
@@ -1017,93 +1164,117 @@ base = os.path.expanduser("~/projects/mini_ble")
 pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
 
 
-bb = pcb.GetBoundingBox()
+modules = {m.GetReference(): m for m in pcb.GetModules()}
+
+targets = "K44 K45 K55 K54".split()
+points = np.array([modules.get(k).GetCenter() for k in targets])
+col1 = modules.get("C55")
+
+
+print(col1.GetPosition())
+from shapely import geometry
+shape = geometry.Polygon(points)
+center = list(shape.centroid.coords)[0]
+col1.SetPosition(pcbnew.wxPoint(*center))
+
+for t in targets:
+    m = modules.get(t)
+    print(t)
+    print(m.GetPosition())
+    print(m.GetCenter())
+
+pcb.Save(os.path.join(base, board_fp))
+print("Done")
+
+
+#+end_src
+
+#+RESULTS: moving c55
+#+begin_example
+(150261000, 128026000)
+K44
+(140250000, 112585000)
+(140250000, 112585000)
+K45
+(159250000, 116385000)
+(159250000, 116385000)
+K55
+(160639000, 143263000)
+(160639000, 143263000)
+K54
+(140947000, 139555000)
+(140947000, 139555000)
+Done
+#+end_example
+
+
+#+name: creating outline svg
+#+begin_src jupyter-python
+from matplotlib import style
+style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt, sys, os
+
+sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+import pcbnew
+board_fp = "miniv2/mini.kicad_pcb"
+base = os.path.expanduser("~/projects/mini_ble")
+pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+
 ec = pcb.GetLayerID("Edge.Cuts")
 
+from matplotlib.collections import LineCollection
+lc = []
+for drawing in pcb.GetDrawings():
+    start, end = drawing.GetStart(), drawing.GetEnd()
+    lc.append((start, end))
+lc = np.asarray(lc)
+print(lc.shape)
 
-rect = bb.getWxRect()
+tmp = lc.reshape(-1 ,2)
+xma, yma  = np.max(tmp[..., 0]), np.max(tmp[..., 1])
+xmi, ymi  = np.min(tmp[..., 0]), np.min(tmp[..., 1])
+lc_a = LineCollection(lc, lw = 1)
+
 modules = {m.GetReference(): m for m in pcb.GetModules()}
-def get_outline(module):
-    bbox = module.GetBoundingBox()
-    x, width, y, height = (bbox.GetX(), bbox.GetWidth(), bbox.GetY(), bbox.GetHeight())
+def compute_components(x):
+    x1 = x[0].GetCenter()
+    x2 = x[1].GetCenter()
+    return (x2.x - x1.x) / (1e6 * 19), (x2.y - x1.y) / (1e6 * 19)
 
-    # if abs(x + width) > abs(x):
-        # x = x+width
-    # if abs(y + height) > abs(y):
-        # y = y + height
-
-    return x, y, width, height
-
-pos = []
-for idx, (k, v) in enumerate(modules.items()):
-    # print(k)
-    if k.lower().startswith("k") or k.lower().startswith("rot") or k.lower().startswith("u2"):
-        # print(k)
-        x, y, w, h = get_outline(v)
-        # print(k, x, y)
-        pos.append((x, y))
-        pos.append((x + w, y))
-        pos.append((x, y + h))
-        pos.append((x + w, y + h))
-pos = np.array(pos)
-import alphashape
-from shapely import geometry
-from descartes import PolygonPatch
-print(pos.shape)
-alpha = 0
-alpha = alphashape.alphashape(pos, alpha = alpha)
+for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
+    tmp = tuple(modules.get(i) for i in x)
+    print(compute_components(tmp))
 fig, ax = plt.subplots()
-ax.scatter(*pos.T)
-# ax.scatter(*pos[:, [0, 2]].T)
-# ax.scatter(*pos[:, [1, 2]].T)
-# ax.scatter(*pos[:, [1, 3]].T)
+for m in pcb.GetModules():
+    ref = m.GetReference()
+    if ref.startswith("K") or  ref.startswith("ROT"):
+        ax.scatter(*m.GetCenter(), color = 'red')
 
-# ax.add_patch(alpha)
-ax.plot(*alpha.exterior.xy)
+ax.add_artist(lc_a)
+ax.set_xlim(xmi * .8, xma * 1.2)
+ax.set_ylim(ymi * .8, yma * 1.2)
+
+from shapely import geometry
+shape = geometry.Polygon(lc.reshape(-1, 2))
+# ax.plot(*shape.exterior.xy, lw = .2)
+ax.axis('off')
+fig.savefig("./figures/test_outline.svg", transparent = 1)
 fig.show()
+#+end_src
 
-ec_id = pcb.GetLayerID("Edge.Cuts")
-
-def move_angle(pos, r, theta):
-    x = np.exp(theta * 1j) * r
-    update = np.array([x.real, x.imag])
-    pos += update
-    return pos
-
-
-def rescale(xy, r = 1.1):
-    # theta = np.arctan2(xy[1] / xy[0])
-    theta = np.arctan2(xy[1], xy[0]) #* 180 / np.pi
-    p = np.exp(1j * theta) * r
-    return xy + np.array([p.real, p.imag])
+#+RESULTS: creating outline svg
+:RESULTS:
+: (93, 2, 2)
+: (0.03668421052631579, 1.4721052631578948)
+: (0.07310526315789474, 1.4672631578947368)
+: (0.109, 1.4593157894736841)
+: /tmp/ipykernel_41497/1427166331.py:51: UserWarning: Matplotlib is currently using module://matplotlib_inline.backend_inline, which is a non-GUI backend, so cannot show the figure.
+:   fig.show()
+[[file:./.ob-jupyter/9a03120dc08dabb065a10714fc496fc1ed28e6c6.png]]
+:END:
 
 
-from shapely import affinity as aff
-r = 1.01
-alpha = aff.scale(alpha, xfact = r, yfact = r)
-xy = np.array(alpha.exterior.xy).T
-for idx in range(xy.shape[0]):
-    tmp = np.roll(xy, idx, axis = 0)
-    start, end = tmp[0], tmp[1]
-    # start = rescale(start, r = r)
-    # end   = rescale(end, r = r)
-    x1 = pcbnew.wxPoint(*start.astype(float))
-    x2 = pcbnew.wxPoint(*end.astype(float))
-    ec = pcbnew.DRAWSEGMENT(pcb)
-    pcb.Add(ec)
-    ec.SetStart(x1)
-    ec.SetEnd(x2)
-    ec.SetLayer(ec_id)
-    ax.scatter(*start, color = 'red', s = 30)
-pcb.Save(os.path.join(base, board_fp))
- #+end_src
-
- #+RESULTS: edgecuts
- :RESULTS:
- : (120, 2)
- : True
- [[file:./.ob-jupyter/668fdaafe1699269bd24231e56b1a7f7bad6921b.png]]
- :END:
 
 ** DONE Place diodes
 ** DONE Change footprints to hot swappable footprintg

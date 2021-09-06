@@ -16,7 +16,6 @@ Matrix::Matrix(Config *config) {
       (config->scan_source == "row" ? config->row_pins : config->col_pins);
   this->sinc_pins =
       (config->scan_source == "row" ? config->col_pins : config->row_pins);
-  this->debounce = config->debounce;
 
   // activate pins
   this->setup_pins();
@@ -173,6 +172,10 @@ void callback(){
 };
 
 void Matrix::wakeup() {
+  for (auto pin : this->sinc_pins) {
+    detachInterrupt(digitalPinToInterrupt(pin));
+    // detachInterrupt(pin);
+  }
   setup_pins();
   setup_keys();
 }

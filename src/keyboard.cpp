@@ -175,7 +175,7 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
     // return (*this->active_layer)[2][1]; // qwerty a
     // Serial.printf("%d\n",
     // (*this->active_layer)[keyswitch.row][keyswitch.col]);
-    return (*this->active_layer)[keyswitch.row][keyswitch.col];
+    return (*this->active_layer)[keyswitch.col][keyswitch.row];
   }
 }
 
@@ -252,11 +252,11 @@ void Keyboard::update() {
    */
   // Serial.println("Scanning");
 
-  bool state;
-
-  // if (millis() - last_led_time > 100) {
-  //   state = (digitalRead(this->config->led_pin) ? LOW : HIGH);
-  //   digitalWrite(this->config->led_pin, state);
+  // bool state;
+  // if (millis() - last_led_time > 1000) {
+  //   pinMode(2, OUTPUT);
+  //   state = (digitalRead(2) ? LOW : HIGH);
+  //   digitalWrite(2, state);
   //   Serial.printf("Writing state as %d \n", state);
   //   last_led_time = millis();
   // }

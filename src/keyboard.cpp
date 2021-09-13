@@ -54,6 +54,7 @@ Keyboard::Keyboard(Config *config) {
   //                   {KC_NO, KC_NO, KC_NO, KC_LCTL, KC_ALT, KC_SPC, KC_ENTER,
   //                    KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
 
+  // std::unordered_map
   layer_t qwerty = {{KC_TILDE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
                      KC_9, KC_0, KC_BSPC},
                     {KC_A, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O,
@@ -75,7 +76,7 @@ Keyboard::Keyboard(Config *config) {
       {"LEFT",
        {{"UP", &KEY_MEDIA_VOLUME_UP}, {"DOWN", &KEY_MEDIA_VOLUME_DOWN}}},
       {"RIGHT",
-       {{"UP", &KEY_MEDIA_VOLUME_UP}, {"DOWN", &KEY_MEDIA_VOLUME_DOWN}}}};
+       {{"UP", &KEY_MEDIA_VOLUME_DOWN}, {"DOWN", &KEY_MEDIA_VOLUME_UP}}}};
   // this->ble = BleKeyboard(config->name);
 
   // this->fb = std::vector<uint8_t>(this->display->getDisplayHeight() *
@@ -156,26 +157,23 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
     Serial.println("Key release");
   }
 
-  // uint8_t col = (this->is_server ? keyswitch.col
-  // : keyswitch.col + this->matrix->get_cols());
-  // uint8_t row = keyswitch.row;
-  // if (keyswitch.pressed_down)
-
-  // TODO: remove sleep button
-  if (keyswitch.source == 21 && keyswitch.sinc == 13) {
-    // only on key release
-    if (!keyswitch.pressed_down)
+  auto keycode = (*this->active_layer)[keyswitch.col][keyswitch.row];
+  switch (keycode) {
+  case KC_SLEEP: {
+    if (keyswitch.pressed_down) {
       this->sleep();
+    }
+    break;
   }
-
-  if (keyswitch.source == 21 && keyswitch.sinc == 26) {
-    Serial.println("SENDING SHIFT");
-    return SHIFT + 1;
-  } else {
-    // return (*this->active_layer)[2][1]; // qwerty a
-    // Serial.printf("%d\n",
-    // (*this->active_layer)[keyswitch.row][keyswitch.col]);
-    return (*this->active_layer)[keyswitch.col][keyswitch.row];
+  case (LAYER_TAP):
+    // deal with layer tap stuff
+    Serial.println("SLEEPING!");
+    break;
+  default: {
+    Serial.printf("Sending a keycode \n");
+    return keycode;
+    break;
+  }
   }
 }
 
@@ -291,6 +289,28 @@ void Keyboard::update() {
   if ((millis() - this->get_last_activity()) >=
       this->config->deep_sleep_timeout) {
     this->sleep();
+  }
+
+  if (this->bluetooth.isConnected()) {
+    this->display->firstPage();
+    do {
+      this->display->log.println("");
+      this->display->log.print("\rhello:)");
+      // this->display->log.print(printf("Connected to %s", "test"));
+      // this->display->setFont(font);
+      // this->display->drawUTF8(1, 30, "hello :)");
+
+    } while (this->display->nextPage());
+  } else {
+    // this->display->clearDisplay();
+    this->display->firstPage();
+    do {
+      // this->display->log.println("");
+      this->display->log.print("\rNo Bluetooth :(");
+      // this->display->setFont(font);
+      // this->display->drawUTF8(1, 30, "No bluetooth :(");
+
+    } while (this->display->nextPage());
   }
 }
 

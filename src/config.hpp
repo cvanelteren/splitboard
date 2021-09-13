@@ -17,26 +17,29 @@
 
 // layer_t c({{s, b}});
 
+#define LAYER_TAP 0x400
+#define KC_SLEEP 0xFF
+#define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
+
 class Config { // see constructor in cpp file
 public:
   Config();
 
   // pin configuration
   std::vector<uint8_t> col_pins = {18, 23, 19, 22, 21, 26};
-  // std::vector<size_t> row_pins = {13, 12, 14, 27, 26};
-  // std::vector<size_t> col_pins = {18, 23, 19, 22, 21};
-  // std::vector<size_t> col_pins = {34, 39, 37, 36};
   std::vector<uint8_t> row_pins = {0, 13, 12, 14, 27};
   std::string scan_source = "col"; // diode direction
-
-  // layer_t test = {{18, {{34, "A"}}}};
-  // layers_t layers{{1, test}};
 
   // deep sleep settings
   const size_t deep_sleep_timeout = 300000; // 5 minutes
   // const size_t deep_sleep_timeout = 6000; // 5 minutes
+
+  // led settings
   static const uint8_t led_pin = 25;
   uint8_t num_led = 2;
+  std::vector<uint8_t> led_col_bins = {0,  5,  10,
+                                       14, 18, 22}; // count from the LED11 pin
+
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
 

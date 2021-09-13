@@ -1356,3 +1356,25 @@ bc.convert()
  - https://complexityexplained.github.io/
  - https://www.math.uh.edu/~dblecher/pf2.html
  - https://hbr.org/2019/02/how-big-a-problem-is-it-that-a-few-shareholders-own-stock-in-so-many-competing-companies
+* Layer taps
+The keyboard will  have 28 * 2 keys (in  principle). This is
+not enough to  emulate a real keyboard. For this  we need to
+utilize more "layers" to create  more degrees of freedom. In
+QMK  there  are  various  different modes  of  activating  a
+different keycode depending on how long you press a keycode.
+For example:
+
+#+begin_src c++
+// L-ayer, T-ap - 256 keycode max, 16 layer max
+#define LT(layer, kc) (kc | QK_LAYER_TAP | ((layer & 0xF) << 8))
+#+end_src
+
+The keycode is put into a range  that is not the same as the
+keycode  range. This  can be  seen by  the layer.  First the
+layer  is converted  to  a 8  bit integer  by  means of  the
+bitwise and. Next the number is shifted in "clear" zone (255
+and up). QK_LAYER_TAP is set inside a range that is probably
+outside the active range as  well. In totality we would have
+a keycode for  which the first 8 bits (up  to 128) represent
+the actual  keycode, the range 255  and up to some  bits are
+set to layers. QK_LAYER_TAP = 0x400. We can use this number.

@@ -1,0 +1,7 @@
+(fp_lib_table
+  (lib (name MX_Alps_Hybrid)(type KiCad)(uri ${KIPRJMOD}/kicad-footprints/MX_Alps_Hybrid)(options "")(descr ""))
+  (lib (name Diode_THT)(type KiCad)(uri ${KIPRJMOD}/kicad-footprints/Diode_THT.pretty)(options "")(descr ""))
+  (lib (name Kailh_Choc)(type KiCad)(uri ${KIPRJMOD}/kicad-footprints/MX_Alps_Hybrid/Kailh_Choc.pretty)(options "")(descr ""))
+  (lib (name LED_THT)(type KiCad)(uri ${KIPRJMOD}/kicad-footprints/LED_THT.pretty)(options "")(descr ""))
+  (lib (name kbd)(type KiCad)(uri ${KIPRJMOD}/kbd/kicad-footprints/kbd.pretty)(options "")(descr ""))
+)

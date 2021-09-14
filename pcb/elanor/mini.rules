@@ -1,0 +1,104 @@
+
+(rules PCB mini
+  (snap_angle 
+    fortyfive_degree
+  )
+  (autoroute_settings
+    (fanout off)
+    (eu.mihosoft.freerouting.autoroute on)
+    (postroute on)
+    (vias on)
+    (via_costs 50)
+    (plane_via_costs 5)
+    (start_ripup_costs 100)
+    (start_pass_no 19)
+    (layer_rule F.Cu
+      (active on)
+      (preferred_direction horizontal)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 2.2)
+    )
+    (layer_rule B.Cu
+      (active on)
+      (preferred_direction vertical)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 1.8)
+    )
+  )
+  (rule
+    (width 250.0)
+    (clear 300.0)
+    (clear 125.0 (type smd_to_turn_gap))
+  )
+  (padstack "Via[0-1]_800:400_um"
+    (shape
+      (circle F.Cu 800.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 800.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_800:400_um" "Via[0-1]_800:400_um" default
+  )
+  (via 
+    "Via[0-1]_800:400_um-kicad_default" "Via[0-1]_800:400_um" default
+  )
+  (via 
+    "Via[0-1]_800:400_um-vcc_line" "Via[0-1]_800:400_um" default
+  )
+  (via_rule
+    default "Via[0-1]_800:400_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_800:400_um-kicad_default"
+  )
+  (via_rule
+    "vcc_line" "Via[0-1]_800:400_um-vcc_line"
+  )
+  (class default
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "kicad_default"
+    GND Row1 "Net-(D11-Pad1)" "Net-(D12-Pad1)" "Net-(D13-Pad1)" "Net-(D14-Pad1)" "Net-(D15-Pad1)" "Net-(D16-Pad1)"
+    Row2 "Net-(D21-Pad1)" "Net-(D22-Pad1)" "Net-(D23-Pad1)" "Net-(D24-Pad1)" "Net-(D25-Pad1)" "Net-(D26-Pad1)" Row3
+    "Net-(D31-Pad1)" "Net-(D32-Pad1)" "Net-(D33-Pad1)" "Net-(D34-Pad1)" "Net-(D35-Pad1)" "Net-(D36-Pad1)" Row4 "Net-(D41-Pad1)"
+    "Net-(D42-Pad1)" "Net-(D43-Pad1)" "Net-(D44-Pad1)" "Net-(D45-Pad1)" "Net-(D46-Pad1)" Row5 "Net-(D54-Pad1)" "Net-(D55-Pad1)"
+    "Net-(D56-Pad1)" Column1 Column2 Column3 Column4 Column5 Column6 din
+    B A "Net-(U2_LEFT1-PadPIN26)" "Net-(U2_LEFT1-PadPIN28)" "Net-(U2_LEFT1-PadPIN29)" "Net-(U2_LEFT1-PadPIN30)" "Net-(U2_LEFT1-PadPIN31)" "Net-(U2_LEFT1-PadPIN32)"
+    "Net-(U2_LEFT1-PadPIN17)" "Net-(U2_LEFT1-PadPIN16)" "Net-(U2_LEFT1-PadPIN15)" "Net-(U2_LEFT1-PadPIN14)" "Net-(U2_LEFT1-PadPIN13)" "Net-(U2_LEFT1-PadPIN12)" "Net-(U2_LEFT1-PadPIN11)" "Net-(U2_LEFT1-PadPIN10)"
+    "Net-(U2_LEFT1-PadPIN3)" "Net-(U2_LEFT1-PadPIN2)" "Net-(U2_RIGHT1-PadPIN26)" "Net-(U2_RIGHT1-PadPIN28)" "Net-(U2_RIGHT1-PadPIN29)" "Net-(U2_RIGHT1-PadPIN30)" "Net-(U2_RIGHT1-PadPIN31)" "Net-(U2_RIGHT1-PadPIN32)"
+    "Net-(U2_RIGHT1-PadPIN17)" "Net-(U2_RIGHT1-PadPIN16)" "Net-(U2_RIGHT1-PadPIN15)" "Net-(U2_RIGHT1-PadPIN14)" "Net-(U2_RIGHT1-PadPIN13)" "Net-(U2_RIGHT1-PadPIN12)" "Net-(U2_RIGHT1-PadPIN11)" "Net-(U2_RIGHT1-PadPIN10)"
+    "Net-(U2_RIGHT1-PadPIN3)" "Net-(U2_RIGHT1-PadPIN2)" "Net-(U2_LEFT1-PadPIN33)" "Net-(U2_RIGHT1-PadPIN33)" "Net-(LED11-Pad2)" +5V "Net-(LED11-Pad4)" "Net-(LED12-Pad4)"
+    "Net-(LED13-Pad4)" "Net-(LED14-Pad4)" "Net-(LED15-Pad4)" "Net-(LED21-Pad4)" "Net-(LED23-Pad4)" "Net-(LED25-Pad4)" "Net-(LED31-Pad4)" "Net-(LED33-Pad4)"
+    "Net-(LED35-Pad4)" "Net-(LED41-Pad4)" "Net-(LED43-Pad4)" "Net-(LED45-Pad4)" "Net-(LED55-Pad4)" "Net-(LED12-Pad2)" "Net-(LED14-Pad2)" "Net-(LED16-Pad2)"
+    "Net-(LED22-Pad2)" "Net-(LED24-Pad2)" "Net-(LED26-Pad2)" "Net-(LED32-Pad2)" "Net-(LED34-Pad2)" "Net-(LED36-Pad2)" "Net-(LED44-Pad2)" "Net-(LED46-Pad2)"
+    "Net-(DROT1-Pad1)" "Net-(U2_LEFT1-PadPIN25)" "Net-(U2_RIGHT1-PadPIN25)"
+    (clearance_class default)
+    (via_rule kicad_default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "vcc_line"
+    (clearance_class default)
+    (via_rule vcc_line)
+    (rule
+      (width 400.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)

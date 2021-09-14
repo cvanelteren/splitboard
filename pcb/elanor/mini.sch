@@ -1,0 +1,2140 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+NoConn ~ -5050 4900
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K12
+U 1 1 5C32BAAE
+P 3050 750
+F 0 "K12" H 3050 983 60  0000 C CNN
+F 1 "key" H 3050 650 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 3050 750 60  0001 C CNN
+F 3 "" H 3050 750 60  0000 C CNN
+	1    3050 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K13
+U 1 1 5C32C79D
+P 4350 750
+F 0 "K13" H 4350 983 60  0000 C CNN
+F 1 "key" H 4350 650 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 4350 750 60  0001 C CNN
+F 3 "" H 4350 750 60  0000 C CNN
+	1    4350 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K14
+U 1 1 5C32E2C3
+P 5600 750
+F 0 "K14" H 5600 983 60  0000 C CNN
+F 1 "key" H 5600 650 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 5600 750 60  0001 C CNN
+F 3 "" H 5600 750 60  0000 C CNN
+	1    5600 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K15
+U 1 1 5C32EFB2
+P 6850 750
+F 0 "K15" H 6850 983 60  0000 C CNN
+F 1 "key" H 6850 650 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 6850 750 60  0001 C CNN
+F 3 "" H 6850 750 60  0000 C CNN
+	1    6850 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K16
+U 1 1 5C32FC81
+P 8050 750
+F 0 "K16" H 8050 983 60  0000 C CNN
+F 1 "key" H 8050 650 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 8050 750 60  0001 C CNN
+F 3 "" H 8050 750 60  0000 C CNN
+	1    8050 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K56
+U 1 1 5F08BC1D
+P 8050 3550
+F 0 "K56" H 8050 3783 60  0000 C CNN
+F 1 "key" H 8050 3450 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap1.5v" H 8050 3550 60  0001 C CNN
+F 3 "" H 8050 3550 60  0000 C CNN
+	1    8050 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K55
+U 1 1 5F08B370
+P 6850 3550
+F 0 "K55" H 6850 3783 60  0000 C CNN
+F 1 "key" H 6850 3450 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap1.25v" H 6850 3550 60  0001 C CNN
+F 3 "" H 6850 3550 60  0000 C CNN
+	1    6850 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K54
+U 1 1 5F08A305
+P 5600 3550
+F 0 "K54" H 5600 3783 60  0000 C CNN
+F 1 "key" H 5600 3450 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 5600 3550 60  0001 C CNN
+F 3 "" H 5600 3550 60  0000 C CNN
+	1    5600 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K42
+U 1 1 5C3B6A79
+P 3050 2850
+F 0 "K42" H 3050 3083 60  0000 C CNN
+F 1 "key" H 3050 2750 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 3050 2850 60  0001 C CNN
+F 3 "" H 3050 2850 60  0000 C CNN
+	1    3050 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K36
+U 1 1 5C32FC88
+P 8050 2200
+F 0 "K36" H 8050 2433 60  0000 C CNN
+F 1 "key" H 8050 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 8050 2200 60  0001 C CNN
+F 3 "" H 8050 2200 60  0000 C CNN
+	1    8050 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K45
+U 1 1 5C32EFC0
+P 6850 2850
+F 0 "K45" H 6850 3083 60  0000 C CNN
+F 1 "key" H 6850 2750 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 6850 2850 60  0001 C CNN
+F 3 "" H 6850 2850 60  0000 C CNN
+	1    6850 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K35
+U 1 1 5C32EFB9
+P 6850 2200
+F 0 "K35" H 6850 2433 60  0000 C CNN
+F 1 "key" H 6850 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 6850 2200 60  0001 C CNN
+F 3 "" H 6850 2200 60  0000 C CNN
+	1    6850 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K44
+U 1 1 5C32E2D1
+P 5600 2850
+F 0 "K44" H 5600 3083 60  0000 C CNN
+F 1 "key" H 5600 2750 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 5600 2850 60  0001 C CNN
+F 3 "" H 5600 2850 60  0000 C CNN
+	1    5600 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K41
+U 1 1 5C31CD6A
+P 1600 2850
+F 0 "K41" H 1600 3083 60  0000 C CNN
+F 1 "key" H 1600 2750 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 1600 2850 60  0001 C CNN
+F 3 "" H 1600 2850 60  0000 C CNN
+	1    1600 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K43
+U 1 1 5F089A4F
+P 4350 2850
+F 0 "K43" H 4350 3083 60  0000 C CNN
+F 1 "key" H 4350 2750 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 4350 2850 60  0001 C CNN
+F 3 "" H 4350 2850 60  0000 C CNN
+	1    4350 2850
+	1    0    0    -1  
+$EndComp
+Connection ~ 5900 1450
+Connection ~ 4650 1450
+Connection ~ 3350 1450
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K26
+U 1 1 5C32FC7A
+P 8050 1450
+F 0 "K26" H 8050 1683 60  0000 C CNN
+F 1 "key" H 8050 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 8050 1450 60  0001 C CNN
+F 3 "" H 8050 1450 60  0000 C CNN
+	1    8050 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K25
+U 1 1 5C32EFAB
+P 6850 1450
+F 0 "K25" H 6850 1683 60  0000 C CNN
+F 1 "key" H 6850 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 6850 1450 60  0001 C CNN
+F 3 "" H 6850 1450 60  0000 C CNN
+	1    6850 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K24
+U 1 1 5C32E2BC
+P 5600 1450
+F 0 "K24" H 5600 1683 60  0000 C CNN
+F 1 "key" H 5600 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 5600 1450 60  0001 C CNN
+F 3 "" H 5600 1450 60  0000 C CNN
+	1    5600 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K23
+U 1 1 5C32C796
+P 4350 1450
+F 0 "K23" H 4350 1683 60  0000 C CNN
+F 1 "key" H 4350 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 4350 1450 60  0001 C CNN
+F 3 "" H 4350 1450 60  0000 C CNN
+	1    4350 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K22
+U 1 1 5C32BAA7
+P 3050 1450
+F 0 "K22" H 3050 1683 60  0000 C CNN
+F 1 "key" H 3050 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 3050 1450 60  0001 C CNN
+F 3 "" H 3050 1450 60  0000 C CNN
+	1    3050 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K21
+U 1 1 5C318F0A
+P 1600 1450
+F 0 "K21" H 1600 1683 60  0000 C CNN
+F 1 "key" H 1600 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 1600 1450 60  0001 C CNN
+F 3 "" H 1600 1450 60  0000 C CNN
+	1    1600 1450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 750  1900 1450
+Wire Wire Line
+	3350 750  3350 1450
+Wire Wire Line
+	4650 750  4650 1450
+Wire Wire Line
+	5900 750  5900 1450
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K31
+U 1 1 5C31C14C
+P 1600 2200
+F 0 "K31" H 1600 2433 60  0000 C CNN
+F 1 "key" H 1600 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 1600 2200 60  0001 C CNN
+F 3 "" H 1600 2200 60  0000 C CNN
+	1    1600 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K32
+U 1 1 5C32BAB5
+P 3050 2200
+F 0 "K32" H 3050 2433 60  0000 C CNN
+F 1 "key" H 3050 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 3050 2200 60  0001 C CNN
+F 3 "" H 3050 2200 60  0000 C CNN
+	1    3050 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K33
+U 1 1 5C32C7A4
+P 4350 2200
+F 0 "K33" H 4350 2433 60  0000 C CNN
+F 1 "key" H 4350 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 4350 2200 60  0001 C CNN
+F 3 "" H 4350 2200 60  0000 C CNN
+	1    4350 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K34
+U 1 1 5C32E2CA
+P 5600 2200
+F 0 "K34" H 5600 2433 60  0000 C CNN
+F 1 "key" H 5600 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 5600 2200 60  0001 C CNN
+F 3 "" H 5600 2200 60  0000 C CNN
+	1    5600 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K46
+U 1 1 5C32FC8F
+P 8050 2850
+F 0 "K46" H 8050 3083 60  0000 C CNN
+F 1 "key" H 8050 2750 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 8050 2850 60  0001 C CNN
+F 3 "" H 8050 2850 60  0000 C CNN
+	1    8050 2850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 1450 1900 2200
+Connection ~ 1900 1450
+Wire Wire Line
+	3350 1450 3350 2200
+Connection ~ 7150 2200
+Connection ~ 5900 2200
+Connection ~ 4650 2200
+Wire Wire Line
+	1900 2200 1900 2850
+Connection ~ 1900 2200
+Wire Wire Line
+	4650 2200 4650 2850
+Wire Wire Line
+	7150 2200 7150 2850
+Wire Wire Line
+	3350 2200 3350 2850
+Connection ~ 3350 2200
+Connection ~ 8350 2200
+Connection ~ 8350 1450
+Wire Wire Line
+	8350 1450 8350 2200
+Wire Wire Line
+	8350 750  8350 1450
+Connection ~ 3350 2850
+Connection ~ 4650 2850
+Wire Wire Line
+	5900 2200 5900 2850
+Connection ~ 5900 2850
+Connection ~ 7150 2850
+Wire Wire Line
+	8350 2200 8350 2850
+Connection ~ 8350 2850
+Wire Wire Line
+	1300 1050 2750 1050
+Wire Wire Line
+	7150 2850 7150 3550
+Connection ~ 7150 3550
+Wire Wire Line
+	7150 3550 7150 4150
+Wire Wire Line
+	5900 2850 5900 3550
+Connection ~ 5900 3550
+Wire Wire Line
+	5900 3550 5900 4150
+Text GLabel 8550 1050 2    50   Input ~ 0
+Row1
+Text GLabel 8550 1750 2    50   Input ~ 0
+Row2
+Text GLabel 8550 2500 2    50   Input ~ 0
+Row3
+Text GLabel 8550 3150 2    50   Input ~ 0
+Row4
+Text GLabel 8500 3850 2    50   Input ~ 0
+Row5
+Text GLabel 6200 -1700 2    50   Input ~ 0
+B
+Text GLabel 6200 -1900 2    50   Input ~ 0
+A
+Text GLabel 4050 4150 3    50   Input ~ 0
+A
+Text GLabel 4250 4150 3    50   Input ~ 0
+B
+$Comp
+L TTGO_ESP32_OLED_V2:TTGO_ESP32_OLED_V2 U2_LEFT1
+U 1 1 6026706B
+P 5300 -2400
+F 0 "U2_LEFT1" H 5250 -433 50  0000 C CNN
+F 1 "TTGO_ESP32_OLED_V2" H 5250 -524 50  0000 C CNN
+F 2 "ttgo:ESP32_TTGO_V2" H 5300 -2400 50  0001 C CNN
+F 3 "" H 5300 -2400 50  0001 C CNN
+	1    5300 -2400
+	1    0    0    -1  
+$EndComp
+Text GLabel 8350 4150 3    50   Input ~ 0
+Column6
+Text GLabel 7150 4150 3    50   Input ~ 0
+Column5
+Text GLabel 5900 4150 3    50   Input ~ 0
+Column4
+Text GLabel 4650 4150 3    50   Input ~ 0
+Column3
+Text GLabel 3350 4150 3    50   Input ~ 0
+Column2
+Text GLabel 1900 4150 3    50   Input ~ 0
+Column1
+$Comp
+L mini-rescue:Logo_Open_Hardware_Large-Graphic #LOGO1
+U 1 1 5C3ADA8B
+P -3150 -900
+F 0 "#LOGO1" H -3150 -400 50  0001 C CNN
+F 1 "Logo_Open_Hardware_Large" H -3150 -1300 50  0001 C CNN
+F 2 "" H -3150 -900 50  0001 C CNN
+F 3 "~" H -3150 -900 50  0001 C CNN
+	1    -3150 -900
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:Logo_Open_Hardware_Large-Graphic #LOGO2
+U 1 1 5C3ACA07
+P -3000 -2450
+F 0 "#LOGO2" H -3000 -1950 50  0001 C CNN
+F 1 "Logo_Open_Hardware_Large" H -3000 -2850 50  0001 C CNN
+F 2 "" H -3000 -2450 50  0001 C CNN
+F 3 "~" H -3000 -2450 50  0001 C CNN
+	1    -3000 -2450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 2850 3350 4150
+Wire Wire Line
+	1900 2850 1900 4150
+Connection ~ 1900 2850
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED15
+U 1 1 60341868
+P 5550 5500
+F 0 "LED15" H 5550 5762 51  0000 C CNN
+F 1 "SK6812MIN" H 5550 5697 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 5550 5500 60  0001 C CNN
+F 3 "" H 5550 5500 60  0001 C CNN
+	1    5550 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED14
+U 1 1 6033D285
+P 4550 5500
+F 0 "LED14" H 4550 5762 51  0000 C CNN
+F 1 "SK6812MIN" H 4550 5697 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 4550 5500 60  0001 C CNN
+F 3 "" H 4550 5500 60  0001 C CNN
+	1    4550 5500
+	1    0    0    -1  
+$EndComp
+Text GLabel 4300 -2300 0    50   Input ~ 0
+din
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED12
+U 1 1 6033781A
+P 2600 5500
+F 0 "LED12" H 2600 5762 51  0000 C CNN
+F 1 "SK6812MIN" H 2600 5697 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 2600 5500 60  0001 C CNN
+F 3 "" H 2600 5500 60  0001 C CNN
+	1    2600 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L 6Pack-cache:Device_Rotary_Encoder_Switch ROT1
+U 1 1 6033F866
+P 4150 3850
+F 0 "ROT1" H 4150 4217 50  0000 C CNN
+F 1 "Device_Rotary_Encoder_Switch" H 4150 4126 50  0000 C CNN
+F 2 "Keebio-Parts:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm" H 4000 4010 50  0001 C CNN
+F 3 "" H 4150 4110 50  0001 C CNN
+	1    4150 3850
+	0    -1   -1   0   
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED11
+U 1 1 603033E2
+P 1600 5500
+F 0 "LED11" H 1600 5762 51  0000 C CNN
+F 1 "SK6812MINI" H 1600 5697 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 1600 5500 60  0001 C CNN
+F 3 "" H 1600 5500 60  0001 C CNN
+	1    1600 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K11
+U 1 1 5C319C7A
+P 1600 750
+F 0 "K11" H 1600 983 60  0000 C CNN
+F 1 "key" H 1600 650 60  0001 C CNN
+F 2 "kbd:CherryMX_MidHeight_Hotswap_ME" H 1600 750 60  0001 C CNN
+F 3 "" H 1600 750 60  0000 C CNN
+	1    1600 750 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4650 2100 4650 2200
+Wire Wire Line
+	5900 2100 5900 2200
+Wire Wire Line
+	7150 2150 7150 2200
+Wire Wire Line
+	4650 1450 4650 2200
+Wire Wire Line
+	5900 1450 5900 2200
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED16
+U 1 1 60344EDD
+P 6550 5500
+F 0 "LED16" H 6550 5762 51  0000 C CNN
+F 1 "SK6812MINI" H 6550 5697 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 6550 5500 60  0001 C CNN
+F 3 "" H 6550 5500 60  0001 C CNN
+	1    6550 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED13
+U 1 1 6033ABCC
+P 3550 5500
+F 0 "LED13" H 3550 5762 51  0000 C CNN
+F 1 "SK6812MINI" H 3550 5697 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 3550 5500 60  0001 C CNN
+F 3 "" H 3550 5500 60  0001 C CNN
+	1    3550 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0103
+U 1 1 616D7F1E
+P 5750 5600
+F 0 "#PWR0103" H 5750 5350 50  0001 C CNN
+F 1 "power_GND" V 5755 5472 50  0000 R CNN
+F 2 "" H 5750 5600 50  0001 C CNN
+F 3 "" H 5750 5600 50  0001 C CNN
+	1    5750 5600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0110
+U 1 1 616EAD44
+P 6750 5600
+F 0 "#PWR0110" H 6750 5350 50  0001 C CNN
+F 1 "power_GND" V 6755 5472 50  0000 R CNN
+F 2 "" H 6750 5600 50  0001 C CNN
+F 3 "" H 6750 5600 50  0001 C CNN
+	1    6750 5600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0111
+U 1 1 616EC6FA
+P 4750 5600
+F 0 "#PWR0111" H 4750 5350 50  0001 C CNN
+F 1 "power_GND" V 4755 5472 50  0000 R CNN
+F 2 "" H 4750 5600 50  0001 C CNN
+F 3 "" H 4750 5600 50  0001 C CNN
+	1    4750 5600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0118
+U 1 1 616FA1B4
+P 3750 5600
+F 0 "#PWR0118" H 3750 5350 50  0001 C CNN
+F 1 "power_GND" V 3755 5472 50  0000 R CNN
+F 2 "" H 3750 5600 50  0001 C CNN
+F 3 "" H 3750 5600 50  0001 C CNN
+	1    3750 5600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0121
+U 1 1 61701700
+P 2800 5600
+F 0 "#PWR0121" H 2800 5350 50  0001 C CNN
+F 1 "power_GND" V 2805 5472 50  0000 R CNN
+F 2 "" H 2800 5600 50  0001 C CNN
+F 3 "" H 2800 5600 50  0001 C CNN
+	1    2800 5600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0127
+U 1 1 6170E2AF
+P 1400 5400
+F 0 "#PWR0127" H 1400 5370 20  0001 C CNN
+F 1 "+5V" V 1400 5508 30  0000 L CNN
+F 2 "" H 1400 5400 60  0000 C CNN
+F 3 "" H 1400 5400 60  0000 C CNN
+	1    1400 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0131
+U 1 1 61716976
+P 3350 5400
+F 0 "#PWR0131" H 3350 5370 20  0001 C CNN
+F 1 "+5V" V 3350 5508 30  0000 L CNN
+F 2 "" H 3350 5400 60  0000 C CNN
+F 3 "" H 3350 5400 60  0000 C CNN
+	1    3350 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0136
+U 1 1 61722E43
+P 4350 5400
+F 0 "#PWR0136" H 4350 5370 20  0001 C CNN
+F 1 "+5V" V 4350 5508 30  0000 L CNN
+F 2 "" H 4350 5400 60  0000 C CNN
+F 3 "" H 4350 5400 60  0000 C CNN
+	1    4350 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0142
+U 1 1 61731170
+P 5350 5400
+F 0 "#PWR0142" H 5350 5370 20  0001 C CNN
+F 1 "+5V" V 5350 5508 30  0000 L CNN
+F 2 "" H 5350 5400 60  0000 C CNN
+F 3 "" H 5350 5400 60  0000 C CNN
+	1    5350 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0143
+U 1 1 61737B37
+P 6350 5400
+F 0 "#PWR0143" H 6350 5370 20  0001 C CNN
+F 1 "+5V" V 6350 5508 30  0000 L CNN
+F 2 "" H 6350 5400 60  0000 C CNN
+F 3 "" H 6350 5400 60  0000 C CNN
+	1    6350 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED21
+U 1 1 6032795E
+P 1600 6300
+F 0 "LED21" H 1600 6562 51  0000 C CNN
+F 1 "SK6812MINI" H 1600 6497 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 1600 6300 60  0001 C CNN
+F 3 "" H 1600 6300 60  0001 C CNN
+	1    1600 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0147
+U 1 1 6170CAA1
+P 1400 6200
+F 0 "#PWR0147" H 1400 6170 20  0001 C CNN
+F 1 "+5V" V 1400 6308 30  0000 L CNN
+F 2 "" H 1400 6200 60  0000 C CNN
+F 3 "" H 1400 6200 60  0000 C CNN
+	1    1400 6200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0148
+U 1 1 6173973C
+P 6350 6200
+F 0 "#PWR0148" H 6350 6170 20  0001 C CNN
+F 1 "+5V" V 6350 6308 30  0000 L CNN
+F 2 "" H 6350 6200 60  0000 C CNN
+F 3 "" H 6350 6200 60  0000 C CNN
+	1    6350 6200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0149
+U 1 1 6172F534
+P 5350 6200
+F 0 "#PWR0149" H 5350 6170 20  0001 C CNN
+F 1 "+5V" V 5350 6308 30  0000 L CNN
+F 2 "" H 5350 6200 60  0000 C CNN
+F 3 "" H 5350 6200 60  0000 C CNN
+	1    5350 6200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0150
+U 1 1 6172499E
+P 4350 6200
+F 0 "#PWR0150" H 4350 6170 20  0001 C CNN
+F 1 "+5V" V 4350 6308 30  0000 L CNN
+F 2 "" H 4350 6200 60  0000 C CNN
+F 3 "" H 4350 6200 60  0000 C CNN
+	1    4350 6200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0151
+U 1 1 617181DD
+P 3350 6200
+F 0 "#PWR0151" H 3350 6170 20  0001 C CNN
+F 1 "+5V" V 3350 6308 30  0000 L CNN
+F 2 "" H 3350 6200 60  0000 C CNN
+F 3 "" H 3350 6200 60  0000 C CNN
+	1    3350 6200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0152
+U 1 1 61711191
+P 2400 6200
+F 0 "#PWR0152" H 2400 6170 20  0001 C CNN
+F 1 "+5V" V 2400 6308 30  0000 L CNN
+F 2 "" H 2400 6200 60  0000 C CNN
+F 3 "" H 2400 6200 60  0000 C CNN
+	1    2400 6200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0155
+U 1 1 616F89C9
+P 3750 6400
+F 0 "#PWR0155" H 3750 6150 50  0001 C CNN
+F 1 "power_GND" V 3755 6272 50  0000 R CNN
+F 2 "" H 3750 6400 50  0001 C CNN
+F 3 "" H 3750 6400 50  0001 C CNN
+	1    3750 6400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0156
+U 1 1 616EDEB3
+P 4750 6400
+F 0 "#PWR0156" H 4750 6150 50  0001 C CNN
+F 1 "power_GND" V 4755 6272 50  0000 R CNN
+F 2 "" H 4750 6400 50  0001 C CNN
+F 3 "" H 4750 6400 50  0001 C CNN
+	1    4750 6400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0157
+U 1 1 616E930D
+P 6750 6400
+F 0 "#PWR0157" H 6750 6150 50  0001 C CNN
+F 1 "power_GND" V 6755 6272 50  0000 R CNN
+F 2 "" H 6750 6400 50  0001 C CNN
+F 3 "" H 6750 6400 50  0001 C CNN
+	1    6750 6400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED25
+U 1 1 60341872
+P 5550 6300
+F 0 "LED25" H 5550 6562 51  0000 C CNN
+F 1 "SK6812MINI" H 5550 6497 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 5550 6300 60  0001 C CNN
+F 3 "" H 5550 6300 60  0001 C CNN
+	1    5550 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED24
+U 1 1 6033D28F
+P 4550 6300
+F 0 "LED24" H 4550 6562 51  0000 C CNN
+F 1 "SK6812MINI" H 4550 6497 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 4550 6300 60  0001 C CNN
+F 3 "" H 4550 6300 60  0001 C CNN
+	1    4550 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED23
+U 1 1 6033ABD6
+P 3550 6300
+F 0 "LED23" H 3550 6562 51  0000 C CNN
+F 1 "SK6812MIN" H 3550 6497 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 3550 6300 60  0001 C CNN
+F 3 "" H 3550 6300 60  0001 C CNN
+	1    3550 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED26
+U 1 1 60344EE7
+P 6550 6300
+F 0 "LED26" H 6550 6562 51  0000 C CNN
+F 1 "SK6812MINI" H 6550 6497 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 6550 6300 60  0001 C CNN
+F 3 "" H 6550 6300 60  0001 C CNN
+	1    6550 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED22
+U 1 1 60337824
+P 2600 6300
+F 0 "LED22" H 2600 6562 51  0000 C CNN
+F 1 "SK6812MINI" H 2600 6497 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 2600 6300 60  0001 C CNN
+F 3 "" H 2600 6300 60  0001 C CNN
+	1    2600 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0159
+U 1 1 61868C4E
+P 6200 -3900
+F 0 "#PWR0159" H 6200 -3930 20  0001 C CNN
+F 1 "+5V" V 6200 -3792 30  0000 L CNN
+F 2 "" H 6200 -3900 60  0000 C CNN
+F 3 "" H 6200 -3900 60  0000 C CNN
+	1    6200 -3900
+	0    1    1    0   
+$EndComp
+Text GLabel 6750 5400 2    50   Input ~ 0
+din
+$Comp
+L 6Pack-cache:power_GND #PWR0160
+U 1 1 61912EC4
+P 4300 -4100
+F 0 "#PWR0160" H 4300 -4350 50  0001 C CNN
+F 1 "power_GND" V 4305 -4228 50  0000 R CNN
+F 2 "" H 4300 -4100 50  0001 C CNN
+F 3 "" H 4300 -4100 50  0001 C CNN
+	1    4300 -4100
+	0    1    1    0   
+$EndComp
+Text GLabel 6200 -1300 2    50   Input ~ 0
+Column2
+Text GLabel 6200 -1500 2    50   Input ~ 0
+Column1
+Text GLabel 6200 -1100 2    50   Input ~ 0
+Column3
+Text GLabel 6200 -900 2    50   Input ~ 0
+Column4
+Text GLabel 6200 -700 2    50   Input ~ 0
+Column5
+Text GLabel 4300 -2500 0    50   Input ~ 0
+Column6
+Text GLabel 4300 -2700 0    50   Input ~ 0
+Row5
+Text GLabel 4300 -3100 0    50   Input ~ 0
+Row3
+Text GLabel 4300 -2900 0    50   Input ~ 0
+Row4
+Text GLabel 6200 -2500 2    50   Input ~ 0
+Row1
+Text GLabel 4300 -3300 0    50   Input ~ 0
+Row2
+$Comp
+L TTGO_ESP32_OLED_V2:TTGO_ESP32_OLED_V2 U2_RIGHT1
+U 1 1 61A8A98F
+P 8700 -2400
+F 0 "U2_RIGHT1" H 8650 -433 50  0000 C CNN
+F 1 "TTGO_ESP32_OLED_V" H 8650 -524 50  0000 C CNN
+F 2 "ttgo:ESP32_TTGO_V2" H 8700 -2400 50  0001 C CNN
+F 3 "" H 8700 -2400 50  0001 C CNN
+	1    8700 -2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0161
+U 1 1 61A8A996
+P 9600 -3900
+F 0 "#PWR0161" H 9600 -3930 20  0001 C CNN
+F 1 "+5V" V 9600 -3792 30  0000 L CNN
+F 2 "" H 9600 -3900 60  0000 C CNN
+F 3 "" H 9600 -3900 60  0000 C CNN
+	1    9600 -3900
+	0    1    1    0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0162
+U 1 1 61A8A99C
+P 7700 -4100
+F 0 "#PWR0162" H 7700 -4350 50  0001 C CNN
+F 1 "power_GND" V 7705 -4228 50  0000 R CNN
+F 2 "" H 7700 -4100 50  0001 C CNN
+F 3 "" H 7700 -4100 50  0001 C CNN
+	1    7700 -4100
+	0    1    1    0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0101
+U 1 1 61AAA730
+P 4150 4150
+F 0 "#PWR0101" H 4150 3900 50  0001 C CNN
+F 1 "power_GND" V 4155 4022 50  0000 R CNN
+F 2 "" H 4150 4150 50  0001 C CNN
+F 3 "" H 4150 4150 50  0001 C CNN
+	1    4150 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0146
+U 1 1 6173ECCF
+P 6300 8600
+F 0 "#PWR0146" H 6300 8570 20  0001 C CNN
+F 1 "+5V" V 6300 8708 30  0000 L CNN
+F 2 "" H 6300 8600 60  0000 C CNN
+F 3 "" H 6300 8600 60  0000 C CNN
+	1    6300 8600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0144
+U 1 1 6173B3A7
+P 6350 7000
+F 0 "#PWR0144" H 6350 6970 20  0001 C CNN
+F 1 "+5V" V 6350 7108 30  0000 L CNN
+F 2 "" H 6350 7000 60  0000 C CNN
+F 3 "" H 6350 7000 60  0000 C CNN
+	1    6350 7000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0141
+U 1 1 6172D650
+P 5350 7000
+F 0 "#PWR0141" H 5350 6970 20  0001 C CNN
+F 1 "+5V" V 5350 7108 30  0000 L CNN
+F 2 "" H 5350 7000 60  0000 C CNN
+F 3 "" H 5350 7000 60  0000 C CNN
+	1    5350 7000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0137
+U 1 1 61726478
+P 4350 7000
+F 0 "#PWR0137" H 4350 6970 20  0001 C CNN
+F 1 "+5V" V 4350 7108 30  0000 L CNN
+F 2 "" H 4350 7000 60  0000 C CNN
+F 3 "" H 4350 7000 60  0000 C CNN
+	1    4350 7000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0135
+U 1 1 61720835
+P 4350 8600
+F 0 "#PWR0135" H 4350 8570 20  0001 C CNN
+F 1 "+5V" V 4350 8708 30  0000 L CNN
+F 2 "" H 4350 8600 60  0000 C CNN
+F 3 "" H 4350 8600 60  0000 C CNN
+	1    4350 8600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0132
+U 1 1 61719959
+P 3350 7000
+F 0 "#PWR0132" H 3350 6970 20  0001 C CNN
+F 1 "+5V" V 3350 7108 30  0000 L CNN
+F 2 "" H 3350 7000 60  0000 C CNN
+F 3 "" H 3350 7000 60  0000 C CNN
+	1    3350 7000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0125
+U 1 1 61709BA3
+P 1400 7000
+F 0 "#PWR0125" H 1400 6970 20  0001 C CNN
+F 1 "+5V" V 1400 7108 30  0000 L CNN
+F 2 "" H 1400 7000 60  0000 C CNN
+F 3 "" H 1400 7000 60  0000 C CNN
+	1    1400 7000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0120
+U 1 1 616FDE94
+P 2800 7200
+F 0 "#PWR0120" H 2800 6950 50  0001 C CNN
+F 1 "power_GND" V 2805 7072 50  0000 R CNN
+F 2 "" H 2800 7200 50  0001 C CNN
+F 3 "" H 2800 7200 50  0001 C CNN
+	1    2800 7200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0117
+U 1 1 616F712E
+P 3750 7200
+F 0 "#PWR0117" H 3750 6950 50  0001 C CNN
+F 1 "power_GND" V 3755 7072 50  0000 R CNN
+F 2 "" H 3750 7200 50  0001 C CNN
+F 3 "" H 3750 7200 50  0001 C CNN
+	1    3750 7200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0114
+U 1 1 616F26E1
+P 4750 8800
+F 0 "#PWR0114" H 4750 8550 50  0001 C CNN
+F 1 "power_GND" V 4755 8672 50  0000 R CNN
+F 2 "" H 4750 8800 50  0001 C CNN
+F 3 "" H 4750 8800 50  0001 C CNN
+	1    4750 8800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0112
+U 1 1 616EF6EA
+P 4750 7200
+F 0 "#PWR0112" H 4750 6950 50  0001 C CNN
+F 1 "power_GND" V 4755 7072 50  0000 R CNN
+F 2 "" H 4750 7200 50  0001 C CNN
+F 3 "" H 4750 7200 50  0001 C CNN
+	1    4750 7200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0109
+U 1 1 616E7956
+P 6750 7200
+F 0 "#PWR0109" H 6750 6950 50  0001 C CNN
+F 1 "power_GND" V 6755 7072 50  0000 R CNN
+F 2 "" H 6750 7200 50  0001 C CNN
+F 3 "" H 6750 7200 50  0001 C CNN
+	1    6750 7200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0107
+U 1 1 616E46F6
+P 6700 8800
+F 0 "#PWR0107" H 6700 8550 50  0001 C CNN
+F 1 "power_GND" V 6705 8672 50  0000 R CNN
+F 2 "" H 6700 8800 50  0001 C CNN
+F 3 "" H 6700 8800 50  0001 C CNN
+	1    6700 8800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0106
+U 1 1 616E2CE1
+P 5750 8800
+F 0 "#PWR0106" H 5750 8550 50  0001 C CNN
+F 1 "power_GND" V 5755 8672 50  0000 R CNN
+F 2 "" H 5750 8800 50  0001 C CNN
+F 3 "" H 5750 8800 50  0001 C CNN
+	1    5750 8800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0104
+U 1 1 616DE04F
+P 5750 7200
+F 0 "#PWR0104" H 5750 6950 50  0001 C CNN
+F 1 "power_GND" V 5755 7072 50  0000 R CNN
+F 2 "" H 5750 7200 50  0001 C CNN
+F 3 "" H 5750 7200 50  0001 C CNN
+	1    5750 7200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED31
+U 1 1 60330613
+P 1600 7100
+F 0 "LED31" H 1600 7362 51  0000 C CNN
+F 1 "SK6812MINI" H 1600 7297 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 1600 7100 60  0001 C CNN
+F 3 "" H 1600 7100 60  0001 C CNN
+	1    1600 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED54
+U 1 1 6033D2A3
+P 4550 8700
+F 0 "LED54" H 4550 8962 51  0000 C CNN
+F 1 "SK6812MINI" H 4550 8897 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 4550 8700 60  0001 C CNN
+F 3 "" H 4550 8700 60  0001 C CNN
+	1    4550 8700
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED34
+U 1 1 6033D2AD
+P 4550 7100
+F 0 "LED34" H 4550 7362 51  0000 C CNN
+F 1 "SK6812MINI" H 4550 7297 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 4550 7100 60  0001 C CNN
+F 3 "" H 4550 7100 60  0001 C CNN
+	1    4550 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED33
+U 1 1 6033ABF4
+P 3550 7100
+F 0 "LED33" H 3550 7362 51  0000 C CNN
+F 1 "SK6812MINI" H 3550 7297 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 3550 7100 60  0001 C CNN
+F 3 "" H 3550 7100 60  0001 C CNN
+	1    3550 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED32
+U 1 1 60337842
+P 2600 7100
+F 0 "LED32" H 2600 7362 51  0000 C CNN
+F 1 "SK6812MINI" H 2600 7297 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 2600 7100 60  0001 C CNN
+F 3 "" H 2600 7100 60  0001 C CNN
+	1    2600 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED36
+U 1 1 60344F05
+P 6550 7100
+F 0 "LED36" H 6550 7362 51  0000 C CNN
+F 1 "SK6812MINI" H 6550 7297 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 6550 7100 60  0001 C CNN
+F 3 "" H 6550 7100 60  0001 C CNN
+	1    6550 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED35
+U 1 1 60341890
+P 5550 7100
+F 0 "LED35" H 5550 7362 51  0000 C CNN
+F 1 "SK6812MINI" H 5550 7297 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 5550 7100 60  0001 C CNN
+F 3 "" H 5550 7100 60  0001 C CNN
+	1    5550 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED56
+U 1 1 60344EFB
+P 6500 8700
+F 0 "LED56" H 6500 8962 51  0000 C CNN
+F 1 "SK6812MINI" H 6500 8897 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 6500 8700 60  0001 C CNN
+F 3 "" H 6500 8700 60  0001 C CNN
+	1    6500 8700
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED55
+U 1 1 60341886
+P 5550 8700
+F 0 "LED55" H 5550 8962 51  0000 C CNN
+F 1 "SK6812MINI" H 5550 8897 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 5550 8700 60  0001 C CNN
+F 3 "" H 5550 8700 60  0001 C CNN
+	1    5550 8700
+	1    0    0    -1  
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0139
+U 1 1 6172A479
+P 5350 8600
+F 0 "#PWR0139" H 5350 8570 20  0001 C CNN
+F 1 "+5V" V 5350 8708 30  0000 L CNN
+F 2 "" H 5350 8600 60  0000 C CNN
+F 3 "" H 5350 8600 60  0000 C CNN
+	1    5350 8600
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6350 5600 6350 5900
+Wire Wire Line
+	6350 5900 6750 5900
+Wire Wire Line
+	6750 5900 6750 6200
+Wire Wire Line
+	6350 6400 6350 6750
+Wire Wire Line
+	6350 6750 6750 6750
+Wire Wire Line
+	6750 6750 6750 7000
+Wire Wire Line
+	6350 7200 6350 7550
+$Comp
+L keyboard_parts:+5V #PWR0145
+U 1 1 6173D08E
+P 6350 7800
+F 0 "#PWR0145" H 6350 7770 20  0001 C CNN
+F 1 "+5V" V 6350 7908 30  0000 L CNN
+F 2 "" H 6350 7800 60  0000 C CNN
+F 3 "" H 6350 7800 60  0000 C CNN
+	1    6350 7800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0108
+U 1 1 616E5F1F
+P 6750 8000
+F 0 "#PWR0108" H 6750 7750 50  0001 C CNN
+F 1 "power_GND" V 6755 7872 50  0000 R CNN
+F 2 "" H 6750 8000 50  0001 C CNN
+F 3 "" H 6750 8000 50  0001 C CNN
+	1    6750 8000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED46
+U 1 1 60344EF1
+P 6550 7900
+F 0 "LED46" H 6550 8162 51  0000 C CNN
+F 1 "SK6812MINI" H 6550 8097 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 6550 7900 60  0001 C CNN
+F 3 "" H 6550 7900 60  0001 C CNN
+	1    6550 7900
+	1    0    0    -1  
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0140
+U 1 1 6172BD5D
+P 5350 7800
+F 0 "#PWR0140" H 5350 7770 20  0001 C CNN
+F 1 "+5V" V 5350 7908 30  0000 L CNN
+F 2 "" H 5350 7800 60  0000 C CNN
+F 3 "" H 5350 7800 60  0000 C CNN
+	1    5350 7800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0138
+U 1 1 61727C18
+P 4350 7800
+F 0 "#PWR0138" H 4350 7770 20  0001 C CNN
+F 1 "+5V" V 4350 7908 30  0000 L CNN
+F 2 "" H 4350 7800 60  0000 C CNN
+F 3 "" H 4350 7800 60  0000 C CNN
+	1    4350 7800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0133
+U 1 1 6171BDD9
+P 3350 7800
+F 0 "#PWR0133" H 3350 7770 20  0001 C CNN
+F 1 "+5V" V 3350 7908 30  0000 L CNN
+F 2 "" H 3350 7800 60  0000 C CNN
+F 3 "" H 3350 7800 60  0000 C CNN
+	1    3350 7800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0130
+U 1 1 61714208
+P 2400 7800
+F 0 "#PWR0130" H 2400 7770 20  0001 C CNN
+F 1 "+5V" V 2400 7908 30  0000 L CNN
+F 2 "" H 2400 7800 60  0000 C CNN
+F 3 "" H 2400 7800 60  0000 C CNN
+	1    2400 7800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0126
+U 1 1 6170B1E1
+P 1400 7800
+F 0 "#PWR0126" H 1400 7770 20  0001 C CNN
+F 1 "+5V" V 1400 7908 30  0000 L CNN
+F 2 "" H 1400 7800 60  0000 C CNN
+F 3 "" H 1400 7800 60  0000 C CNN
+	1    1400 7800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0116
+U 1 1 616F573D
+P 3750 8000
+F 0 "#PWR0116" H 3750 7750 50  0001 C CNN
+F 1 "power_GND" V 3755 7872 50  0000 R CNN
+F 2 "" H 3750 8000 50  0001 C CNN
+F 3 "" H 3750 8000 50  0001 C CNN
+	1    3750 8000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0113
+U 1 1 616F0E96
+P 4750 8000
+F 0 "#PWR0113" H 4750 7750 50  0001 C CNN
+F 1 "power_GND" V 4755 7872 50  0000 R CNN
+F 2 "" H 4750 8000 50  0001 C CNN
+F 3 "" H 4750 8000 50  0001 C CNN
+	1    4750 8000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED44
+U 1 1 6033D299
+P 4550 7900
+F 0 "LED44" H 4550 8162 51  0000 C CNN
+F 1 "SK6812MINI" H 4550 8097 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 4550 7900 60  0001 C CNN
+F 3 "" H 4550 7900 60  0001 C CNN
+	1    4550 7900
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED43
+U 1 1 6033ABE0
+P 3550 7900
+F 0 "LED43" H 3550 8162 51  0000 C CNN
+F 1 "SK6812MINI" H 3550 8097 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 3550 7900 60  0001 C CNN
+F 3 "" H 3550 7900 60  0001 C CNN
+	1    3550 7900
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED45
+U 1 1 6034187C
+P 5550 7900
+F 0 "LED45" H 5550 8162 51  0000 C CNN
+F 1 "SK6812MINI" H 5550 8097 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 5550 7900 60  0001 C CNN
+F 3 "" H 5550 7900 60  0001 C CNN
+	1    5550 7900
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED41
+U 1 1 60329614
+P 1600 7900
+F 0 "LED41" H 1600 8162 51  0000 C CNN
+F 1 "SK6812MINI" H 1600 8097 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 1600 7900 60  0001 C CNN
+F 3 "" H 1600 7900 60  0001 C CNN
+	1    1600 7900
+	1    0    0    -1  
+$EndComp
+$Comp
+L kbd:SK6812MINI-E_pin_corrected LED42
+U 1 1 6033782E
+P 2600 7900
+F 0 "LED42" H 2600 8162 51  0000 C CNN
+F 1 "SK6812MINI" H 2600 8097 16  0000 C CNN
+F 2 "kbd:SK6812_double_sided_no_hole" H 2600 7900 60  0001 C CNN
+F 3 "" H 2600 7900 60  0001 C CNN
+	1    2600 7900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6750 7550 6750 7800
+Wire Wire Line
+	6350 7550 6750 7550
+Wire Wire Line
+	6350 8000 6350 8350
+Wire Wire Line
+	6350 8350 6700 8350
+Wire Wire Line
+	6700 8350 6700 8600
+Wire Wire Line
+	6300 8800 5950 8800
+Wire Wire Line
+	5950 8800 5950 8600
+Wire Wire Line
+	5950 8600 5750 8600
+Wire Wire Line
+	5350 8800 5100 8800
+Wire Wire Line
+	5100 8800 5100 8400
+Wire Wire Line
+	5100 8400 5900 8400
+Wire Wire Line
+	5900 7800 5750 7800
+Wire Wire Line
+	5350 8000 5150 8000
+Wire Wire Line
+	5150 8000 5150 7500
+Wire Wire Line
+	5150 7500 5900 7500
+Wire Wire Line
+	5900 7500 5900 7000
+Wire Wire Line
+	5900 7000 5750 7000
+Wire Wire Line
+	5350 7200 5150 7200
+Wire Wire Line
+	5150 7200 5150 6700
+Wire Wire Line
+	5150 6700 5900 6700
+Wire Wire Line
+	5900 6700 5900 6200
+Wire Wire Line
+	5900 6200 5750 6200
+Wire Wire Line
+	5350 6400 5150 6400
+Wire Wire Line
+	5150 6400 5150 5900
+Wire Wire Line
+	5150 5900 5900 5900
+Wire Wire Line
+	5900 5900 5900 5400
+Wire Wire Line
+	5900 5400 5750 5400
+Wire Wire Line
+	5350 5600 5000 5600
+Wire Wire Line
+	5000 5600 5000 5400
+Wire Wire Line
+	5000 5400 4750 5400
+Wire Wire Line
+	4350 5600 4350 5950
+Wire Wire Line
+	4350 5950 4750 5950
+Wire Wire Line
+	4750 5950 4750 6200
+Wire Wire Line
+	4350 6400 4350 6700
+Wire Wire Line
+	4350 6700 4750 6700
+Wire Wire Line
+	4750 6700 4750 7000
+Wire Wire Line
+	4350 7200 4350 7450
+Wire Wire Line
+	4350 7450 4750 7450
+Wire Wire Line
+	4750 7450 4750 7800
+Wire Wire Line
+	4350 8000 4350 8300
+Wire Wire Line
+	4350 8300 4750 8300
+Wire Wire Line
+	4750 8300 4750 8600
+Wire Wire Line
+	3950 7800 3750 7800
+Wire Wire Line
+	3350 8000 3150 8000
+Wire Wire Line
+	3150 8000 3150 7500
+Wire Wire Line
+	3150 7500 3950 7500
+Wire Wire Line
+	3950 7500 3950 7000
+Wire Wire Line
+	3950 7000 3750 7000
+Wire Wire Line
+	3350 7200 3150 7200
+Wire Wire Line
+	3150 7200 3150 6700
+Wire Wire Line
+	3150 6700 3950 6700
+Wire Wire Line
+	3950 6700 3950 6200
+Wire Wire Line
+	3950 6200 3750 6200
+Wire Wire Line
+	3350 6400 3150 6400
+Wire Wire Line
+	3150 6400 3150 5900
+Wire Wire Line
+	3150 5900 3950 5900
+Wire Wire Line
+	3950 5900 3950 5400
+Wire Wire Line
+	3950 5400 3750 5400
+Wire Wire Line
+	3350 5600 3050 5600
+Wire Wire Line
+	3050 5600 3050 5400
+Wire Wire Line
+	3050 5400 2800 5400
+Wire Wire Line
+	2400 5900 2800 5900
+Wire Wire Line
+	2800 5900 2800 6200
+Wire Wire Line
+	2400 6400 2400 6700
+Wire Wire Line
+	2400 6700 2800 6700
+Wire Wire Line
+	2800 6700 2800 7000
+Wire Wire Line
+	2400 7200 2400 7500
+Wire Wire Line
+	2400 7500 2800 7500
+Wire Wire Line
+	2800 7500 2800 7800
+Wire Wire Line
+	2400 8000 2050 8000
+Wire Wire Line
+	2050 8000 2050 7800
+Wire Wire Line
+	2050 7800 1800 7800
+Wire Wire Line
+	1400 8000 1200 8000
+Wire Wire Line
+	1200 8000 1200 7500
+Wire Wire Line
+	1200 7500 2000 7500
+Wire Wire Line
+	2000 7500 2000 7000
+Wire Wire Line
+	2000 7000 1800 7000
+Wire Wire Line
+	1400 7200 1200 7200
+Wire Wire Line
+	1200 7200 1200 6650
+Wire Wire Line
+	1200 6650 2050 6650
+Wire Wire Line
+	2050 6650 2050 6200
+Wire Wire Line
+	2050 6200 1800 6200
+Wire Wire Line
+	1400 6400 1200 6400
+Wire Wire Line
+	1200 6400 1200 5900
+Wire Wire Line
+	1200 5900 2050 5900
+Wire Wire Line
+	2050 5900 2050 5400
+Wire Wire Line
+	2050 5400 1800 5400
+$Comp
+L 6Pack-cache:power_GND #PWR0102
+U 1 1 6150E864
+P 2800 8000
+F 0 "#PWR0102" H 2800 7750 50  0001 C CNN
+F 1 "power_GND" V 2805 7872 50  0000 R CNN
+F 2 "" H 2800 8000 50  0001 C CNN
+F 3 "" H 2800 8000 50  0001 C CNN
+	1    2800 8000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0105
+U 1 1 61517FCF
+P 1800 8000
+F 0 "#PWR0105" H 1800 7750 50  0001 C CNN
+F 1 "power_GND" V 1805 7872 50  0000 R CNN
+F 2 "" H 1800 8000 50  0001 C CNN
+F 3 "" H 1800 8000 50  0001 C CNN
+	1    1800 8000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0119
+U 1 1 61521800
+P 1800 7200
+F 0 "#PWR0119" H 1800 6950 50  0001 C CNN
+F 1 "power_GND" V 1805 7072 50  0000 R CNN
+F 2 "" H 1800 7200 50  0001 C CNN
+F 3 "" H 1800 7200 50  0001 C CNN
+	1    1800 7200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0122
+U 1 1 6152B875
+P 1800 5600
+F 0 "#PWR0122" H 1800 5350 50  0001 C CNN
+F 1 "power_GND" V 1805 5472 50  0000 R CNN
+F 2 "" H 1800 5600 50  0001 C CNN
+F 3 "" H 1800 5600 50  0001 C CNN
+	1    1800 5600
+	0    -1   -1   0   
+$EndComp
+NoConn ~ 1400 5600
+Text GLabel 9600 -1700 2    50   Input ~ 0
+B
+Text GLabel 9600 -1900 2    50   Input ~ 0
+A
+Text GLabel 7700 -2300 0    50   Input ~ 0
+din
+Text GLabel 9600 -1300 2    50   Input ~ 0
+Column2
+Text GLabel 9600 -1500 2    50   Input ~ 0
+Column1
+Text GLabel 9600 -1100 2    50   Input ~ 0
+Column3
+Text GLabel 9600 -900 2    50   Input ~ 0
+Column4
+Text GLabel 9600 -700 2    50   Input ~ 0
+Column5
+Text GLabel 9600 -2500 2    50   Input ~ 0
+Row1
+Text GLabel 7700 -2500 0    50   Input ~ 0
+Column6
+Text GLabel 7700 -2700 0    50   Input ~ 0
+Row5
+Text GLabel 7700 -3100 0    50   Input ~ 0
+Row3
+Text GLabel 7700 -2900 0    50   Input ~ 0
+Row4
+Text GLabel 7700 -3300 0    50   Input ~ 0
+Row2
+$Comp
+L diode-default:1N4148 D11
+U 1 1 618E30CF
+P 1300 900
+F 0 "D11" V 1254 980 50  0000 L CNN
+F 1 "1N4148" V 1345 980 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 1300 725 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 1300 900 50  0001 C CNN
+	1    1300 900 
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1300 3150 2750 3150
+$Comp
+L diode-default:1N4148 D21
+U 1 1 619154BA
+P 1300 1600
+F 0 "D21" V 1254 1680 50  0000 L CNN
+F 1 "1N4148" V 1345 1680 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 1300 1425 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 1300 1600 50  0001 C CNN
+	1    1300 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D41
+U 1 1 61928541
+P 1300 3000
+F 0 "D41" V 1254 3080 50  0000 L CNN
+F 1 "1N4148" V 1345 3080 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 1300 2825 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 1300 3000 50  0001 C CNN
+	1    1300 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D42
+U 1 1 61930731
+P 2750 3000
+F 0 "D42" V 2704 3080 50  0000 L CNN
+F 1 "1N4148" V 2795 3080 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 2750 2825 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 2750 3000 50  0001 C CNN
+	1    2750 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D32
+U 1 1 61937E69
+P 2750 2350
+F 0 "D32" V 2704 2430 50  0000 L CNN
+F 1 "1N4148" V 2795 2430 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 2750 2175 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 2750 2350 50  0001 C CNN
+	1    2750 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D22
+U 1 1 6193F3B3
+P 2750 1600
+F 0 "D22" V 2704 1680 50  0000 L CNN
+F 1 "1N4148" V 2795 1680 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 2750 1425 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 2750 1600 50  0001 C CNN
+	1    2750 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D12
+U 1 1 6194E3F5
+P 2750 900
+F 0 "D12" V 2704 980 50  0000 L CNN
+F 1 "1N4148" V 2795 980 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 2750 725 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 2750 900 50  0001 C CNN
+	1    2750 900 
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D13
+U 1 1 61955B0B
+P 4050 900
+F 0 "D13" V 4004 980 50  0000 L CNN
+F 1 "1N4148" V 4095 980 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 4050 725 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 4050 900 50  0001 C CNN
+	1    4050 900 
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D23
+U 1 1 6195D1DD
+P 4050 1600
+F 0 "D23" V 4004 1680 50  0000 L CNN
+F 1 "1N4148" V 4095 1680 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 4050 1425 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 4050 1600 50  0001 C CNN
+	1    4050 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D24
+U 1 1 61964CF2
+P 5300 1600
+F 0 "D24" V 5254 1680 50  0000 L CNN
+F 1 "1N4148" V 5345 1680 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 5300 1425 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 5300 1600 50  0001 C CNN
+	1    5300 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D14
+U 1 1 6196C561
+P 5300 900
+F 0 "D14" V 5254 980 50  0000 L CNN
+F 1 "1N4148" V 5345 980 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 5300 725 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 5300 900 50  0001 C CNN
+	1    5300 900 
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D15
+U 1 1 6197BC4B
+P 6550 900
+F 0 "D15" V 6504 980 50  0000 L CNN
+F 1 "1N414" V 6595 980 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 6550 725 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 6550 900 50  0001 C CNN
+	1    6550 900 
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D25
+U 1 1 619832B7
+P 6550 1600
+F 0 "D25" V 6504 1680 50  0000 L CNN
+F 1 "1N414" V 6595 1680 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 6550 1425 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 6550 1600 50  0001 C CNN
+	1    6550 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D26
+U 1 1 6198B251
+P 7750 1600
+F 0 "D26" V 7704 1680 50  0000 L CNN
+F 1 "1N4148" V 7795 1680 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 7750 1425 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 7750 1600 50  0001 C CNN
+	1    7750 1600
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D16
+U 1 1 61992C13
+P 7750 900
+F 0 "D16" V 7704 980 50  0000 L CNN
+F 1 "1N4148" V 7795 980 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 7750 725 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 7750 900 50  0001 C CNN
+	1    7750 900 
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D34
+U 1 1 6199C6FC
+P 5300 2350
+F 0 "D34" V 5254 2430 50  0000 L CNN
+F 1 "1N414" V 5345 2430 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 5300 2175 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 5300 2350 50  0001 C CNN
+	1    5300 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D33
+U 1 1 619A4099
+P 4050 2350
+F 0 "D33" V 4004 2430 50  0000 L CNN
+F 1 "1N4148" V 4095 2430 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 4050 2175 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 4050 2350 50  0001 C CNN
+	1    4050 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D43
+U 1 1 619AB927
+P 4050 3000
+F 0 "D43" V 4004 3080 50  0000 L CNN
+F 1 "1N4148" V 4095 3080 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 4050 2825 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 4050 3000 50  0001 C CNN
+	1    4050 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D44
+U 1 1 619B345E
+P 5300 3000
+F 0 "D44" V 5254 3080 50  0000 L CNN
+F 1 "1N4148" V 5345 3080 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 5300 2825 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 5300 3000 50  0001 C CNN
+	1    5300 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D45
+U 1 1 619BB13F
+P 6550 3000
+F 0 "D45" V 6504 3080 50  0000 L CNN
+F 1 "1N4148" V 6595 3080 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 6550 2825 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 6550 3000 50  0001 C CNN
+	1    6550 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D46
+U 1 1 619C2C5C
+P 7750 3000
+F 0 "D46" V 7704 3080 50  0000 L CNN
+F 1 "1N4148" V 7795 3080 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 7750 2825 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 7750 3000 50  0001 C CNN
+	1    7750 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D54
+U 1 1 619CAA31
+P 5300 3700
+F 0 "D54" V 5254 3780 50  0000 L CNN
+F 1 "1N4148" V 5345 3780 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 5300 3525 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 5300 3700 50  0001 C CNN
+	1    5300 3700
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D55
+U 1 1 619D281C
+P 6550 3700
+F 0 "D55" V 6504 3780 50  0000 L CNN
+F 1 "1N4148" V 6595 3780 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 6550 3525 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 6550 3700 50  0001 C CNN
+	1    6550 3700
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D56
+U 1 1 619DA492
+P 7750 3700
+F 0 "D56" V 7704 3780 50  0000 L CNN
+F 1 "1N4148" V 7795 3780 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 7750 3525 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 7750 3700 50  0001 C CNN
+	1    7750 3700
+	0    1    1    0   
+$EndComp
+Connection ~ 5300 3850
+Wire Wire Line
+	5300 3850 6550 3850
+Connection ~ 6550 3850
+Wire Wire Line
+	6550 3850 7750 3850
+Wire Wire Line
+	4650 2850 4650 3550
+Wire Wire Line
+	1300 3850 3650 3850
+$Comp
+L diode-default:1N4148 DROT1
+U 1 1 61A3559A
+P 3650 3700
+F 0 "DROT1" V 3604 3780 50  0000 L CNN
+F 1 "1N414" V 3695 3780 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 3650 3525 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 3650 3700 50  0001 C CNN
+	1    3650 3700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3650 3550 4050 3550
+Connection ~ 2750 3150
+Wire Wire Line
+	2750 3150 4050 3150
+Connection ~ 4050 3150
+Wire Wire Line
+	4050 3150 5300 3150
+Connection ~ 5300 3150
+Wire Wire Line
+	5300 3150 6550 3150
+Connection ~ 6550 3150
+Wire Wire Line
+	6550 3150 7750 3150
+Wire Wire Line
+	2750 1050 4050 1050
+Connection ~ 2750 1050
+Connection ~ 4050 1050
+Wire Wire Line
+	4050 1050 5300 1050
+Connection ~ 5300 1050
+Wire Wire Line
+	5300 1050 6550 1050
+Connection ~ 6550 1050
+Connection ~ 2750 2500
+Wire Wire Line
+	2750 2500 4050 2500
+Connection ~ 4050 2500
+Wire Wire Line
+	4050 2500 5300 2500
+$Comp
+L diode-default:1N4148 D31
+U 1 1 61ABE581
+P 1300 2350
+F 0 "D31" V 1254 2430 50  0000 L CNN
+F 1 "1N4148" V 1345 2430 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 1300 2175 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 1300 2350 50  0001 C CNN
+	1    1300 2350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1300 2500 2750 2500
+$Comp
+L diode-default:1N4148 D35
+U 1 1 61AE230D
+P 6550 2350
+F 0 "D35" V 6504 2430 50  0000 L CNN
+F 1 "1N4148" V 6595 2430 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 6550 2175 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 6550 2350 50  0001 C CNN
+	1    6550 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L diode-default:1N4148 D36
+U 1 1 61AF2C29
+P 7750 2350
+F 0 "D36" V 7704 2430 50  0000 L CNN
+F 1 "1N4148" V 7795 2430 50  0000 L CNN
+F 2 "kbd:D3_TH_SMD_v2" H 7750 2175 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 7750 2350 50  0001 C CNN
+	1    7750 2350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6550 1050 7750 1050
+Connection ~ 7750 1050
+Wire Wire Line
+	7750 1050 8550 1050
+Wire Wire Line
+	8550 1750 7750 1750
+Connection ~ 2750 1750
+Wire Wire Line
+	2750 1750 1300 1750
+Connection ~ 4050 1750
+Wire Wire Line
+	4050 1750 2750 1750
+Connection ~ 5300 1750
+Wire Wire Line
+	5300 1750 4050 1750
+Connection ~ 7750 1750
+Wire Wire Line
+	7750 1750 6550 1750
+Wire Wire Line
+	7750 3150 8550 3150
+Connection ~ 7750 3150
+Wire Wire Line
+	7750 3850 8500 3850
+Connection ~ 7750 3850
+Wire Wire Line
+	5300 2500 6550 2500
+Connection ~ 5300 2500
+Connection ~ 6550 2500
+Wire Wire Line
+	6550 2500 7750 2500
+Connection ~ 7750 2500
+Wire Wire Line
+	7750 2500 8550 2500
+Connection ~ 7150 1450
+Wire Wire Line
+	4250 3550 4650 3550
+Wire Wire Line
+	7150 750  7150 1450
+Connection ~ 4650 3550
+Wire Wire Line
+	4650 3550 4650 4150
+Connection ~ 3650 3850
+Wire Wire Line
+	3650 3850 5300 3850
+Wire Wire Line
+	3950 7800 3950 8800
+Wire Wire Line
+	4350 8800 3950 8800
+Wire Wire Line
+	8350 2850 8350 3550
+Connection ~ 8350 3550
+Wire Wire Line
+	8350 3550 8350 4150
+Connection ~ 6550 1750
+Wire Wire Line
+	6550 1750 5300 1750
+Wire Wire Line
+	7150 1450 7150 2200
+$Comp
+L 6Pack-cache:power_GND #PWR0115
+U 1 1 613B217C
+P 1800 6400
+F 0 "#PWR0115" H 1800 6150 50  0001 C CNN
+F 1 "power_GND" V 1805 6272 50  0000 R CNN
+F 2 "" H 1800 6400 50  0001 C CNN
+F 3 "" H 1800 6400 50  0001 C CNN
+	1    1800 6400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0123
+U 1 1 613B9F4A
+P 2800 6400
+F 0 "#PWR0123" H 2800 6150 50  0001 C CNN
+F 1 "power_GND" V 2805 6272 50  0000 R CNN
+F 2 "" H 2800 6400 50  0001 C CNN
+F 3 "" H 2800 6400 50  0001 C CNN
+	1    2800 6400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0124
+U 1 1 613C2D17
+P 2400 7000
+F 0 "#PWR0124" H 2400 6970 20  0001 C CNN
+F 1 "+5V" V 2400 7108 30  0000 L CNN
+F 2 "" H 2400 7000 60  0000 C CNN
+F 3 "" H 2400 7000 60  0000 C CNN
+	1    2400 7000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0128
+U 1 1 613CD706
+P 2400 5400
+F 0 "#PWR0128" H 2400 5370 20  0001 C CNN
+F 1 "+5V" V 2400 5508 30  0000 L CNN
+F 2 "" H 2400 5400 60  0000 C CNN
+F 3 "" H 2400 5400 60  0000 C CNN
+	1    2400 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0129
+U 1 1 613ED0D0
+P 5750 6400
+F 0 "#PWR0129" H 5750 6150 50  0001 C CNN
+F 1 "power_GND" V 5755 6272 50  0000 R CNN
+F 2 "" H 5750 6400 50  0001 C CNN
+F 3 "" H 5750 6400 50  0001 C CNN
+	1    5750 6400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0134
+U 1 1 613F5759
+P 5750 8000
+F 0 "#PWR0134" H 5750 7750 50  0001 C CNN
+F 1 "power_GND" V 5755 7872 50  0000 R CNN
+F 2 "" H 5750 8000 50  0001 C CNN
+F 3 "" H 5750 8000 50  0001 C CNN
+	1    5750 8000
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5900 7800 5900 8400
+Wire Wire Line
+	2400 5600 2400 5900
+$Comp
+L keyboard_parts:+5V #PWR0153
+U 1 1 6139229D
+P 4300 -3900
+F 0 "#PWR0153" H 4300 -3930 20  0001 C CNN
+F 1 "+5V" V 4300 -3792 30  0000 L CNN
+F 2 "" H 4300 -3900 60  0000 C CNN
+F 3 "" H 4300 -3900 60  0000 C CNN
+	1    4300 -3900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0154
+U 1 1 613A8A65
+P 6200 -4100
+F 0 "#PWR0154" H 6200 -4350 50  0001 C CNN
+F 1 "power_GND" V 6205 -4228 50  0000 R CNN
+F 2 "" H 6200 -4100 50  0001 C CNN
+F 3 "" H 6200 -4100 50  0001 C CNN
+	1    6200 -4100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 6Pack-cache:power_GND #PWR0158
+U 1 1 613B124E
+P 9600 -4100
+F 0 "#PWR0158" H 9600 -4350 50  0001 C CNN
+F 1 "power_GND" V 9605 -4228 50  0000 R CNN
+F 2 "" H 9600 -4100 50  0001 C CNN
+F 3 "" H 9600 -4100 50  0001 C CNN
+	1    9600 -4100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L keyboard_parts:+5V #PWR0163
+U 1 1 613BA8B1
+P 7700 -3900
+F 0 "#PWR0163" H 7700 -3930 20  0001 C CNN
+F 1 "+5V" V 7700 -3792 30  0000 L CNN
+F 2 "" H 7700 -3900 60  0000 C CNN
+F 3 "" H 7700 -3900 60  0000 C CNN
+	1    7700 -3900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L mini-rescue:LOGO-board_logo BOARD_LOGO1
+U 1 1 61412EF2
+P -900 -1600
+F 0 "BOARD_LOGO1" H -900 -2903 60  0001 C CNN
+F 1 "LOGO" H -900 -297 60  0001 C CNN
+F 2 "casper:cve_logo_neg" H -900 -1600 50  0001 C CNN
+F 3 "" H -900 -1600 50  0001 C CNN
+	1    -900 -1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:LOGO-beaver beaver1
+U 1 1 613CD501
+P 1400 -2950
+F 0 "beaver1" H 1400 -3283 60  0001 C CNN
+F 1 "FL" H 1400 -2617 60  0001 C CNN
+F 2 "casper:beaver_fiona" H 1400 -2950 50  0001 C CNN
+F 3 "" H 1400 -2950 50  0001 C CNN
+	1    1400 -2950
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

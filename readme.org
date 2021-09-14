@@ -2,6 +2,7 @@
 /This is  work in progress -  the post is updated  as I find
 time to work on it./
 
+https://t.17track.net/en#nums=1511258884
 
 #+begin_export md
 <img src="./figures/logo.svg" width = "100%"></img>
@@ -766,12 +767,8 @@ Start writing unit tests
 #+end_src
 
 * PCB layout design
-** DONE figure out building
- - PIO building:
-   - set environment to esp32
-
-** DONE Fixed layout with diodes
-** DONE Coordinates
+- For case http://builder.swillkb.com/
+- For layout http://www.keyboard-layout-editor.com/#/
 #+name: board layout
 #+begin_src jupyter-python
 from matplotlib import style
@@ -1031,10 +1028,6 @@ fig.show()
  #+end_src
 
 
-
-
-
-
  #+name: edgecuts
  #+begin_src jupyter-python
  import matplotlib.pyplot as plt, cmasher as cmr
@@ -1213,7 +1206,7 @@ Done
 from matplotlib import style
 style.use("fivethirtyeight".split())
 import numpy as np, matplotlib.pyplot as plt, sys, os
-
+from matplotlib.collections import LineCollection
 sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
 import pcbnew
 board_fp = "miniv2/mini.kicad_pcb"
@@ -1223,126 +1216,58 @@ pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
 
 ec = pcb.GetLayerID("Edge.Cuts")
 
-from matplotlib.collections import LineCollection
-lc = []
-for drawing in pcb.GetDrawings():
-    start, end = drawing.GetStart(), drawing.GetEnd()
-    lc.append((start, end))
-lc = np.asarray(lc)
-print(lc.shape)
-
-tmp = lc.reshape(-1 ,2)
-xma, yma  = np.max(tmp[..., 0]), np.max(tmp[..., 1])
-xmi, ymi  = np.min(tmp[..., 0]), np.min(tmp[..., 1])
-lc_a = LineCollection(lc, lw = 1)
-
 modules = {m.GetReference(): m for m in pcb.GetModules()}
 def compute_components(x):
     x1 = x[0].GetCenter()
     x2 = x[1].GetCenter()
     return (x2.x - x1.x) / (1e6 * 19), (x2.y - x1.y) / (1e6 * 19)
-
 for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
     tmp = tuple(modules.get(i) for i in x)
-    print(compute_components(tmp))
-fig, ax = plt.subplots()
-for m in pcb.GetModules():
-    ref = m.GetReference()
-    if ref.startswith("K") or  ref.startswith("ROT"):
-        ax.scatter(*m.GetCenter(), color = 'red')
+    print(x, compute_components(tmp))
 
-ax.add_artist(lc_a)
-ax.set_xlim(xmi * .8, xma * 1.2)
-ax.set_ylim(ymi * .8, yma * 1.2)
+# lc = []
+# for drawing in pcb.GetDrawings():
+#     start, end = drawing.GetStart(), drawing.GetEnd()
+#     lc.append((start, end))
+# lc = np.asarray(lc)
+# print(lc.shape)
 
-from shapely import geometry
-shape = geometry.Polygon(lc.reshape(-1, 2))
-# ax.plot(*shape.exterior.xy, lw = .2)
-ax.axis('off')
-fig.savefig("./figures/test_outline.svg", transparent = 1)
-fig.show()
+# tmp = lc.reshape(-1 ,2)
+# xma, yma  = np.max(tmp[..., 0]), np.max(tmp[..., 1])
+# xmi, ymi  = np.min(tmp[..., 0]), np.min(tmp[..., 1])
+# lc_a = LineCollection(lc, lw = 1)
+
+
+
+# for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
+#     tmp = tuple(modules.get(i) for i in x)
+#     print(compute_components(tmp))
+
+# fig, ax = plt.subplots()
+# for m in pcb.GetModules():
+#     ref = m.GetReference()
+#     if ref.startswith("K") or  ref.startswith("ROT"):
+#         ax.scatter(*m.GetCenter(), color = 'red')
+
+# ax.add_artist(lc_a)
+# ax.set_xlim(xmi * .8, xma * 1.2)
+# ax.set_ylim(ymi * .8, yma * 1.2)
+
+# from shapely import geometry
+# shape = geometry.Polygon(lc.reshape(-1, 2))
+# # ax.plot(*shape.exterior.xy, lw = .2)
+# ax.axis('off')
+# # fig.savefig("./figures/test_outline.svg", transparent = 1)
+# fig.show()
 #+end_src
 
 #+RESULTS: creating outline svg
-:RESULTS:
-: (93, 2, 2)
-: (0.03668421052631579, 1.4721052631578948)
-: (0.07310526315789474, 1.4672631578947368)
-: (0.109, 1.4593157894736841)
-: /tmp/ipykernel_41497/1427166331.py:51: UserWarning: Matplotlib is currently using module://matplotlib_inline.backend_inline, which is a non-GUI backend, so cannot show the figure.
-:   fig.show()
-[[file:./.ob-jupyter/9a03120dc08dabb065a10714fc496fc1ed28e6c6.png]]
-:END:
+: ('K44', 'K54') (0.03668421052631579, 1.4194736842105262)
+: ('K45', 'K55') (0.07310526315789474, 1.4146315789473685)
+: ('K46', 'K56') (0.109, 1.4066842105263158)
 
 
-
-** DONE Place diodes
-** DONE Change footprints to hot swappable footprintg
-** DONE Layout TTGO_oled
- #+begin_src jupyter-python
-from matplotlib import style; style.use("fivethirtyeight".split())
-import numpy as np, matplotlib.pyplot as plt
-import sys, os; sys.path.insert(0, '/usr/lib/python3.9/site-packages')
-fp = os.path.expanduser('~/projects/mini_ble/miniv2/esp32.kicad_pcb')
-
-import pcbnew;
-from shapely import geometry as geom
-
-class BoardConverter:
-    def __init__(self, fp):
-        self.board  = pcbnew.LoadBoard(fp)
-
-        self.layers = {44 : "F.SilkS",
-                       0 : "F.Cu",
-                       31 : "B.Cu"}
-
-        # self.layers = {"F.SilkS" : 44, "F.Cu" : 0, "B.Cu" : 31,
-                       # }
-        self.mod = pcbnew.FootPrint("test.mode_pretty")
-    def convert(self):
-        self.get_silks()
-
-    def get_silks(self):
-        for segment in self.board.GetDrawings():
-            if self.layers.get(pcbnew.DRAWSEGMENT_ClassOf(segment), None) == "F.SilkS":
-                pass
-    def create_arc(self, start, end, angle):
-        return geom.LineString(xy)
-    def get_tracks(self):
-        for track in self.board.GetTracks():
-            if self.layers.get(track.GetLayer(), "").endswith('.Cu'):
-                start, end  = track.GetStart(), track.GetEnd()
-
-                poly = Line(start = start, end = end, layer = layer, width = 0.15)
-                self.mod.append(poly)
-
-
-bc = BoardConverter(fp)
-
-bc.convert()
-
- #+end_src
- Got the layout from LC2EDA
-** DONE Attach rotary encoder
-** DONE Fix board edge cuts
-** TODO add power switch
-** DONE Center diodes around keycaps
-** DONE Add switch leds
-** TODO Wire board
-** TODO Check wiring with code
-** DONE determine layout
-** encoder pins
- from x32k keyboard config
-*** rotary encoder
- #define ENCODER_A_PIN GPIO_NUM_17 // encoder phase A pin
- #define ENCODER_B_PIN GPIO_NUM_34// encoder phase B pin
- #define ENCODER_S_PIN GPIO_NUM_16// encoder switch pin
-** oled pins
- # these thos works`
- #define OLED_SDA_PIN GPIO_NUM_4
- #define OLED_SCL_PIN GPIO_NUM_15
 ** TODO implement hid_le_env
-
    https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
  The hid_le_env seems to control the bluetooth stuff at the low-end
  - What are its functions?

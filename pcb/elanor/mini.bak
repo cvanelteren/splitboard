@@ -1,0 +1,1314 @@
+EESchema Schematic File Version 4
+LIBS:mini-cache
+EELAYER 26 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+NoConn ~ -5050 4900
+$Comp
+L mini-rescue:Conn_01x04_Male-Connector-fifth-rescue J_PROG_PORT1
+U 1 1 5B82F178
+P 2150 5700
+F 0 "J_PROG_PORT1" H 2256 5978 50  0000 C CNN
+F 1 "PROGRAMMER" H 2256 5887 50  0000 C CNN
+F 2 "redox_w_footprints:PinHeader_1x04_P2.54mm_Horizontal_edit" H 2150 5700 50  0001 C CNN
+F 3 "~" H 2150 5700 50  0001 C CNN
+	1    2150 5700
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0101
+U 1 1 5B82FA96
+P 2350 5900
+F 0 "#PWR0101" H 2350 5650 50  0001 C CNN
+F 1 "GND" V 2355 5772 50  0000 R CNN
+F 2 "" H 2350 5900 50  0001 C CNN
+F 3 "" H 2350 5900 50  0001 C CNN
+	1    2350 5900
+	0    -1   -1   0   
+$EndComp
+Text GLabel 2350 5700 2    60   Input ~ 0
+SWCLK
+Text GLabel 2350 5800 2    60   Input ~ 0
+SWDIO
+Text GLabel 3050 5850 0    50   Input ~ 0
+5V
+Wire Wire Line
+	4250 6450 4250 5850
+Text GLabel 6300 5800 2    50   Input ~ 0
+VBAT
+Wire Wire Line
+	5350 5800 5800 5800
+$Comp
+L Device:R R1
+U 1 1 5C18FAA7
+P 3700 7200
+F 0 "R1" H 3770 7246 50  0000 L CNN
+F 1 "2k" H 3770 7155 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 3630 7200 50  0001 C CNN
+F 3 "~" H 3700 7200 50  0001 C CNN
+	1    3700 7200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3850 6850 3700 6850
+Wire Wire Line
+	3700 6850 3700 7050
+Wire Wire Line
+	3350 7550 3700 7550
+Wire Wire Line
+	3700 7550 3700 7350
+Wire Wire Line
+	3350 7550 3350 6700
+Wire Wire Line
+	3050 5850 3350 5850
+Connection ~ 3350 5850
+$Comp
+L Device:C C1
+U 1 1 5C19E7B9
+P 3350 6550
+F 0 "C1" H 3465 6596 50  0000 L CNN
+F 1 "4u7F" H 3465 6505 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 3388 6400 50  0001 C CNN
+F 3 "~" H 3350 6550 50  0001 C CNN
+	1    3350 6550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 6400 3350 5850
+Wire Wire Line
+	3350 5850 4250 5850
+$Comp
+L Device:R R2
+U 1 1 5C1A41F9
+P 5150 6150
+F 0 "R2" H 5220 6196 50  0000 L CNN
+F 1 "470 ohm" H 5220 6105 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 5080 6150 50  0001 C CNN
+F 3 "~" H 5150 6150 50  0001 C CNN
+	1    5150 6150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D1
+U 1 1 5C1B384D
+P 5150 6450
+F 0 "D1" V 5188 6332 50  0000 R CNN
+F 1 "CHARGE" V 5097 6332 50  0000 R CNN
+F 2 "Diode_SMD:D_0805_2012Metric" H 5150 6450 50  0001 C CNN
+F 3 "~" H 5150 6450 50  0001 C CNN
+	1    5150 6450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Battery_Management:MCP73831-2-OT U1_BAT1
+U 1 1 5C1C3036
+P 4250 6750
+F 0 "U1_BAT1" H 4250 7228 50  0000 C CNN
+F 1 "MCP73831-2-OT" H 4250 7137 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 4300 6500 50  0001 L CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001984g.pdf" H 4100 6700 50  0001 C CNN
+	1    4250 6750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4650 6650 5350 6650
+$Comp
+L Device:R R3
+U 1 1 5C1DEE4D
+P 5150 7300
+F 0 "R3" H 5220 7346 50  0000 L CNN
+F 1 "470 ohm" H 5220 7255 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 5080 7300 50  0001 C CNN
+F 3 "~" H 5150 7300 50  0001 C CNN
+	1    5150 7300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D2
+U 1 1 5C1DEE54
+P 5150 7000
+F 0 "D2" V 5188 6882 50  0000 R CNN
+F 1 "READY" V 5097 6882 50  0000 R CNN
+F 2 "Diode_SMD:D_0805_2012Metric" H 5150 7000 50  0001 C CNN
+F 3 "~" H 5150 7000 50  0001 C CNN
+	1    5150 7000
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5350 5800 5350 6650
+Wire Wire Line
+	4650 6850 5150 6850
+Wire Wire Line
+	5150 6850 5150 6600
+Connection ~ 5150 6850
+Wire Wire Line
+	3700 7550 4250 7550
+Wire Wire Line
+	4250 7550 4250 7050
+Connection ~ 3700 7550
+Wire Wire Line
+	5150 7450 5150 7550
+Wire Wire Line
+	5150 7550 4250 7550
+Connection ~ 4250 7550
+$Comp
+L Device:C C2
+U 1 1 5C1F3E03
+P 5800 6750
+F 0 "C2" H 5915 6796 50  0000 L CNN
+F 1 "4u7F" H 5915 6705 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 5838 6600 50  0001 C CNN
+F 3 "~" H 5800 6750 50  0001 C CNN
+	1    5800 6750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5150 7550 5800 7550
+Wire Wire Line
+	5800 7550 5800 6900
+Connection ~ 5150 7550
+Wire Wire Line
+	5800 6600 5800 5800
+Connection ~ 5800 5800
+Wire Wire Line
+	5800 5800 6300 5800
+Wire Wire Line
+	5150 6000 5150 5850
+Wire Wire Line
+	5150 5850 4250 5850
+Connection ~ 4250 5850
+$Comp
+L Device:D_Schottky D3
+U 1 1 5C207B53
+P 6600 3600
+F 0 "D3" V 6646 3521 50  0000 R CNN
+F 1 "NSR0320" V 6555 3521 50  0000 R CNN
+F 2 "kicad-libraries:SOD-323" H 6600 3600 50  0001 C CNN
+F 3 "~" H 6600 3600 50  0001 C CNN
+	1    6600 3600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:C C3
+U 1 1 5C207F9F
+P 6600 4100
+F 0 "C3" H 6715 4146 50  0000 L CNN
+F 1 "1uF" H 6715 4055 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 6638 3950 50  0001 C CNN
+F 3 "~" H 6600 4100 50  0001 C CNN
+	1    6600 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R4
+U 1 1 5C212191
+P 6150 4100
+F 0 "R4" H 6220 4146 50  0000 L CNN
+F 1 "100k" H 6220 4055 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6080 4100 50  0001 C CNN
+F 3 "~" H 6150 4100 50  0001 C CNN
+	1    6150 4100
+	1    0    0    -1  
+$EndComp
+Text GLabel 5150 3350 0    50   Input ~ 0
+5V
+Text GLabel 5200 3750 0    50   Input ~ 0
+VBAT
+Connection ~ 6600 3750
+Wire Wire Line
+	5200 3750 5450 3750
+Wire Wire Line
+	6600 3750 6600 3950
+Wire Wire Line
+	6150 3950 6150 3350
+Wire Wire Line
+	6150 4250 6150 4750
+Wire Wire Line
+	6150 4750 6600 4750
+Wire Wire Line
+	6600 4750 6600 4250
+Text GLabel 10950 5050 2    50   Input ~ 0
+5V
+NoConn ~ 11250 4450
+NoConn ~ 10950 5450
+NoConn ~ 10950 5350
+Wire Wire Line
+	6600 3450 6600 3350
+$Comp
+L Connector:Conn_01x02_Female J0_RIGHT1
+U 1 1 5C2E5756
+P 1800 6700
+F 0 "J0_RIGHT1" H 1828 6676 50  0000 L CNN
+F 1 "JST CONNECTOR_RIGHT" H 1828 6585 50  0000 L CNN
+F 2 "Connectors_JST:JST_ACH_BM02B-ACHSS_02x1.20mm_Angled" H 1800 6700 50  0001 C CNN
+F 3 "~" H 1800 6700 50  0001 C CNN
+	1    1800 6700
+	1    0    0    -1  
+$EndComp
+Text GLabel 1350 6700 0    50   Input ~ 0
+VBAT
+Wire Wire Line
+	1600 6800 1350 6800
+Wire Wire Line
+	1350 6700 1600 6700
+$Comp
+L Transistor_FET:Si2319CDS Q1
+U 1 1 5C2F24D1
+P 5650 3650
+F 0 "Q1" V 5900 3650 50  0000 C CNN
+F 1 "SI2301" V 5991 3650 50  0000 C CNN
+F 2 "digikey-footprints:SOT-23-3" H 5850 3575 50  0001 L CIN
+F 3 "http://www.vishay.com/docs/66709/si2319cd.pdf" H 5650 3650 50  0001 L CNN
+	1    5650 3650
+	0    -1   1    0   
+$EndComp
+Wire Wire Line
+	5850 3750 6600 3750
+Wire Wire Line
+	5650 3450 5650 3350
+$Comp
+L mini-rescue:Switch_SW_SPDT-redox_rev1-cache-fifth-rescue POWER_RIGHT1
+U 1 1 5C306455
+P 2900 4800
+F 0 "POWER_RIGHT1" H 2900 5085 50  0000 C CNN
+F 1 "Switch_SW_SPDT" H 2900 4994 50  0000 C CNN
+F 2 "Buttons_Switches_SMD:SW_SPDT_PCM12" H 2900 4800 50  0001 C CNN
+F 3 "" H 2900 4800 50  0001 C CNN
+	1    2900 4800
+	1    0    0    -1  
+$EndComp
+Text GLabel 2700 4800 0    50   Input ~ 0
+VIN_SW
+Text GLabel 3100 4700 2    50   Input ~ 0
+VCC
+$Comp
+L Connector:USB_B_Micro J1_LEFT1
+U 1 1 5C264D60
+P 10650 5250
+F 0 "J1_LEFT1" H 10705 5717 50  0000 C CNN
+F 1 "USB_B_Micro" H 10705 5626 50  0000 C CNN
+F 2 "Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal" H 10800 5200 50  0001 C CNN
+F 3 "~" H 10800 5200 50  0001 C CNN
+	1    10650 5250
+	1    0    0    -1  
+$EndComp
+NoConn ~ 10950 5250
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0102
+U 1 1 5C306102
+P 3350 7550
+F 0 "#PWR0102" H 3350 7300 50  0001 C CNN
+F 1 "GND" V 3355 7422 50  0000 R CNN
+F 2 "" H 3350 7550 50  0001 C CNN
+F 3 "" H 3350 7550 50  0001 C CNN
+	1    3350 7550
+	1    0    0    -1  
+$EndComp
+Connection ~ 3350 7550
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0103
+U 1 1 5C31BEA6
+P 6150 4750
+F 0 "#PWR0103" H 6150 4500 50  0001 C CNN
+F 1 "GND" V 6155 4622 50  0000 R CNN
+F 2 "" H 6150 4750 50  0001 C CNN
+F 3 "" H 6150 4750 50  0001 C CNN
+	1    6150 4750
+	1    0    0    -1  
+$EndComp
+Connection ~ 6150 4750
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0104
+U 1 1 5C331B03
+P 10650 5650
+F 0 "#PWR0104" H 10650 5400 50  0001 C CNN
+F 1 "GND" V 10655 5522 50  0000 R CNN
+F 2 "" H 10650 5650 50  0001 C CNN
+F 3 "" H 10650 5650 50  0001 C CNN
+	1    10650 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0105
+U 1 1 5C3840B5
+P 1350 6800
+F 0 "#PWR0105" H 1350 6550 50  0001 C CNN
+F 1 "GND" V 1355 6672 50  0000 R CNN
+F 2 "" H 1350 6800 50  0001 C CNN
+F 3 "" H 1350 6800 50  0001 C CNN
+	1    1350 6800
+	0    1    1    0   
+$EndComp
+NoConn ~ 3100 4900
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K12
+U 1 1 5C318F0A
+P 5300 1450
+F 0 "K12" H 5300 1683 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 5300 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 5300 1450 60  0001 C CNN
+F 3 "" H 5300 1450 60  0000 C CNN
+	1    5300 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K11
+U 1 1 5C319C7A
+P 5300 1000
+F 0 "K11" H 5300 1233 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 5300 900 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 5300 1000 60  0001 C CNN
+F 3 "" H 5300 1000 60  0000 C CNN
+	1    5300 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K13
+U 1 1 5C31C14C
+P 5300 1850
+F 0 "K13" H 5300 2083 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 5300 1750 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 5300 1850 60  0001 C CNN
+F 3 "" H 5300 1850 60  0000 C CNN
+	1    5300 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K14
+U 1 1 5C31CD6A
+P 5300 2200
+F 0 "K14" H 5300 2433 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 5300 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 5300 2200 60  0001 C CNN
+F 3 "" H 5300 2200 60  0000 C CNN
+	1    5300 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K22
+U 1 1 5C32BAA7
+P 6750 1450
+F 0 "K22" H 6750 1683 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 6750 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 6750 1450 60  0001 C CNN
+F 3 "" H 6750 1450 60  0000 C CNN
+	1    6750 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K21
+U 1 1 5C32BAAE
+P 6750 1000
+F 0 "K21" H 6750 1233 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 6750 900 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 6750 1000 60  0001 C CNN
+F 3 "" H 6750 1000 60  0000 C CNN
+	1    6750 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K23
+U 1 1 5C32BAB5
+P 6750 1850
+F 0 "K23" H 6750 2083 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 6750 1750 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 6750 1850 60  0001 C CNN
+F 3 "" H 6750 1850 60  0000 C CNN
+	1    6750 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K32
+U 1 1 5C32C796
+P 8050 1450
+F 0 "K32" H 8050 1683 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 8050 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 8050 1450 60  0001 C CNN
+F 3 "" H 8050 1450 60  0000 C CNN
+	1    8050 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K31
+U 1 1 5C32C79D
+P 8050 1000
+F 0 "K31" H 8050 1233 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 8050 900 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 8050 1000 60  0001 C CNN
+F 3 "" H 8050 1000 60  0000 C CNN
+	1    8050 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K33
+U 1 1 5C32C7A4
+P 8050 1850
+F 0 "K33" H 8050 2083 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 8050 1750 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 8050 1850 60  0001 C CNN
+F 3 "" H 8050 1850 60  0000 C CNN
+	1    8050 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K42
+U 1 1 5C32E2BC
+P 9300 1450
+F 0 "K42" H 9300 1683 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 9300 1350 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 9300 1450 60  0001 C CNN
+F 3 "" H 9300 1450 60  0000 C CNN
+	1    9300 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K41
+U 1 1 5C32E2C3
+P 9300 1000
+F 0 "K41" H 9300 1233 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 9300 900 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 9300 1000 60  0001 C CNN
+F 3 "" H 9300 1000 60  0000 C CNN
+	1    9300 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K43
+U 1 1 5C32E2CA
+P 9300 1850
+F 0 "K43" H 9300 2083 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 9300 1750 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 9300 1850 60  0001 C CNN
+F 3 "" H 9300 1850 60  0000 C CNN
+	1    9300 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K44
+U 1 1 5C32E2D1
+P 9300 2200
+F 0 "K44" H 9300 2433 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 9300 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 9300 2200 60  0001 C CNN
+F 3 "" H 9300 2200 60  0000 C CNN
+	1    9300 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K52
+U 1 1 5C32EFAB
+P 10550 1400
+F 0 "K52" H 10550 1633 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 10550 1300 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 10550 1400 60  0001 C CNN
+F 3 "" H 10550 1400 60  0000 C CNN
+	1    10550 1400
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K51
+U 1 1 5C32EFB2
+P 10550 950
+F 0 "K51" H 10550 1183 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 10550 850 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 10550 950 60  0001 C CNN
+F 3 "" H 10550 950 60  0000 C CNN
+	1    10550 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K53
+U 1 1 5C32EFB9
+P 10550 1800
+F 0 "K53" H 10550 2033 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 10550 1700 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 10550 1800 60  0001 C CNN
+F 3 "" H 10550 1800 60  0000 C CNN
+	1    10550 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K54
+U 1 1 5C32EFC0
+P 10550 2150
+F 0 "K54" H 10550 2383 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 10550 2050 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 10550 2150 60  0001 C CNN
+F 3 "" H 10550 2150 60  0000 C CNN
+	1    10550 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K62
+U 1 1 5C32FC7A
+P 11750 1350
+F 0 "K62" H 11750 1583 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 11750 1250 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 11750 1350 60  0001 C CNN
+F 3 "" H 11750 1350 60  0000 C CNN
+	1    11750 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K61
+U 1 1 5C32FC81
+P 11750 900
+F 0 "K61" H 11750 1133 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 11750 800 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 11750 900 60  0001 C CNN
+F 3 "" H 11750 900 60  0000 C CNN
+	1    11750 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K63
+U 1 1 5C32FC88
+P 11750 1750
+F 0 "K63" H 11750 1983 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 11750 1650 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 11750 1750 60  0001 C CNN
+F 3 "" H 11750 1750 60  0000 C CNN
+	1    11750 1750
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K64
+U 1 1 5C32FC8F
+P 11750 2100
+F 0 "K64" H 11750 2333 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 11750 2000 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_1.5u_edit" H 11750 2100 60  0001 C CNN
+F 3 "" H 11750 2100 60  0000 C CNN
+	1    11750 2100
+	1    0    0    -1  
+$EndComp
+Text GLabel 5600 1000 2    50   Input ~ 0
+k11
+Text GLabel 5600 1450 2    50   Input ~ 0
+k12
+Text GLabel 5600 1850 2    50   Input ~ 0
+k13
+Text GLabel 5600 2200 2    50   Input ~ 0
+k14
+Text GLabel 7050 1000 2    50   Input ~ 0
+k21
+Text GLabel 7050 1450 2    50   Input ~ 0
+k22
+Text GLabel 7050 1850 2    50   Input ~ 0
+k23
+Text GLabel 8350 1000 2    50   Input ~ 0
+k31
+Text GLabel 8350 1450 2    50   Input ~ 0
+k32
+Text GLabel 8350 1850 2    50   Input ~ 0
+k33
+Text GLabel 9600 1000 2    50   Input ~ 0
+k41
+Text GLabel 9600 1450 2    50   Input ~ 0
+k42
+Text GLabel 9600 1850 2    50   Input ~ 0
+k43
+Text GLabel 9600 2200 2    50   Input ~ 0
+k44
+Text GLabel 10850 950  2    50   Input ~ 0
+k51
+Text GLabel 10850 1400 2    50   Input ~ 0
+k52
+Text GLabel 10850 1800 2    50   Input ~ 0
+k53
+Text GLabel 10850 2150 2    50   Input ~ 0
+k54
+Text GLabel 12050 900  2    50   Input ~ 0
+k61
+Text GLabel 12050 1350 2    50   Input ~ 0
+k62
+Text GLabel 12050 1750 2    50   Input ~ 0
+k63
+Text GLabel 12050 2100 2    50   Input ~ 0
+k64
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0106
+U 1 1 5C3490C1
+P 3150 2400
+F 0 "#PWR0106" H 3150 2150 50  0001 C CNN
+F 1 "GND" V 3155 2272 50  0000 R CNN
+F 2 "" H 3150 2400 50  0001 C CNN
+F 3 "" H 3150 2400 50  0001 C CNN
+	1    3150 2400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0107
+U 1 1 5C3490C7
+P 3150 1400
+F 0 "#PWR0107" H 3150 1150 50  0001 C CNN
+F 1 "GND" V 3155 1272 50  0000 R CNN
+F 2 "" H 3150 1400 50  0001 C CNN
+F 3 "" H 3150 1400 50  0001 C CNN
+	1    3150 1400
+	0    -1   -1   0   
+$EndComp
+Text GLabel 1250 2000 0    60   Input ~ 0
+SWCLK
+Text GLabel 1250 1900 0    60   Input ~ 0
+SWDIO
+Text GLabel 1250 2400 0    60   Input ~ 0
+k14
+Text GLabel 1250 2300 0    60   Input ~ 0
+k13
+Text GLabel 1250 2200 0    60   Input ~ 0
+k12
+Text GLabel 1250 2100 0    60   Input ~ 0
+k11
+Text GLabel 1250 1700 0    50   Input ~ 0
+k23
+Text GLabel 1250 1600 0    50   Input ~ 0
+k22
+Text GLabel 1250 1500 0    50   Input ~ 0
+k21
+Text GLabel 1250 1300 0    50   Input ~ 0
+k32
+Text GLabel 1250 1400 0    50   Input ~ 0
+k31
+Text GLabel 1650 850  1    50   Input ~ 0
+k33
+Text GLabel 1750 850  1    50   Input ~ 0
+k41
+Text GLabel 1850 850  1    50   Input ~ 0
+k42
+Text GLabel 1950 850  1    50   Input ~ 0
+k43
+Text GLabel 2050 850  1    50   Input ~ 0
+k51
+Text GLabel 2150 850  1    50   Input ~ 0
+k52
+Text GLabel 2250 850  1    50   Input ~ 0
+k53
+Text GLabel 2450 850  1    50   Input ~ 0
+k61
+Text GLabel 2550 850  1    50   Input ~ 0
+k62
+Text GLabel 2750 850  1    50   Input ~ 0
+k64
+Text GLabel 2650 850  1    50   Input ~ 0
+k63
+Text GLabel 3150 2100 2    50   Input ~ 0
+k44
+Text GLabel 3150 2200 2    50   Input ~ 0
+k54
+Text GLabel 1250 1800 0    50   Input ~ 0
+k24
+Text GLabel -1900 1550 0    50   Input ~ 0
+k31
+Text GLabel -1900 1450 0    50   Input ~ 0
+k32
+Text GLabel 0    2150 2    60   Input ~ 0
+k24
+Text GLabel 0    1650 2    50   Input ~ 0
+k21
+Text GLabel 0    1750 2    50   Input ~ 0
+k22
+Text GLabel 0    2050 2    50   Input ~ 0
+k23
+Text GLabel -1900 2050 0    60   Input ~ 0
+SWDIO
+Text GLabel -1900 2150 0    60   Input ~ 0
+SWCLK
+Text GLabel 0    2350 2    60   Input ~ 0
+k12
+Text GLabel 0    2450 2    60   Input ~ 0
+k13
+Text GLabel -1900 2550 0    60   Input ~ 0
+k14
+Text GLabel 0    2250 2    60   Input ~ 0
+k11
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0108
+U 1 1 5C37D42A
+P 0 1550
+F 0 "#PWR0108" H 0   1300 50  0001 C CNN
+F 1 "GND" V 5   1422 50  0000 R CNN
+F 2 "" H 0   1550 50  0001 C CNN
+F 3 "" H 0   1550 50  0001 C CNN
+	1    0    1550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0109
+U 1 1 5C37D424
+P 0 2550
+F 0 "#PWR0109" H 0   2300 50  0001 C CNN
+F 1 "GND" V 5   2422 50  0000 R CNN
+F 2 "" H 0   2550 50  0001 C CNN
+F 3 "" H 0   2550 50  0001 C CNN
+	1    0    2550
+	0    -1   -1   0   
+$EndComp
+Text GLabel -1900 2250 0    50   Input ~ 0
+k44
+Text GLabel -1900 2350 0    50   Input ~ 0
+k54
+$Comp
+L mini-rescue:Switch_SW_SPDT-redox_rev1-cache-fifth-rescue POWER_LEFT1
+U 1 1 5C379587
+P 1450 4800
+F 0 "POWER_LEFT1" H 1450 5085 50  0000 C CNN
+F 1 "Switch_SW_SPDT" H 1450 4994 50  0000 C CNN
+F 2 "Buttons_Switches_SMD:SW_SPDT_PCM12" H 1450 4800 50  0001 C CNN
+F 3 "" H 1450 4800 50  0001 C CNN
+	1    1450 4800
+	1    0    0    -1  
+$EndComp
+Text GLabel 1250 4800 0    50   Input ~ 0
+VIN_SW
+Text GLabel 1650 4700 2    50   Input ~ 0
+VCC
+NoConn ~ 1650 4900
+$Comp
+L Connector:Conn_01x02_Female J0_LEFT1
+U 1 1 5C37A516
+P 1800 6450
+F 0 "J0_LEFT1" H 1828 6426 50  0000 L CNN
+F 1 "JST CONNECTOR_LEFT" H 1828 6335 50  0000 L CNN
+F 2 "Connectors_JST:JST_ACH_BM02B-ACHSS_02x1.20mm_Angled" H 1800 6450 50  0001 C CNN
+F 3 "~" H 1800 6450 50  0001 C CNN
+	1    1800 6450
+	1    0    0    -1  
+$EndComp
+Text GLabel 1350 6450 0    50   Input ~ 0
+VBAT
+Wire Wire Line
+	1600 6550 1350 6550
+Wire Wire Line
+	1350 6450 1600 6450
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0110
+U 1 1 5C37A520
+P 1350 6550
+F 0 "#PWR0110" H 1350 6300 50  0001 C CNN
+F 1 "GND" V 1355 6422 50  0000 R CNN
+F 2 "" H 1350 6550 50  0001 C CNN
+F 3 "" H 1350 6550 50  0001 C CNN
+	1    1350 6550
+	0    1    1    0   
+$EndComp
+Text GLabel 10900 3650 2    50   Input ~ 0
+5V
+NoConn ~ 10900 4050
+NoConn ~ 10900 3950
+NoConn ~ 10900 3850
+NoConn ~ 3850 5150
+$Comp
+L power:GND #PWR0111
+U 1 1 5C3C33F0
+P 5000 1000
+F 0 "#PWR0111" H 5000 750 50  0001 C CNN
+F 1 "GND" H 5005 827 50  0000 C CNN
+F 2 "" H 5000 1000 50  0001 C CNN
+F 3 "" H 5000 1000 50  0001 C CNN
+	1    5000 1000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0112
+U 1 1 5C3C6F3C
+P 5000 1450
+F 0 "#PWR0112" H 5000 1200 50  0001 C CNN
+F 1 "GND" H 5005 1277 50  0000 C CNN
+F 2 "" H 5000 1450 50  0001 C CNN
+F 3 "" H 5000 1450 50  0001 C CNN
+	1    5000 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 5C3C7CCB
+P 5000 1850
+F 0 "#PWR0113" H 5000 1600 50  0001 C CNN
+F 1 "GND" H 5005 1677 50  0000 C CNN
+F 2 "" H 5000 1850 50  0001 C CNN
+F 3 "" H 5000 1850 50  0001 C CNN
+	1    5000 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0114
+U 1 1 5C3C8A5A
+P 5000 2200
+F 0 "#PWR0114" H 5000 1950 50  0001 C CNN
+F 1 "GND" H 5005 2027 50  0000 C CNN
+F 2 "" H 5000 2200 50  0001 C CNN
+F 3 "" H 5000 2200 50  0001 C CNN
+	1    5000 2200
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0115
+U 1 1 5C3CCFD1
+P 6450 1000
+F 0 "#PWR0115" H 6450 750 50  0001 C CNN
+F 1 "GND" H 6455 827 50  0000 C CNN
+F 2 "" H 6450 1000 50  0001 C CNN
+F 3 "" H 6450 1000 50  0001 C CNN
+	1    6450 1000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0116
+U 1 1 5C3CCFD7
+P 6450 1450
+F 0 "#PWR0116" H 6450 1200 50  0001 C CNN
+F 1 "GND" H 6455 1277 50  0000 C CNN
+F 2 "" H 6450 1450 50  0001 C CNN
+F 3 "" H 6450 1450 50  0001 C CNN
+	1    6450 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0117
+U 1 1 5C3CCFDD
+P 6450 1850
+F 0 "#PWR0117" H 6450 1600 50  0001 C CNN
+F 1 "GND" H 6455 1677 50  0000 C CNN
+F 2 "" H 6450 1850 50  0001 C CNN
+F 3 "" H 6450 1850 50  0001 C CNN
+	1    6450 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0118
+U 1 1 5C3CEB97
+P 7750 1000
+F 0 "#PWR0118" H 7750 750 50  0001 C CNN
+F 1 "GND" H 7755 827 50  0000 C CNN
+F 2 "" H 7750 1000 50  0001 C CNN
+F 3 "" H 7750 1000 50  0001 C CNN
+	1    7750 1000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0119
+U 1 1 5C3CEB9D
+P 7750 1450
+F 0 "#PWR0119" H 7750 1200 50  0001 C CNN
+F 1 "GND" H 7755 1277 50  0000 C CNN
+F 2 "" H 7750 1450 50  0001 C CNN
+F 3 "" H 7750 1450 50  0001 C CNN
+	1    7750 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0120
+U 1 1 5C3CEBA3
+P 7750 1850
+F 0 "#PWR0120" H 7750 1600 50  0001 C CNN
+F 1 "GND" H 7755 1677 50  0000 C CNN
+F 2 "" H 7750 1850 50  0001 C CNN
+F 3 "" H 7750 1850 50  0001 C CNN
+	1    7750 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0121
+U 1 1 5C3D0803
+P 9000 1000
+F 0 "#PWR0121" H 9000 750 50  0001 C CNN
+F 1 "GND" H 9005 827 50  0000 C CNN
+F 2 "" H 9000 1000 50  0001 C CNN
+F 3 "" H 9000 1000 50  0001 C CNN
+	1    9000 1000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0122
+U 1 1 5C3D0809
+P 9000 1450
+F 0 "#PWR0122" H 9000 1200 50  0001 C CNN
+F 1 "GND" H 9005 1277 50  0000 C CNN
+F 2 "" H 9000 1450 50  0001 C CNN
+F 3 "" H 9000 1450 50  0001 C CNN
+	1    9000 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0123
+U 1 1 5C3D080F
+P 9000 1850
+F 0 "#PWR0123" H 9000 1600 50  0001 C CNN
+F 1 "GND" H 9005 1677 50  0000 C CNN
+F 2 "" H 9000 1850 50  0001 C CNN
+F 3 "" H 9000 1850 50  0001 C CNN
+	1    9000 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0124
+U 1 1 5C3D0815
+P 9000 2200
+F 0 "#PWR0124" H 9000 1950 50  0001 C CNN
+F 1 "GND" H 9005 2027 50  0000 C CNN
+F 2 "" H 9000 2200 50  0001 C CNN
+F 3 "" H 9000 2200 50  0001 C CNN
+	1    9000 2200
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0125
+U 1 1 5C3D232D
+P 10250 950
+F 0 "#PWR0125" H 10250 700 50  0001 C CNN
+F 1 "GND" H 10255 777 50  0000 C CNN
+F 2 "" H 10250 950 50  0001 C CNN
+F 3 "" H 10250 950 50  0001 C CNN
+	1    10250 950 
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0126
+U 1 1 5C3D2333
+P 10250 1400
+F 0 "#PWR0126" H 10250 1150 50  0001 C CNN
+F 1 "GND" H 10255 1227 50  0000 C CNN
+F 2 "" H 10250 1400 50  0001 C CNN
+F 3 "" H 10250 1400 50  0001 C CNN
+	1    10250 1400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0127
+U 1 1 5C3D2339
+P 10250 1800
+F 0 "#PWR0127" H 10250 1550 50  0001 C CNN
+F 1 "GND" H 10255 1627 50  0000 C CNN
+F 2 "" H 10250 1800 50  0001 C CNN
+F 3 "" H 10250 1800 50  0001 C CNN
+	1    10250 1800
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0128
+U 1 1 5C3D233F
+P 10250 2150
+F 0 "#PWR0128" H 10250 1900 50  0001 C CNN
+F 1 "GND" H 10255 1977 50  0000 C CNN
+F 2 "" H 10250 2150 50  0001 C CNN
+F 3 "" H 10250 2150 50  0001 C CNN
+	1    10250 2150
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0129
+U 1 1 5C3D5DC5
+P 11450 900
+F 0 "#PWR0129" H 11450 650 50  0001 C CNN
+F 1 "GND" H 11455 727 50  0000 C CNN
+F 2 "" H 11450 900 50  0001 C CNN
+F 3 "" H 11450 900 50  0001 C CNN
+	1    11450 900 
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0130
+U 1 1 5C3D5DCB
+P 11450 1350
+F 0 "#PWR0130" H 11450 1100 50  0001 C CNN
+F 1 "GND" H 11455 1177 50  0000 C CNN
+F 2 "" H 11450 1350 50  0001 C CNN
+F 3 "" H 11450 1350 50  0001 C CNN
+	1    11450 1350
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0131
+U 1 1 5C3D5DD1
+P 11450 1750
+F 0 "#PWR0131" H 11450 1500 50  0001 C CNN
+F 1 "GND" H 11455 1577 50  0000 C CNN
+F 2 "" H 11450 1750 50  0001 C CNN
+F 3 "" H 11450 1750 50  0001 C CNN
+	1    11450 1750
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0132
+U 1 1 5C3D5DD7
+P 11450 2100
+F 0 "#PWR0132" H 11450 1850 50  0001 C CNN
+F 1 "GND" H 11455 1927 50  0000 C CNN
+F 2 "" H 11450 2100 50  0001 C CNN
+F 3 "" H 11450 2100 50  0001 C CNN
+	1    11450 2100
+	0    1    1    0   
+$EndComp
+Text GLabel 0    1450 2    50   Input ~ 0
+VCC
+Text GLabel 3150 1300 2    50   Input ~ 0
+VCC
+Text GLabel 2350 5600 2    50   Input ~ 0
+VIN_LDO
+Entry Wire Line
+	13700 3650 13800 3750
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0133
+U 1 1 5C3F833A
+P 10550 5650
+F 0 "#PWR0133" H 10550 5400 50  0001 C CNN
+F 1 "GND" V 10555 5522 50  0000 R CNN
+F 2 "" H 10550 5650 50  0001 C CNN
+F 3 "" H 10550 5650 50  0001 C CNN
+	1    10550 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:USB_B_Micro J1_RIGHT1
+U 1 1 5C37FCDE
+P 10600 3850
+F 0 "J1_RIGHT1" H 10655 4317 50  0000 C CNN
+F 1 "USB_B_Micro" H 10655 4226 50  0000 C CNN
+F 2 "Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal" H 10750 3800 50  0001 C CNN
+F 3 "~" H 10750 3800 50  0001 C CNN
+	1    10600 3850
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0134
+U 1 1 5C3FB116
+P 10600 4250
+F 0 "#PWR0134" H 10600 4000 50  0001 C CNN
+F 1 "GND" V 10605 4122 50  0000 R CNN
+F 2 "" H 10600 4250 50  0001 C CNN
+F 3 "" H 10600 4250 50  0001 C CNN
+	1    10600 4250
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:GND-power-fifth-rescue #PWR0135
+U 1 1 5C3FB11C
+P 10500 4250
+F 0 "#PWR0135" H 10500 4000 50  0001 C CNN
+F 1 "GND" V 10505 4122 50  0000 R CNN
+F 2 "" H 10500 4250 50  0001 C CNN
+F 3 "" H 10500 4250 50  0001 C CNN
+	1    10500 4250
+	1    0    0    -1  
+$EndComp
+NoConn ~ -1900 1850
+NoConn ~ -1900 1950
+NoConn ~ 0    1850
+NoConn ~ 0    1950
+NoConn ~ 3150 1900
+NoConn ~ 3150 2000
+NoConn ~ 3150 1800
+NoConn ~ 3150 1700
+$Comp
+L mini-rescue:Core51822B-core51822b-fifth-rescue U_LEFT1
+U 1 1 5C4215E4
+P 2200 1900
+F 0 "U_LEFT1" H 2200 2680 60  0000 C CNN
+F 1 "Core51822B" H 2200 2786 60  0000 C CNN
+F 2 "redox_w_footprints:MY-YJ-14015-Module" H 2200 2000 60  0001 C CNN
+F 3 "" H 2200 2000 60  0001 C CNN
+	1    2200 1900
+	-1   0    0    1   
+$EndComp
+$Comp
+L mini-rescue:Core51822B-core51822b-fifth-rescue U_RIGHT1
+U 1 1 5C42CBAD
+P -950 2050
+F 0 "U_RIGHT1" H -950 2830 60  0000 C CNN
+F 1 "Core51822B" H -950 2936 60  0000 C CNN
+F 2 "redox_w_footprints:MY-YJ-14015-Module" H -950 2150 60  0001 C CNN
+F 3 "" H -950 2150 60  0001 C CNN
+	1    -950 2050
+	-1   0    0    1   
+$EndComp
+$Comp
+L Regulator_Linear:MCP1703A-5002_SOT23 U1
+U 1 1 5C382D8C
+P 8900 3250
+F 0 "U1" H 8900 3492 50  0000 C CNN
+F 1 "MCP1703A-5002_SOT23" H 8900 3401 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 8900 3450 50  0001 C CNN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20005122B.pdf" H 8900 3200 50  0001 C CNN
+	1    8900 3250
+	1    0    0    -1  
+$EndComp
+Text GLabel 8900 3850 3    50   Input ~ 0
+GND
+Text GLabel 9600 3250 2    50   Input ~ 0
+VIN_SW
+Wire Wire Line
+	9600 3250 9350 3250
+Wire Wire Line
+	8600 3250 8350 3250
+Wire Wire Line
+	8900 3550 8900 3700
+$Comp
+L Device:C C5
+U 1 1 5C39147F
+P 9350 3400
+F 0 "C5" H 9465 3446 50  0000 L CNN
+F 1 "1uF" H 9465 3355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 9388 3250 50  0001 C CNN
+F 3 "~" H 9350 3400 50  0001 C CNN
+	1    9350 3400
+	1    0    0    -1  
+$EndComp
+Connection ~ 9350 3250
+Wire Wire Line
+	9350 3250 9200 3250
+$Comp
+L Device:C C4
+U 1 1 5C39154D
+P 8350 3400
+F 0 "C4" H 8465 3446 50  0000 L CNN
+F 1 "1uF" H 8465 3355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 8388 3250 50  0001 C CNN
+F 3 "~" H 8350 3400 50  0001 C CNN
+	1    8350 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8900 3700 8350 3700
+Wire Wire Line
+	8350 3700 8350 3550
+Connection ~ 8900 3700
+Wire Wire Line
+	8900 3700 8900 3850
+Wire Wire Line
+	8900 3700 9350 3700
+Wire Wire Line
+	9350 3700 9350 3550
+Wire Wire Line
+	5150 3350 5650 3350
+Wire Wire Line
+	5650 3350 6150 3350
+Connection ~ 5650 3350
+Wire Wire Line
+	6150 3350 6600 3350
+Connection ~ 6150 3350
+Text GLabel 7750 3250 0    50   Input ~ 0
+VIN_LDO
+Wire Wire Line
+	6600 3750 7350 3750
+Text GLabel 7350 3750 2    50   Input ~ 0
+VIN_LDO
+Wire Wire Line
+	7750 3250 8350 3250
+Connection ~ 8350 3250
+$Comp
+L Graphic:Logo_Open_Hardware_Large #LOGO1
+U 1 1 5C3ACA07
+P 2300 3450
+F 0 "#LOGO1" H 2300 3950 50  0001 C CNN
+F 1 "Logo_Open_Hardware_Large" H 2300 3050 50  0001 C CNN
+F 2 "" H 2300 3450 50  0001 C CNN
+F 3 "~" H 2300 3450 50  0001 C CNN
+	1    2300 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Graphic:Logo_Open_Hardware_Large #LOGO2
+U 1 1 5C3ADA8B
+P 3350 3450
+F 0 "#LOGO2" H 3350 3950 50  0001 C CNN
+F 1 "Logo_Open_Hardware_Large" H 3350 3050 50  0001 C CNN
+F 2 "" H 3350 3450 50  0001 C CNN
+F 3 "~" H 3350 3450 50  0001 C CNN
+	1    3350 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L mini-rescue:KEYSW-redox_rev1-rescue-fifth-rescue K24
+U 1 1 5C3B6A79
+P 6800 2200
+F 0 "K24" H 6800 2433 60  0000 C CNN
+F 1 "KEYSW-redox_rev1-rescue" H 6800 2100 60  0001 C CNN
+F 2 "kbd:CherryMX_Hotswap_edit" H 6800 2200 60  0001 C CNN
+F 3 "" H 6800 2200 60  0000 C CNN
+	1    6800 2200
+	1    0    0    -1  
+$EndComp
+Text GLabel 7100 2200 2    50   Input ~ 0
+k24
+$Comp
+L power:GND #PWR0136
+U 1 1 5C3B6A81
+P 6500 2200
+F 0 "#PWR0136" H 6500 1950 50  0001 C CNN
+F 1 "GND" H 6505 2027 50  0000 C CNN
+F 2 "" H 6500 2200 50  0001 C CNN
+F 3 "" H 6500 2200 50  0001 C CNN
+	1    6500 2200
+	0    1    1    0   
+$EndComp
+Text GLabel -400 1000 1    50   Input ~ 0
+k33
+Text GLabel -500 1000 1    50   Input ~ 0
+k41
+Text GLabel -600 1000 1    50   Input ~ 0
+k42
+Text GLabel -700 1000 1    50   Input ~ 0
+k43
+Text GLabel -800 1000 1    50   Input ~ 0
+k51
+Text GLabel -900 1000 1    50   Input ~ 0
+k52
+Text GLabel -1000 1000 1    50   Input ~ 0
+k53
+Text GLabel -1200 1000 1    50   Input ~ 0
+k61
+Text GLabel -1300 1000 1    50   Input ~ 0
+k62
+Text GLabel -1500 1000 1    50   Input ~ 0
+k64
+Text GLabel -1400 1000 1    50   Input ~ 0
+k63
+NoConn ~ -1900 2450
+NoConn ~ -1900 1650
+NoConn ~ -1100 1000
+NoConn ~ 3150 2300
+NoConn ~ 2350 850 
+Text GLabel 3150 1600 2    50   Input ~ 0
+LED
+Text GLabel -1900 1750 0    50   Input ~ 0
+LED
+Text GLabel 4700 5300 0    50   Input ~ 0
+LED
+Text GLabel 5400 5300 2    50   Input ~ 0
+GND
+$Comp
+L MyKiCadLibs-Lib:DIODE D201
+U 1 1 5C3C3FAF
+P 4900 5300
+F 0 "D201" H 4900 5492 40  0000 C CNN
+F 1 "DIODE" H 4900 5416 40  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric" H 4900 5300 60  0001 C CNN
+F 3 "" H 4900 5300 60  0000 C CNN
+F 4 "Text description" H 4900 5150 40  0001 C CNN "Description"
+	1    4900 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R201
+U 1 1 5C3C46A3
+P 5250 5300
+F 0 "R201" V 5043 5300 50  0000 C CNN
+F 1 "R" V 5134 5300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 5180 5300 50  0001 C CNN
+F 3 "~" H 5250 5300 50  0001 C CNN
+	1    5250 5300
+	0    1    1    0   
+$EndComp
+$EndSCHEMATC

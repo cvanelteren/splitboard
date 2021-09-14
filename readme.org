@@ -1209,8 +1209,8 @@ import numpy as np, matplotlib.pyplot as plt, sys, os
 from matplotlib.collections import LineCollection
 sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
 import pcbnew
-board_fp = "miniv2/mini.kicad_pcb"
-base = os.path.expanduser("~/projects/mini_ble")
+board_fp = "elanor.kicad_pcb"
+base = os.path.expanduser("~/Documents/PlatformIO/Projects/arduino_esp32/pcb/elanor")
 pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
 
 
@@ -1220,7 +1220,7 @@ modules = {m.GetReference(): m for m in pcb.GetModules()}
 def compute_components(x):
     x1 = x[0].GetCenter()
     x2 = x[1].GetCenter()
-    return (x2.x - x1.x) / (1e6 * 19), (x2.y - x1.y) / (1e6 * 19)
+    return (x2.x - x1.x) / (1e6 * 19.05), (x2.y - x1.y) / (1e6 * 19.05)
 for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
     tmp = tuple(modules.get(i) for i in x)
     print(x, compute_components(tmp))
@@ -1259,12 +1259,17 @@ for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
 # ax.axis('off')
 # # fig.savefig("./figures/test_outline.svg", transparent = 1)
 # fig.show()
+s = """
+Note  to future self: In the online keyboard layout editor, you have to add half a unit (.5) to both x and y as the rotation puts the center in the
+wrong place
+"""
+print(s)
 #+end_src
 
 #+RESULTS: creating outline svg
-: ('K44', 'K54') (0.03668421052631579, 1.4194736842105262)
-: ('K45', 'K55') (0.07310526315789474, 1.4146315789473685)
-: ('K46', 'K56') (0.109, 1.4066842105263158)
+: ('K44', 'K54') (0.03658792650918635, 1.415748031496063)
+: ('K45', 'K55') (0.07291338582677165, 1.4109186351706038)
+: ('K46', 'K56') (0.10871391076115486, 1.402992125984252)
 
 
 ** TODO implement hid_le_env

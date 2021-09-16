@@ -32,7 +32,7 @@ public:
 
   // deep sleep settings
   const size_t deep_sleep_timeout = 300000; // 5 minutes
-  // const size_t deep_sleep_timeout = 6000; // 5 minutes
+  // const size_t deep_sleep_timeout = 3000; // 5 minutes
 
   // led settings
   static const uint8_t led_pin = 25;

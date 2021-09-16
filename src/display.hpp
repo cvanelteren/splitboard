@@ -11,6 +11,8 @@ public:
   U8G2LOG log;
   std::vector<uint8_t> log_buffer;
   Display(Config *config);
+  void sleep();
+  void wakeup();
   // void print(uint8_t x, uint8_t y, text);
 };
 

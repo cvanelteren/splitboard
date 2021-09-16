@@ -113,7 +113,6 @@ void Keyboard::begin() {
     this->display->log_buffer.resize(width * height);
     this->display->log.begin(*this->display, width, height,
                              &(this->display->log_buffer)[0]);
-    this->display->log.setRedrawMode(0);
   }
 
   // start bluetooth when server
@@ -167,7 +166,7 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   }
   case (LAYER_TAP):
     // deal with layer tap stuff
-    Serial.println("SLEEPING!");
+    Serial.printf("Layer tap!");
     break;
   default: {
     Serial.printf("Sending a keycode \n");
@@ -292,25 +291,36 @@ void Keyboard::update() {
   }
 
   if (this->bluetooth.isConnected()) {
-    this->display->firstPage();
-    do {
-      this->display->log.println("");
-      this->display->log.print("\rhello:)");
-      // this->display->log.print(printf("Connected to %s", "test"));
-      // this->display->setFont(font);
-      // this->display->drawUTF8(1, 30, "hello :)");
+    // this->display->log.print("\rhello:)");
+    // this->display->clearBuffer();
+    // this->display->log.print("\rhello:)");
+    // this->display->sendBuffer();
 
-    } while (this->display->nextPage());
+    // // this->display->firstPage();
+    //   do {
+    //     this->display->log.println("");
+    //     this->display->log.print("\rhello:)");
+    //     // this->display->log.print(printf("Connected to %s", "test"));
+    //     // this->display->setFont(font);
+    //     // this->display->drawUTF8(1, 30, "hello :)");
+
+    //   } while (this->display->nextPage());
+    // } else {
+    //   // this->display->clearDisplay();
+    //   this->display->firstPage();
+    //   do {
+    //     // this->display->log.println("");
+    //     this->display->log.print("\rNo Bluetooth :(");
+    //     // this->display->setFont(font);
+    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
+
+    //   }
+    // while (this->display->nextPage())
+    // ;
   } else {
-    // this->display->clearDisplay();
-    this->display->firstPage();
-    do {
-      // this->display->log.println("");
-      this->display->log.print("\rNo Bluetooth :(");
-      // this->display->setFont(font);
-      // this->display->drawUTF8(1, 30, "No bluetooth :(");
-
-    } while (this->display->nextPage());
+    // this->display->clearBuffer();
+    // this->display->log.print("\rNo BLE :(");
+    // this->display->sendBuffer();
   }
 }
 
@@ -343,6 +353,7 @@ void Keyboard::wakeup() {
 
   this->matrix->wakeup();
   this->led->wakeup();
+  this->display->wakeup();
   this->last_activity = millis();
 }
 
@@ -365,6 +376,8 @@ void Keyboard::sleep() {
   this->led->sleep();
   // prepare pins for sleep
   this->matrix->sleep();
+  this->display->sleep();
+
   esp_sleep_enable_touchpad_wakeup();
   Serial.println("Going sleepy time!");
   esp_light_sleep_start();

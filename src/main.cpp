@@ -2,13 +2,18 @@
 #include <WiFi.h>
 #include <esp_now.h>
 
+#include "event_manager.hpp"
 #include <config.hpp>
 #include <key_definitions.hpp>
 #include <keyboard.hpp>
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
 
+void (EventManager::*update)() = &EventManager::update;
+EventManager manager = EventManager();
+
 void setup() {
+  manager.begin();
 
   // this needs to be here for some reason?
   WiFi.mode(WIFI_STA);
@@ -57,6 +62,7 @@ void loop() {
 
   keyboard.update();
   keyboard.led->cycle();
+  manager.add_event("display");
   // if (keyboard.bluetooth.isConnected()) {
   //   keyboard.bluetooth.print("A");
 

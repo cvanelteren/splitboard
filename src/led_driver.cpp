@@ -109,5 +109,5 @@ std::pair<uint8_t, uint8_t> LED::int2grid(uint8_t idx) {
       }
     }
   }
-  return std::make_pair<uint8_t, uint8_t>(row, col);
+  return std::pair<uint8_t, uint8_t>(row, col);
 }

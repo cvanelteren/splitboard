@@ -1,0 +1,3 @@
+[submodule "Elanor"]
+	path = Elanor
+	url = git@github.com:cvanelteren/Elanor.git

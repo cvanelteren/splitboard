@@ -125,21 +125,10 @@ void Keyboard::begin() {
   if (this->led != nullptr) {
     this->led->begin();
   }
-  // if (this->rotaryEncoder != NULL) {
-  this->rotary_encoder->begin();
-  // }
-  // this->display->setFont(u8g2_font_tom_thumb_4x6_mf);
-  // this->display->setFont(u8g2_font_7x14B_mr);
-  // this->display->setFont(u8g2_font_7x14_tf);
 
-  // this->log->begin(*this->display, 64 / 7, 128 / 14, &this->fb[0]);
-
-  // this->log->begin(*this->display, 8, 4, &this->fb[0]);
-
-  // this->log->begin(8, 4, &this->fb[0]);
-
-  // this->log->setLineHeightOffset(5);
-  // this->log->setRedrawMode(1);
+  if (this->rotaryEncoder != NULL) {
+    this->rotary_encoder->begin();
+  }
 }
 
 uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {

@@ -6,43 +6,50 @@ time to work on it.*
 
 # Table of Contents
 
-1.  [Introduction](#orgd4032f2)
-2.  [Outline](#org90401e6)
-3.  [ESP32](#orgcbcf110)
-4.  [Matrix scanning](#org86486a0)
-    1.  [Ghosting](#orge70f096)
-    2.  [Key debouncing](#org7acf371)
-    3.  [Changes](#org8699dbe)
-5.  [ESP-Now](#org9ef4b15)
-    1.  [Mesh interface class](#org50c127e)
-    2.  [Changes](#org6249645)
-6.  [Modifier keys](#orga027db5)
-    1.  [Changes](#org93dd80f)
-7.  [Bluetooth](#orgd52e4ab)
-    1.  [Changes](#org8e42bf1)
-8.  [Keyboard layers](#orgf8500c6)
-    1.  [Changes](#org7b35bb6)
-9.  [Rotary encoder](#orga0da5f4)
-    1.  [Taming the KY-040 with decoding](#org6927c92)
-    2.  [Changes](#orgc9cbc50)
-10. [LED driver: FastLED](#orge2ef258)
-    1.  [Changes](#orgc0aab11)
-11. [OLED Display](#org49840ac)
-    1.  [Changes](#org5a46f9e)
-12. [Deep sleep](#orgd4c2a71)
-    1.  [Changes](#org771cdb2)
-13. [Battery control](#orgbf1d3c1)
-    1.  [Changes](#org3d7ac16)
-14. [Backlog and weird behavior notes](#org01eb7be)
-    1.  [Pressing  down  a  key  repeatedly and  then  another  key](#org50b8c95)
-    2.  [Figure out bug  where \`-\` is sent  repeatedly. This occurs](#org4062a26)
-    3.  [Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This](#orgecb99e2)
-    4.  [Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd symbol to appear  when  rotating](#org755abbb)
-15. [Final checklist](#org26b8fd3)
-16. [Unit tests](#orgbc82269)
+1.  [Introduction](#org66d61fc)
+2.  [Outline](#orgcd0b72d)
+3.  [ESP32](#orge449954)
+4.  [Matrix scanning](#org99d08ed)
+    1.  [Ghosting](#orgff10b77)
+    2.  [Key debouncing](#org25f8fe8)
+    3.  [Changes](#orge6beba7)
+5.  [ESP-Now](#orgc6533fe)
+    1.  [Mesh interface class](#org6480685)
+    2.  [Changes](#org0731466)
+6.  [Modifier keys](#org645aaaf)
+    1.  [Changes](#org4a89f5d)
+7.  [Bluetooth](#org0161ce0)
+    1.  [Changes](#orgc8db705)
+8.  [Keyboard layers](#org9faa104)
+    1.  [Changes](#orgc07b971)
+9.  [Rotary encoder](#org7920630)
+    1.  [Taming the KY-040 with decoding](#org9ef6d7b)
+    2.  [Changes](#org92e8e6c)
+10. [LED driver: FastLED](#org784f601)
+    1.  [Changes](#orgcddeb47)
+11. [OLED Display](#orge9981d3)
+    1.  [Changes](#org75e4a14)
+12. [Deep sleep](#orgfde27c0)
+    1.  [Changes](#orgc6c36cd)
+13. [Battery control](#org728adb4)
+    1.  [Changes](#org91ea3cb)
+14. [Backlog and weird behavior notes](#org21d696b)
+    1.  [Repated key presses.](#orgdf0bbde)
+    2.  [Figure out bug  where \`-\` is sent  repeatedly.](#org9aa3607)
+    3.  [Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly.](#orga1e65cf)
+    4.  [Odd symbols rotary encoder](#org5ab9a94)
+15. [Unit tests](#orge610c7b)
+16. [PCB layout design](#org75528ae)
+    1.  [Making the layout](#org64d3c0f)
+    2.  [Edge cut pcb](#org2e7e7c0)
+    3.  [implement hid<sub>le</sub><sub>env</sub>](#org0abf0bf)
+    4.  [misc](#orgbf9aa6a)
+17. [Case design](#org2fd1e41)
+18. [Layer taps](#orgd61211a)
+19. [Final checklist](#org683af03)
 
 
-<a id="orgd4032f2"></a>
+<a id="org66d61fc"></a>
 
 # Introduction
 
@@ -112,7 +119,7 @@ Core feature targets
 -   Rotary encoders
 
 
-<a id="org90401e6"></a>
+<a id="orgcd0b72d"></a>
 
 # Outline
 
@@ -148,7 +155,7 @@ To give a course overview consider the following picture:
 ![img](./figures/overview.png)
 
 
-<a id="orgcbcf110"></a>
+<a id="orge449954"></a>
 
 # ESP32
 
@@ -180,7 +187,7 @@ harness to do server-client communication.
 ![img](./figures/pinout.jpg "Pin-out ESP32 LORA-V2")
 
 
-<a id="org86486a0"></a>
+<a id="org99d08ed"></a>
 
 # Matrix scanning
 
@@ -206,7 +213,7 @@ The scanning occurs at a high scan rate, making it seemingly
 instantaneous.
 
 
-<a id="orge70f096"></a>
+<a id="orgff10b77"></a>
 
 ## Ghosting
 
@@ -230,7 +237,7 @@ and causing ghosting.
 ![img](./figures/ghosting.png "Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left. (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the second row, second column etc.")
 
 
-<a id="org7acf371"></a>
+<a id="org25f8fe8"></a>
 
 ## Key debouncing
 
@@ -245,7 +252,7 @@ switches I  was using; I  ended up writing a  digital filter
 that worked fairly well.
 
 
-<a id="org8699dbe"></a>
+<a id="orge6beba7"></a>
 
 ## Changes
 
@@ -256,7 +263,7 @@ that worked fairly well.
         -   [X] filters out erroneous key presses
 
 
-<a id="org9ef4b15"></a>
+<a id="orgc6533fe"></a>
 
 # ESP-Now
 
@@ -274,7 +281,7 @@ foreign attackers. From the website we read:
 > ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
 
 
-<a id="org50c127e"></a>
+<a id="org6480685"></a>
 
 ## Mesh interface class
 
@@ -296,7 +303,7 @@ from the  col and row,  then they are combined.  This solves
 the issue of sending ascii shifted codes or media keys.
 
 
-<a id="org6249645"></a>
+<a id="org0731466"></a>
 
 ## Changes
 
@@ -304,7 +311,7 @@ the issue of sending ascii shifted codes or media keys.
 -   [X] Added server capabilities to join the keys from both half and communicate through bluetooth
 
 
-<a id="orga027db5"></a>
+<a id="org645aaaf"></a>
 
 # Modifier keys
 
@@ -322,7 +329,7 @@ well as the  key release; I modified  the debounce mechanism
 to also detect the key release.
 
 
-<a id="org93dd80f"></a>
+<a id="org4a89f5d"></a>
 
 ## Changes
 
@@ -331,7 +338,7 @@ to also detect the key release.
 -   [X] Fixed wrong indexing in reading the active keys on the server.
 
 
-<a id="orgd52e4ab"></a>
+<a id="org0161ce0"></a>
 
 # Bluetooth
 
@@ -342,7 +349,7 @@ code map. Note that the over bluetooth (for whatever reason)
 these keycodes are remapped to different numbers.
 
 
-<a id="org8e42bf1"></a>
+<a id="orgc8db705"></a>
 
 ## Changes
 
@@ -367,7 +374,7 @@ these keycodes are remapped to different numbers.
         config class steps)
 
 
-<a id="orgf8500c6"></a>
+<a id="org9faa104"></a>
 
 # Keyboard layers
 
@@ -417,7 +424,7 @@ current  active keys.  With transparent  keys I  can imagine
 that this approach will not work.
 
 
-<a id="org7b35bb6"></a>
+<a id="orgc07b971"></a>
 
 ## Changes
 
@@ -432,7 +439,7 @@ that this approach will not work.
             holding down this key.
 
 
-<a id="orga0da5f4"></a>
+<a id="org7920630"></a>
 
 # Rotary encoder
 
@@ -468,7 +475,7 @@ some  time to  figure out.  Below is  the exploration  I had
 trying to figure out how this code worked.
 
 
-<a id="org6927c92"></a>
+<a id="org9ef6d7b"></a>
 
 ## Taming the KY-040 with decoding
 
@@ -477,7 +484,7 @@ either clockwise or anti-clockwise rotation. The encoder can
 be thought of  as a fixed state machine  that moves between
 different states ([table_transition](#table_transition)).
 
-<table id="org896bb32" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org1b1b718" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -605,7 +612,7 @@ state of the A  and B pin. This implies that  2<sup>4</sup> = 16 state
 transitions are possible and we only allow for 8 of these to
 occur (see table [table_transition](#table_transition)).
 
-<table id="orgd37ee80" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org2395089" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -756,7 +763,7 @@ occur (see table [table_transition](#table_transition)).
 </tbody>
 </table>
 
-<table id="org0e12c29" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgc82c8ad" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -791,14 +798,14 @@ occur (see table [table_transition](#table_transition)).
 </table>
 
 
-<a id="orgc9cbc50"></a>
+<a id="org92e8e6c"></a>
 
 ## Changes
 
 -   [X] Add rotary encoder to keyboard class
 
 
-<a id="orge2ef258"></a>
+<a id="org784f601"></a>
 
 # LED driver: FastLED
 
@@ -824,7 +831,7 @@ that the end is  in sight! The coming week I will integrate  the driver with the
 keyboard class and check the box below.
 
 
-<a id="orgc0aab11"></a>
+<a id="orgcddeb47"></a>
 
 ## Changes
 
@@ -833,12 +840,12 @@ keyboard class and check the box below.
     -   [X] Make LED wrapper in keyboard class
 
 
-<a id="org49840ac"></a>
+<a id="orge9981d3"></a>
 
 # OLED Display
 
 
-<a id="org5a46f9e"></a>
+<a id="org75e4a14"></a>
 
 ## Changes
 
@@ -850,7 +857,7 @@ keyboard class and check the box below.
         -   [ ] Battery level info
 
 
-<a id="orgd4c2a71"></a>
+<a id="orgfde27c0"></a>
 
 # Deep sleep
 
@@ -859,7 +866,7 @@ Some pins  on the esp32 can  be used to wakeup  the keyboard
 from deep  sleep. The  RTC<sub>GPIO</sub> pins and  Touch pins  can be
 used for waking the device from deep sleep. The RTC pins are
 
-<table id="org839fc33" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org0235cf0" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -1042,7 +1049,7 @@ the rows  or columns would  result in  the board to  wake up
 from sleep (which is ideal).
 
 
-<a id="org771cdb2"></a>
+<a id="orgc6c36cd"></a>
 
 ## Changes
 
@@ -1054,12 +1061,12 @@ from sleep (which is ideal).
         row2column or reverse connection.
 
 
-<a id="orgbf1d3c1"></a>
+<a id="org728adb4"></a>
 
 # Battery control
 
 
-<a id="org3d7ac16"></a>
+<a id="org91ea3cb"></a>
 
 ## Changes
 
@@ -1068,15 +1075,16 @@ from sleep (which is ideal).
     -   [ ] Inline to battery directly.
 
 
-<a id="org01eb7be"></a>
+<a id="org21d696b"></a>
 
 # Backlog and weird behavior notes
 
 
-<a id="org50b8c95"></a>
+<a id="orgdf0bbde"></a>
 
-## DONE Pressing  down  a  key  repeatedly and  then  another  key
+## DONE Repated key presses.
 
+Pressing  down  a  key   repeatedly  and  then  another  key
 afterwards, stops  sending the  initially pressed  down key.
 For example holding down \`a\` and then pressing any other key
 (including modifies) stops sending \`a\`.
@@ -1086,23 +1094,23 @@ digital filter. It may have  been related to the cheapo test
 buttons.
 
 
-<a id="org4062a26"></a>
+<a id="org9aa3607"></a>
 
-## DONE Figure out bug  where \`-\` is sent  repeatedly. This occurs
+## DONE Figure out bug  where \`-\` is sent  repeatedly.
 
-especially when  sending \`a\` key.  I think it is  related to
-the ascii code for for \`a\` and \`-\`.
+This occurs especially  when sending \`a\` key. I  think it is
+related to the ascii code for for \`a\` and \`-\`.
 
 This problem went  away after replacing the  debounce with a
 digital filter. It may have  been related to the cheapo test
 buttons.
 
 
-<a id="orgecb99e2"></a>
+<a id="orga1e65cf"></a>
 
-## DONE Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly. This
+## DONE Figure out bug  where &rsquo;up arrow&rsquo; is  sent repeatedly.
 
-occurs when the keyboard is  connected to bluetooth. No keys
+This occurs when the keyboard is  connected to bluetooth. No keys
 are send on my part.
 
 This problem went  away after replacing the  debounce with a
@@ -1110,15 +1118,17 @@ digital filter. It may have  been related to the cheapo test
 buttons.
 
 
-<a id="org755abbb"></a>
+<a id="org5ab9a94"></a>
 
-## DONE Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd symbol to appear  when  rotating
+## DONE Odd symbols rotary encoder
 
-In  addition, when  set in  a particular  condition it  will
-cause the rotary encoder to fail to upload code. This effect
-is gone with  an additional turn. Apparently,  the esp32 has
-some flaw in it that some  pins are sensitive to inputs when
-uploading   code.    More   info    can   be    found   here
+Connecting  the rotary  encoder to  GPIO1, GPIO3  causes odd
+symbol to  appear when rotating  In addition, when set  in a
+particular  condition it  will cause  the rotary  encoder to
+fail to upload code. This  effect is gone with an additional
+turn. Apparently,  the esp32 has  some flaw in it  that some
+pins are sensitive to inputs  when uploading code. More info
+can               be                found               here
 <https://github.com/espressif/arduino-esp32/issues/1497>.    I
 have changed pin  1 to pin 2 which seemed  to have fixed the
 issue.
@@ -1129,7 +1139,159 @@ another  range   (currently  25   for  LED)   is  relatively
 noiseless.
 
 
-<a id="org26b8fd3"></a>
+<a id="orge610c7b"></a>
+
+# Unit tests
+
+Start writing unit tests
+
+-   [-] matrix scanner
+    -   [ ] Pin modes
+    -   [X] Debouncing
+    -   [X] Registry of multiple keys simultaneously
+
+-   [ ] Keyboard
+    -   [ ] Sending of messages without being connected to bluetooth
+
+
+<a id="org75528ae"></a>
+
+# PCB layout design
+
+I used  kicad for PCB  design. The  layout of the  keys were
+determined by tracing out my  hand and determining the shift
+in the  columns by  the mount of  &ldquo;natural bend&rdquo;  my fingers
+have. I traced  my hand and made a horizontal  line from the
+pinky; this served as my zero line. Columns 1, 2, and 6 were
+determined to lie on this zero line. The remaining 3 columns
+were shifted. upwards sequentially.
+
+The bottom row (id 5) contains merely 3 keys and they are rotated from left to right as 5, 10, 15 degrees. These were determined based on &ldquo;angle&rdquo; of my thumb. It was judge sort of by eye (and a ruler).
+
+Below is some code I wrote to determined the outline. The end result is:
+
+![img](./figures/pcb3d.png)
+
+
+<a id="org64d3c0f"></a>
+
+## Making the layout
+
+The code below are some scripts I wrote to determined the relative position between keys. It is (very) uggly code but worked for this simple purpose. Future me may want to make it look prettier for the outside world.
+
+
+<a id="org2e7e7c0"></a>
+
+## Edge cut pcb
+
+Kicad prefers to make edge cuts relatively simple, i.e. straight lines. I attempted to round most corners, but the odd layouts of the bottom keys (K54, K55, K56) made it a bit hard given the odd angle. I put some effort in making it somewhat curved.
+
+
+<a id="org0abf0bf"></a>
+
+## TODO implement hid<sub>le</sub><sub>env</sub>
+
+The hid<sub>le</sub><sub>env</sub> seems to control the bluetooth stuff at the low-end
+
+-   What are its functions?
+-   Do I need to bind them or just wrap them?
+-   It contains a lot of definitions and spans multiple files; worth it?
+
+
+<a id="orgbf9aa6a"></a>
+
+## misc
+
+-   <http://amasci.com/miscon/whyhard2.html>
+-   <https://wiki.liutyi.info/display/ARDUINO/ESP32+TTGO+V2.0+OLED+Drawing+Demo>
+-   <https://github.com/ThingPulse/esp8266-oled-ssd1306>
+-   <https://complexityexplained.github.io/>
+-   <https://www.math.uh.edu/~dblecher/pf2.html>
+-   <https://hbr.org/2019/02/how-big-a-problem-is-it-that-a-few-shareholders-own-stock-in-so-many-competing-companies>
+
+
+<a id="org2fd1e41"></a>
+
+# Case design
+
+The  case is  going to  be a  sandwich style  case. It  will
+consist at minimum of 3 layers: the bottom plate, the middle
+plate and  the top plate.  The top  plate will host  the key
+switches, reliefs ar cut such that the key top can be opened
+while the  key is  mounted. A  plate in  this design  is not
+necessary but  preferred as  the key  sockets are  not super
+rigid, i.e. you could theoretically  have a lose switch over
+time. A plate fixes the keys in place.
+
+The  edge cut  layers,  court yards  and  user drawings  are
+combined and exported  from kicad to svg format.  I used the
+keyboard layout editor together  with the codeblock below to
+determine where the  cuts would have to be made  for the top
+plate.
+
+For the keyswitch  cutouts, I took a shortcut.  By using the
+[keyboard layout  editor](https://keyboard-layout-editor.com) in conjunction with  [case builder](https://builder.swillkb.com), I
+was  able  to export  the  keyboard  layout and  obtain  the
+correct keyswitch footprint for  the plate. The case builder
+website takes  json as  input which  is compatible  with the
+keyboard  layout  editor. The  output  of  the case  builder
+software allows for automatic screw hole and plate clearance
+for  simple pcb  designs (i.e.  rectangular). Unfortunately,
+this design is not well suited  for this. As such I exported
+the drawings  to svg and  overlayed it with the  export from
+kicad.
+
+The  top  plate is  nearly  done.  I  am currently  in  the
+progress  of  making the  curves  a  bit smoother  for  the
+outside. I  will work on  the middle and bottom  plate from
+this top plate design.
+
+![img](./figures/elanor_top.png)
+
+
+### Links
+
+-   For case <http://builder.swillkb.com/>
+-   For layout <http://www.keyboard-layout-editor.com/#/>
+
+
+### Changes
+
+-   [-] construct plate layer
+    -   [ ] 4x 5mm screw holes
+    -   [X] 1x diameter (5mm) clearance outside
+    -   [X] add key switch mounting holes
+-   [ ] construct top layer
+-   [ ] construct middle layer
+-   [ ] construct bottom layer
+
+
+<a id="orgd61211a"></a>
+
+# Layer taps
+
+The keyboard will  have 28 \* 2 keys (in  principle). This is
+not enough to  emulate a real keyboard. For this  we need to
+utilize more &ldquo;layers&rdquo; to create  more degrees of freedom. In
+QMK  there  are  various  different modes  of  activating  a
+different keycode depending on how long you press a keycode.
+For example:
+
+    // L-ayer, T-ap - 256 keycode max, 16 layer max
+    #define LT(layer, kc) (kc | QK_LAYER_TAP | ((layer & 0xF) << 8))
+
+The keycode is put into a range  that is not the same as the
+keycode  range. This  can be  seen by  the layer.  First the
+layer  is converted  to  a 8  bit integer  by  means of  the
+bitwise and. Next the number is shifted in &ldquo;clear&rdquo; zone (255
+and up). QK<sub>LAYER</sub><sub>TAP</sub> is set inside a range that is probably
+outside the active range as  well. In totality we would have
+a keycode for  which the first 8 bits (up  to 128) represent
+the actual  keycode, the range 255  and up to some  bits are
+set to layers. QK<sub>LAYER</sub><sub>TAP</sub> = 0x400. We can use this number.
+
+
+<a id="org683af03"></a>
 
 # Final checklist
 
@@ -1154,24 +1316,22 @@ Check that the following components work:
     -   [ ] Do they display the GUI?
 -   [ ] PCB
     -   [ ] Are all the components connected?
-    -   [ ] Is the ground plate present?
+        -   [ ] Are touch pins  connected to the pins that go high
+            in the code? (sinc pins)
+        -   [ ] Are the leds VSS connected to the 5v line?
+        -   [ ] Are the rotary encoder pins A and B matching
+            what is defined in the Code base to be A and B?
+        -   [ ] Do the LEDS go from DIN to DOUT in series?
+            -   [ ] is the first  LED connected  to DIN pin  on the
+                micro controller?
+    -   [ ] Is the  ground plate present  and connected  to all
+        ground pins?
     -   [ ] Are the pins present with enough clearance?
+        -   [ ] Use the clearance guide at  <https://jlcpcb.com/capabilities/Capabilities>
 -   [ ] Software hardware interface
+    
     -   [ ] verify that no pins are used that will cause issues,
         for example input pins in the 3x range.
-
-
-<a id="orgbc82269"></a>
-
-# Unit tests
-
-Start writing unit tests
-
--   [-] matrix scanner
-    -   [ ] Pin modes
-    -   [X] Debouncing
-    -   [X] Registry of multiple keys simultaneously
-
--   [ ] Keyboard
-    -   [ ] Sending of messages without being connected to bluetooth
+    
+    Good luck :)!
 

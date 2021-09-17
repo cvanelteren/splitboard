@@ -2,7 +2,9 @@
 /This is  work in progress -  the post is updated  as I find
 time to work on it./
 
-https://t.17track.net/en#nums=1511258884
+# * Tracking :noexport:
+# https://t.17track.net/en#nums=1511258884
+
 
 #+begin_export md
 <img src="./figures/logo.svg" width = "100%"></img>
@@ -642,7 +644,9 @@ CLOCK: [2021-08-05 Thu 11:58]--[2021-08-05 Thu 12:43] =>  0:45
   + [ ] Inline to battery directly.
 
 * Backlog and weird behavior notes
-** DONE Pressing  down  a  key  repeatedly and  then  another  key
+** DONE Repated key presses.
+
+Pressing  down  a  key   repeatedly  and  then  another  key
 afterwards, stops  sending the  initially pressed  down key.
 For example holding down `a` and then pressing any other key
 (including modifies) stops sending `a`.
@@ -651,28 +655,33 @@ This problem went  away after replacing the  debounce with a
 digital filter. It may have  been related to the cheapo test
 buttons.
 
-** DONE Figure out bug  where `-` is sent  repeatedly. This occurs
-especially when  sending `a` key.  I think it is  related to
-the ascii code for for `a` and `-`.
+** DONE Figure out bug  where `-` is sent  repeatedly.
+
+This occurs especially  when sending `a` key. I  think it is
+related to the ascii code for for `a` and `-`.
 
 This problem went  away after replacing the  debounce with a
 digital filter. It may have  been related to the cheapo test
 buttons.
 
-** DONE Figure out bug  where 'up arrow' is  sent repeatedly. This
-occurs when the keyboard is  connected to bluetooth. No keys
+** DONE Figure out bug  where 'up arrow' is  sent repeatedly.
+
+This occurs when the keyboard is  connected to bluetooth. No keys
 are send on my part.
 
 This problem went  away after replacing the  debounce with a
 digital filter. It may have  been related to the cheapo test
 buttons.
 
-** DONE Connecting the  rotary encoder to GPIO1,  GPIO3 causes odd symbol to appear  when  rotating
-In  addition, when  set in  a particular  condition it  will
-cause the rotary encoder to fail to upload code. This effect
-is gone with  an additional turn. Apparently,  the esp32 has
-some flaw in it that some  pins are sensitive to inputs when
-uploading   code.    More   info    can   be    found   here
+** DONE Odd symbols rotary encoder
+
+Connecting  the rotary  encoder to  GPIO1, GPIO3  causes odd
+symbol to  appear when rotating  In addition, when set  in a
+particular  condition it  will cause  the rotary  encoder to
+fail to upload code. This  effect is gone with an additional
+turn. Apparently,  the esp32 has  some flaw in it  that some
+pins are sensitive to inputs  when uploading code. More info
+can               be                found               here
 https://github.com/espressif/arduino-esp32/issues/1497.    I
 have changed pin  1 to pin 2 which seemed  to have fixed the
 issue.
@@ -681,46 +690,6 @@ GPIO0, GPIO02  seemed to both  be sensitive to  noise. Don't
 use these pins for sensitive  operations. Moving the GPIO to
 another  range   (currently  25   for  LED)   is  relatively
 noiseless.
-
-
-* Final checklist
-Check that the following components work:
-+ [ ] Matrix
-  - [ ] Does scanning work?
-  - [ ] Does ghosting occur?
-+ [ ] ESPNOW [hard to write unit test for]
-  - [ ] Does the wireless bridge work?
-+ [ ] Bluetooth
-  - [ ] Is the unit detected as a keyboard?
-+ [ ] Rotary encoder
-  - [ ] Are single ticks detected?
-  - [ ] Are both positive as well as negative clicks detected?
-  - [ ]  Does the esp32  flash regardless of  the rotary
-    encoder position?
-+ [ ] LEDs
-  - [ ] Can colors be encoded?
-  - [ ] No shorting to ground?
-+ [ ] Display
-  - [ ] Do they display the GUI?
-+ [ ] PCB
-  - [ ] Are all the components connected?
-    + [ ] Are touch pins  connected to the pins that go high
-      in the code? (sinc pins)
-    + [ ] Are the leds VSS connected to the 5v line?
-    + [ ] Are the rotary encoder pins A and B matching
-      what is defined in the Code base to be A and B?
-    + [ ] Do the LEDS go from DIN to DOUT in series?
-      - [ ]  is the first  LED connected  to DIN pin  on the
-        micro controller?
-  - [ ]  Is the  ground plate present  and connected  to all
-    ground pins?
-  - [ ] Are the pins present with enough clearance?
-    - [ ] Use the clearance guide at  https://jlcpcb.com/capabilities/Capabilities
-+ [ ] Software hardware interface
-  - [ ] verify that no pins are used that will cause issues,
-    for example input pins in the 3x range.
-  Good luck :)!
-
 
 * Unit tests
 Start writing unit tests
@@ -732,43 +701,27 @@ Start writing unit tests
 - [ ] Keyboard
   + [ ] Sending of messages without being connected to bluetooth
 
-* Bk code :noexport:
-#+name: display printing
-#+begin_src c++
-    // this->mesh->buffer.active_keys = this->matrix->active_keys;
-    // 1. collect message from client
-    // 2. collect active keys
-    // 3. merge the keys
-    // 4. send through bluetooth
-    // if (this->bluetooth->connection->connected) {
-
-    //   this->display->firstPage();
-    //   do {
-    //     this->display->log.println("");
-    //     this->display->log.print("\rhello:)");
-    //     // this->display->log.print(printf("Connected to %s", "test"));
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "hello :)");
-
-    //   } while (this->display->nextPage());
-    // } else {
-    //   // this->display->clearDisplay();
-    //   this->display->firstPage();
-    //   do {
-    //     // this->display->log.println("");
-    //     this->display->log.print("\rNo Bluetooth :(");
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
-
-    //   } while (this->display->nextPage());
-    //   // delay(10);
-    // }
-
-#+end_src
-
 * PCB layout design
-- For case http://builder.swillkb.com/
-- For layout http://www.keyboard-layout-editor.com/#/
+
+I used  kicad for PCB  design. The  layout of the  keys were
+determined by tracing out my  hand and determining the shift
+in the  columns by  the mount of  "natural bend"  my fingers
+have. I traced  my hand and made a horizontal  line from the
+pinky; this served as my zero line. Columns 1, 2, and 6 were
+determined to lie on this zero line. The remaining 3 columns
+were shifted. upwards sequentially.
+
+The bottom row (id 5) contains merely 3 keys and they are rotated from left to right as 5, 10, 15 degrees. These were determined based on "angle" of my thumb. It was judge sort of by eye (and a ruler).
+
+Below is some code I wrote to determined the outline. The end result is:
+
+#+attr_html: :alt  :align left :class img
+[[file:./figures/pcb3d.png]]
+
+** Making the layout
+The code below are some scripts I wrote to determined the relative position between keys. It is (very) uggly code but worked for this simple purpose. Future me may want to make it look prettier for the outside world.
+
+
 #+name: board layout
 #+begin_src jupyter-python
 from matplotlib import style
@@ -1135,12 +1088,6 @@ ax.axis('off')
  pcb.Save(os.path.join(base, board_fp))
  #+end_src
 
- #+RESULTS: edgecuts
- :RESULTS:
- : (120, 2)
- | 66295826.65 | 229187618.35 | 36491603.05 | 170876313.95 |
- [[file:./.ob-jupyter/d039ec756cd964603dce5d41f357bd2d33a49b67.png]]
- :END:
 
 
 #+name: moving c55
@@ -1182,24 +1129,61 @@ print("Done")
 
 #+end_src
 
-#+RESULTS: moving c55
-#+begin_example
-(150261000, 128026000)
-K44
-(140250000, 112585000)
-(140250000, 112585000)
-K45
-(159250000, 116385000)
-(159250000, 116385000)
-K55
-(160639000, 143263000)
-(160639000, 143263000)
-K54
-(140947000, 139555000)
-(140947000, 139555000)
-Done
-#+end_example
 
+
+
+** Edge cut pcb
+Kicad prefers to make edge cuts relatively simple, i.e. straight lines. I attempted to round most corners, but the odd layouts of the bottom keys (K54, K55, K56) made it a bit hard given the odd angle. I put some effort in making it somewhat curved.
+
+
+** TODO implement hid_le_env
+ The hid_le_env seems to control the bluetooth stuff at the low-end
+ - What are its functions?
+ - Do I need to bind them or just wrap them?
+ - It contains a lot of definitions and spans multiple files; worth it?
+
+** misc
+ - http://amasci.com/miscon/whyhard2.html
+ - https://wiki.liutyi.info/display/ARDUINO/ESP32+TTGO+V2.0+OLED+Drawing+Demo
+ - https://github.com/ThingPulse/esp8266-oled-ssd1306
+ - https://complexityexplained.github.io/
+ - https://www.math.uh.edu/~dblecher/pf2.html
+ - https://hbr.org/2019/02/how-big-a-problem-is-it-that-a-few-shareholders-own-stock-in-so-many-competing-companies
+* Case design
+The  case is  going to  be a  sandwich style  case. It  will
+consist at minimum of 3 layers: the bottom plate, the middle
+plate and  the top plate.  The top  plate will host  the key
+switches, reliefs ar cut such that the key top can be opened
+while the  key is  mounted. A  plate in  this design  is not
+necessary but  preferred as  the key  sockets are  not super
+rigid, i.e. you could theoretically  have a lose switch over
+time. A plate fixes the keys in place.
+
+The  edge cut  layers,  court yards  and  user drawings  are
+combined and exported  from kicad to svg format.  I used the
+keyboard layout editor together  with the codeblock below to
+determine where the  cuts would have to be made  for the top
+plate.
+
+For the keyswitch  cutouts, I took a shortcut.  By using the
+[[https://keyboard-layout-editor.com][keyboard layout  editor]] in conjunction with  [[https://builder.swillkb.com][case builder]], I
+was  able  to export  the  keyboard  layout and  obtain  the
+correct keyswitch footprint for  the plate. The case builder
+website takes  json as  input which  is compatible  with the
+keyboard  layout  editor. The  output  of  the case  builder
+software allows for automatic screw hole and plate clearance
+for  simple pcb  designs (i.e.  rectangular). Unfortunately,
+this design is not well suited  for this. As such I exported
+the drawings  to svg and  overlayed it with the  export from
+kicad.
+
+ The  top  plate is  nearly  done.  I  am currently  in  the
+ progress  of  making the  curves  a  bit smoother  for  the
+ outside. I  will work on  the middle and bottom  plate from
+ this top plate design.
+
+#+attr_html: :alt  :align left :class img
+[[file:./figures/elanor_top.png]]
 
 #+name: creating outline svg
 #+begin_src jupyter-python
@@ -1266,26 +1250,19 @@ wrong place
 print(s)
 #+end_src
 
-#+RESULTS: creating outline svg
-: ('K44', 'K54') (0.03658792650918635, 1.415748031496063)
-: ('K45', 'K55') (0.07291338582677165, 1.4109186351706038)
-: ('K46', 'K56') (0.10871391076115486, 1.402992125984252)
+*** Links
+- For case http://builder.swillkb.com/
+- For layout http://www.keyboard-layout-editor.com/#/
 
+*** Changes
+- [-] construct plate layer
+  + [ ] 4x 5mm screw holes
+  + [X] 1x diameter (5mm) clearance outside
+  + [X] add key switch mounting holes
+- [ ] construct top layer
+- [ ] construct middle layer
+- [ ] construct bottom layer
 
-** TODO implement hid_le_env
-   https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
- The hid_le_env seems to control the bluetooth stuff at the low-end
- - What are its functions?
- - Do I need to bind them or just wrap them?
- - It contains a lot of definitions and spans multiple files; worth it?
-
-** misc
- - http://amasci.com/miscon/whyhard2.html
- - https://wiki.liutyi.info/display/ARDUINO/ESP32+TTGO+V2.0+OLED+Drawing+Demo
- - https://github.com/ThingPulse/esp8266-oled-ssd1306
- - https://complexityexplained.github.io/
- - https://www.math.uh.edu/~dblecher/pf2.html
- - https://hbr.org/2019/02/how-big-a-problem-is-it-that-a-few-shareholders-own-stock-in-so-many-competing-companies
 * Layer taps
 The keyboard will  have 28 * 2 keys (in  principle). This is
 not enough to  emulate a real keyboard. For this  we need to
@@ -1308,3 +1285,75 @@ outside the active range as  well. In totality we would have
 a keycode for  which the first 8 bits (up  to 128) represent
 the actual  keycode, the range 255  and up to some  bits are
 set to layers. QK_LAYER_TAP = 0x400. We can use this number.
+
+* Final checklist
+Check that the following components work:
++ [ ] Matrix
+  - [ ] Does scanning work?
+  - [ ] Does ghosting occur?
++ [ ] ESPNOW [hard to write unit test for]
+  - [ ] Does the wireless bridge work?
++ [ ] Bluetooth
+  - [ ] Is the unit detected as a keyboard?
++ [ ] Rotary encoder
+  - [ ] Are single ticks detected?
+  - [ ] Are both positive as well as negative clicks detected?
+  - [ ]  Does the esp32  flash regardless of  the rotary
+    encoder position?
++ [ ] LEDs
+  - [ ] Can colors be encoded?
+  - [ ] No shorting to ground?
++ [ ] Display
+  - [ ] Do they display the GUI?
++ [ ] PCB
+  - [ ] Are all the components connected?
+    + [ ] Are touch pins  connected to the pins that go high
+      in the code? (sinc pins)
+    + [ ] Are the leds VSS connected to the 5v line?
+    + [ ] Are the rotary encoder pins A and B matching
+      what is defined in the Code base to be A and B?
+    + [ ] Do the LEDS go from DIN to DOUT in series?
+      - [ ]  is the first  LED connected  to DIN pin  on the
+        micro controller?
+  - [ ]  Is the  ground plate present  and connected  to all
+    ground pins?
+  - [ ] Are the pins present with enough clearance?
+    - [ ] Use the clearance guide at  https://jlcpcb.com/capabilities/Capabilities
++ [ ] Software hardware interface
+  - [ ] verify that no pins are used that will cause issues,
+    for example input pins in the 3x range.
+  Good luck :)!
+
+* Bk code :noexport:
+# #+name: display printing
+# #+begin_src c++
+#     // this->mesh->buffer.active_keys = this->matrix->active_keys;
+#     // 1. collect message from client
+#     // 2. collect active keys
+#     // 3. merge the keys
+#     // 4. send through bluetooth
+#     // if (this->bluetooth->connection->connected) {
+
+#     //   this->display->firstPage();
+#     //   do {
+#     //     this->display->log.println("");
+#     //     this->display->log.print("\rhello:)");
+#     //     // this->display->log.print(printf("Connected to %s", "test"));
+#     //     // this->display->setFont(font);
+#     //     // this->display->drawUTF8(1, 30, "hello :)");
+
+#     //   } while (this->display->nextPage());
+#     // } else {
+#     //   // this->display->clearDisplay();
+#     //   this->display->firstPage();
+#     //   do {
+#     //     // this->display->log.println("");
+#     //     this->display->log.print("\rNo Bluetooth :(");
+#     //     // this->display->setFont(font);
+#     //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
+
+#     //   } while (this->display->nextPage());
+#     //   // delay(10);
+#     // }
+
+# #+end_src

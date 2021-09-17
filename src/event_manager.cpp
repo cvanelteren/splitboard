@@ -21,29 +21,30 @@ void EventManager::update() {
       Serial.println(event.c_str());
       Serial.println(test[idx]);
 
-      keyboard.display->firstPage();
-      do {
-        keyboard.display->setFont(u8g2_font_open_iconic_embedded_2x_t);
-        keyboard.display->drawStr(10, 50, "\x40");
-        keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
-        keyboard.display->log.print(test[idx]);
-        keyboard.display->log.print("\rhello:)");
-      } while (keyboard.display->nextPage());
       idx++;
       idx %= sizeof(test);
-    }
+      keyboard.display->setCursor(10, 5);
+      keyboard.display->log.print(test[idx]);
+      keyboard.display->firstPage();
+      if (!idx) {
+        keyboard.display->log.println();
+      }
+      do {
+        keyboard.display->setFont(u8g2_font_open_iconic_embedded_2x_t);
+        keyboard.display->setCursor(10, 80);
+        keyboard.display->drawStr(10, 80, "\x40");
+        keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
+        keyboard.display->setCursor(10, 5);
+        keyboard.display->drawLog(10, 5, keyboard.display->log);
 
-    //   switch (event) {
-    //   case "display":
-    //     break;
-    //   default:
-    //     break;
-    //   }
+        // keyboard.display->log.print("\rhello:)");
+      } while (keyboard.display->nextPage());
+    }
   }
   queue.clear();
 }
 
-void EventManager::startx(void *obj) {
+void EventManager::start_xtask(void *obj) {
   // recast and run
 
   EventManager *tmp = (EventManager *)obj;
@@ -54,6 +55,6 @@ void EventManager::startx(void *obj) {
 }
 
 void EventManager::begin() {
-  xTaskCreatePinnedToCore(this->startx, "event_manager", 2048, (void *)this, 1,
-                          NULL, 1);
+  xTaskCreatePinnedToCore(this->start_xtask, "event_manager", 2048,
+                          (void *)this, 1, NULL, 1);
 }

@@ -50,8 +50,19 @@ typedef struct {
 typedef uint8_t bla[2];
 const bla D = {0, 1};
 
+class Test {
+public:
+  void func() { printf("Hello\n"); }
+};
+
 uint8_t downcast(size_t x) { return x; };
 int main() {
+
+  Test *tester = new Test();
+  void (Test::*fptr)() = &Test::func;
+
+  (tester->*fptr)();
+  // printf("test %d  \n", b);
 
   uint16_t x = 256;
 

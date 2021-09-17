@@ -7,7 +7,6 @@ Display::Display(Config *config)
   // setup logger
   Serial.println("Setting up display");
   this->log_buffer = std::vector<uint8_t>(0);
-
   this->log.setRedrawMode(0);
 }
 

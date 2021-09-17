@@ -11,7 +11,7 @@ public:
   EventManager();
   void add_event(std::string event);
   void update();
-  static void startx(void *obj);
+  static void start_xtask(void *obj);
   void begin();
 };
 

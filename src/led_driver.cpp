@@ -2,15 +2,18 @@
 #include <utility>
 
 LED::LED(Config *config) {
+
+  Serial.printf("Setting %d leds", config->num_led);
   this->num_leds = config->num_led;
   this->led_pin = Config::led_pin;
-  this->leds = new CRGB(config->num_led);
+  this->leds = new CRGB[num_leds];
   this->led_col_bins = config->led_col_bins;
 
   // this->saturation = 0;
   // this->hue = 0;
   // this->value = 0;
   this->brightness = 128;
+  this->sleep();
   FastLED.setBrightness(brightness);
 }
 
@@ -18,14 +21,15 @@ LED::~LED() { delete this->leds; }
 
 void LED::begin() {
   pinMode(led_pin, OUTPUT);
+  Serial.printf("Setting %d leds\n", num_leds);
   FastLED.addLeds<SK6812, Config::led_pin, GRB>(leds, num_leds);
   FastLED.show();
 }
 
 void LED::set_color(uint8_t hue, uint8_t saturation, uint8_t value) {
-  for (auto idx = 0; idx < num_leds; idx++) {
-    leds[idx].setHSV(hue, saturation, value);
-  }
+  // for (auto idx = 0; idx < num_leds; idx++) {
+  // leds[idx].setHSV(hue, saturation, value);
+  // }
 }
 
 void LED::wakeup() {
@@ -33,16 +37,17 @@ void LED::wakeup() {
   FastLED.setBrightness(brightness);
 }
 void LED::sleep() {
+  Serial.printf("LED power down\n");
   FastLED.setBrightness(0);
-  // for (auto idx = 0; idx < num_leds; idx++) {
-  // leds[idx].setBrightness(0);
-  // }
+  for (auto idx = 0; idx < num_leds; idx++) {
+    leds[idx].setHSV(0, 0, 0);
+  }
   FastLED.show();
 }
 
 void LED::cycle() {
   // rainbow effect
-  static uint8_t hue, saturation, value, hue2;
+  static uint8_t hue, saturation, value;
   value = 50;
   // Serial.printf("%d \t %d \t %d \n", hue, saturation, value);
   // FastLED.showColor();
@@ -50,13 +55,61 @@ void LED::cycle() {
   // saturation++;
   saturation = 255; // primary colors
   hue++;
-  hue2--;
   for (auto idx = 0; idx < num_leds; idx++) {
-    if (idx == 1) {
-      leds[idx].setHSV(hue2, saturation, value);
-    } else {
+    // leds[idx] = CRGB(hue, saturation, value);
+    leds[idx].setHSV(hue, saturation, value);
+  }
+  FastLED.show();
+}
+
+void LED::ble_status(bool connected) {
+  static size_t time, delta;
+  static bool connected_;
+
+  if (connected_ ^ connected) {
+    connected_ = connected;
+    if (connected_ == 0)
+      this->sleep();
+    else
+      FastLED.setBrightness(255);
+  }
+
+  delta = millis() - time;
+  // printf("Delta \t %d\n", delta);
+  for (auto idx = 0; idx < 5; idx++) {
+    leds[idx].setHSV(128, 255, 255);
+  }
+  FastLED.show();
+}
+
+void LED::serial_cycle() {
+  static uint8_t hue, saturation, value;
+  static uint8_t active_led;
+  static size_t last_active;
+
+  saturation = 255;
+
+  for (uint8_t idx = 0; idx < num_leds; idx++) {
+    if (active_led == idx) {
       leds[idx].setHSV(hue, saturation, value);
+    } else {
+      leds[idx].setHSV(0, 0, 0);
     }
+  }
+  auto delta = millis() - last_active;
+  if (delta > 100) {
+    active_led++;
+    last_active = millis();
+    // Serial.printf("Setting %d LED on\n", active_led);
+    // Serial.printf("Delta \t %d \n", delta);
+  }
+  if (!(active_led % 5)) {
+    hue++;
+    value += 10;
+  }
+
+  if (active_led == num_leds) {
+    active_led %= num_leds;
   }
   FastLED.show();
 }

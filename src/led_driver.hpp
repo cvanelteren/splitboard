@@ -4,6 +4,8 @@
 #include "config.hpp"
 #include <FastLED.h>
 #include <cstdint>
+#include <stdint.h>
+#include <vector>
 class LED {
   uint8_t num_leds;
   uint8_t led_pin;
@@ -12,13 +14,18 @@ class LED {
 
 private:
   std::vector<uint8_t> led_col_bins;
+  std::vector<size_t> last_activity;
 
 public:
   void begin();
   LED(Config *Config);
   ~LED();
   void cycle();
+  void serial_cycle();
   void set_color(uint8_t hue, uint8_t saturation, uint8_t value);
+  void ble_status(bool connected);
+  void turn_off_all();
+  void battery_level();
 
   // drive specific locations
   std::pair<uint8_t, uint8_t> int2grid(uint8_t idx);

@@ -1,8 +1,9 @@
 #include <BleKeyboard.h>
 // * // controls
 #define KC_BSPC 0x2a  // BS	Backspace
-#define KC_TAB 0x2b   // TAB	Tab
-#define KC_ENTER 0x28 // LF	Enter
+#define KC_TAB 0xB3   // TAB	Tab
+#define KC_ENTER 0xB0 // LF	Enter
+#define KC_ESC 0xB1
 
 // alphabet
 #define KC_A 0x61
@@ -84,7 +85,7 @@
 #define KC_CCBRACKET 0x7D // }
 #define KC_TILDE 0x7E     // ~
 #define KC_DEL 0x7F       // DEL
-#define KC_SPC 0x2c       //  ' '
+#define KC_SPC 0x20       //  ' '
 #define KC_EXCLAIM 0x21   // !
 #define KC_QUOTE 0x27     // "
 #define KC_HASH 0x23      // #

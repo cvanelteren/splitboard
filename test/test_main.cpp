@@ -5,6 +5,9 @@
 
 #include "config.hpp"
 #include "matrix.hpp"
+#include "types.hpp"
+#include <unordered_map>
+#include <vector>
 
 Config *config = new Config();
 Matrix *matrix = new Matrix(config);
@@ -77,6 +80,35 @@ void test_ghosting() {
   TEST_ASSERT_EQUAL(number_of_pressed_keys(), threshold);
 }
 
+void test_timing() {
+  // timings seems to be around max 110 ms
+  std::unordered_map<uint8_t, size_t> start;
+  std::unordered_map<uint8_t, size_t> end;
+  std::vector<size_t> time;
+  size_t n = 20;
+  Serial.printf("Press a normal key %d times\n", n);
+  while (time.size() < n) {
+    matrix->update();
+    for (auto &elem : matrix->active_keys) {
+      if (elem.pressed_down) {
+        start[elem.sinc] = millis();
+      } else {
+        end[elem.sinc] = millis();
+        time.push_back(end[elem.sinc] - start[elem.sinc]);
+      }
+    }
+    Serial.printf("\rPress a normal key %d times\n", n - time.size());
+  }
+
+  double avg = 0;
+  Serial.println();
+  for (size_t idx = 0; idx < time.size(); idx++) {
+    avg += time[idx];
+    Serial.printf("%d idx \t timing %f \t cumsum %f\n", idx, time[idx], avg);
+  }
+  Serial.printf("avg \t %f\n", avg / time.size());
+}
+
 #include <FastLED.h>
 #define DATA_PIN 2
 #define n_leds 1
@@ -92,7 +124,8 @@ void setup() {
   RUN_TEST(test_source_pin_mode); // doesn't work atm; not sure why
   RUN_TEST(test_sinc_pin_mode);   // doesn't work atm; not sure why
   RUN_TEST(test_zero_state_keys);
-  RUN_TEST(test_ghosting);
+  // RUN_TEST(test_ghosting);
+  RUN_TEST(test_timing);
 }
 void loop() { UNITY_END(); }
 #endif

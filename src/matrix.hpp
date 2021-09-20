@@ -64,6 +64,7 @@ public:
   friend void test_sinc_pin_mode();
   friend void test_ghosting();
   friend uint8_t number_of_keys_pressed();
+  friend void test_timing();
 #endif
 };
 #endif

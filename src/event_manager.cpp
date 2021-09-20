@@ -18,8 +18,8 @@ void EventManager::update() {
 
   for (auto event : queue) {
     if (event == "display") {
-      Serial.println(event.c_str());
-      Serial.println(test[idx]);
+      // Serial.println(event.c_str());
+      // Serial.println(test[idx]);
 
       idx++;
       idx %= sizeof(test);

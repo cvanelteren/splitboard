@@ -17,8 +17,9 @@
 
 // layer_t c({{s, b}});
 
-#define LAYER_TAP 0x400
-#define KC_SLEEP 0xFF
+// layout: 8 bits of keycodes, 4 bits of layer info, 4 bits of special keys
+#define LAYER_TAP 1 << 12
+#define KC_SLEEP 1 << 13
 #define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
 
 class Config { // see constructor in cpp file
@@ -36,7 +37,7 @@ public:
 
   // led settings
   static const uint8_t led_pin = 25;
-  uint8_t num_led = 2;
+  uint8_t num_led = 27;
   std::vector<uint8_t> led_col_bins = {0,  5,  10,
                                        14, 18, 22}; // count from the LED11 pin
 
@@ -71,7 +72,8 @@ public:
   // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
   // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
   // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
-  uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
   uint8_t client_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
   // uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
   // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};

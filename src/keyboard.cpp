@@ -3,6 +3,7 @@
 
 #include "driver/rtc_io.h"
 
+#define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
 Keyboard::Keyboard(Config *config) {
 
   this->config = config;
@@ -18,8 +19,6 @@ Keyboard::Keyboard(Config *config) {
   this->display = new Display(config);
 
   this->led = new LED(config);
-
-  // pinMode(config->led_pin, OUTPUT);
 
   byte mac_addr[6];
   WiFi.macAddress(mac_addr);
@@ -42,29 +41,31 @@ Keyboard::Keyboard(Config *config) {
     // this->bluetooth = new Bluetooth(config);
   }
 
-  // layer_t qwerty = {{KC_TILDE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7,
-  // KC_8,
-  //                    KC_9, KC_0, KC_BSPC},
-  //                   {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
-  //                    KC_O, KC_P, KC_OBRACKET, KC_CBRACKET},
-  //                   {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
-  //                    KC_L, KC_COLON, KC_SQUOTE},
-  //                   {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
-  //                    KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+  layer_t qwerty = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
+                     KC_9, KC_0, KC_BSPC},
+                    {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
+                     KC_O, KC_P, KC_OBRACKET, KC_CBRACKET},
+                    {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
+                     KC_L, KC_COLON, KC_SQUOTE},
+                    {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
+                     KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+                    {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, KC_SPC, KC_ENTER,
+                     KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
+  // // std::unordered_map
+  // layer_t qwerty = {{KC_B, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
+  // KC_9,
+  //                    KC_0, KC_BSPC},
+  //                   {KC_A, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
+  //                   KC_O,
+  //                    KC_P, KC_OBRACKET, KC_CBRACKET},
+  //                   {KC_B, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
+  //                   KC_L,
+  //                    KC_COLON, KC_SQUOTE},
+  //                   {KC_C, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
+  //                   KC_COMMA,
+  //                    KC_DOT, KC_SLASH, KC_RSHIFT},
   //                   {KC_NO, KC_NO, KC_NO, KC_LCTL, KC_ALT, KC_SPC, KC_ENTER,
   //                    KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
-
-  // std::unordered_map
-  layer_t qwerty = {{KC_TILDE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
-                     KC_9, KC_0, KC_BSPC},
-                    {KC_A, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O,
-                     KC_P, KC_OBRACKET, KC_CBRACKET},
-                    {KC_B, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L,
-                     KC_COLON, KC_SQUOTE},
-                    {KC_C, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMMA,
-                     KC_DOT, KC_SLASH, KC_RSHIFT},
-                    {KC_NO, KC_NO, KC_NO, KC_LCTL, KC_ALT, KC_SPC, KC_ENTER,
-                     KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
 
   this->layers = {key_layers::qwerty};
   this->layers = {qwerty};
@@ -126,9 +127,34 @@ void Keyboard::begin() {
     this->led->begin();
   }
 
-  if (this->rotaryEncoder != NULL) {
+  if (this->rotary_encoder != NULL) {
     this->rotary_encoder->begin();
   }
+}
+
+// Function to toggle bits in the given range
+int toggleBitsFromLToR(int n, int l, int r) {
+  // calculating a number 'num' having 'r' number of bits
+  // and bits in the range l to r are the only set bits
+  int num = ((1 << r) - 1) ^ ((1 << (l - 1)) - 1);
+
+  // toggle the bits in the range l to r in 'n'
+  // and return the number
+  return (n ^ num);
+}
+
+// Function to unset bits in the given range
+int unsetBitsInGivenRange(int n, int l, int r) {
+  // 'num' is the highest positive integer number
+  // all the bits of 'num' are set
+  long num = (1ll << (4 * 8 - 1)) - 1;
+
+  // toggle the bits in the range l to r in 'num'
+  num = toggleBitsFromLToR(num, l, r);
+
+  // unset the bits in the range l to r in 'n'
+  // and return the number
+  return (n & num);
 }
 
 uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
@@ -146,7 +172,8 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   }
 
   auto keycode = (*this->active_layer)[keyswitch.col][keyswitch.row];
-  switch (keycode) {
+  size_t tmp;
+  switch (unsetBitsInGivenRange(keycode, 12, 0)) {
   case KC_SLEEP: {
     if (keyswitch.pressed_down) {
       this->sleep();
@@ -156,6 +183,9 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
   case (LAYER_TAP):
     // deal with layer tap stuff
     Serial.printf("Layer tap!");
+    tmp = unsetBitsInGivenRange(keycode, 16, 12);
+    tmp = unsetBitsInGivenRange(tmp, 8, 0) >> 8;
+    // this->active_layer = tmp;
     break;
   default: {
     Serial.printf("Sending a keycode \n");
@@ -201,11 +231,11 @@ void Keyboard::send_keys() {
       if (keyswitch->buffer == 1) {
         encoder_code =
             (idx < active_keys.size() ? this->encoder_codes["LEFT"]["UP"]
-                                      : this->encoder_codes["RIGHT"]["UP"]);
+                                      : this->encoder_codes["RIGHT"]["DOWN"]);
       } else {
         encoder_code =
             (idx < active_keys.size() ? this->encoder_codes["LEFT"]["DOWN"]
-                                      : this->encoder_codes["RIGHT"]["DOWN"]);
+                                      : this->encoder_codes["RIGHT"]["UP"]);
       }
       if (this->bluetooth.isConnected()) {
         bluetooth.write(*encoder_code);
@@ -228,7 +258,6 @@ void Keyboard::send_keys() {
   }
 }
 
-static size_t last_led_time = 0;
 void Keyboard::update() {
   /**
    * @brief     keyboard updater
@@ -279,7 +308,9 @@ void Keyboard::update() {
     this->sleep();
   }
 
+  static bool ble_connected;
   if (this->bluetooth.isConnected()) {
+    ble_connected = 1;
     // this->display->log.print("\rhello:)");
     // this->display->clearBuffer();
     // this->display->log.print("\rhello:)");
@@ -307,10 +338,13 @@ void Keyboard::update() {
     // while (this->display->nextPage())
     // ;
   } else {
+    ble_connected = 0;
     // this->display->clearBuffer();
     // this->display->log.print("\rNo BLE :(");
     // this->display->sendBuffer();
   }
+
+  this->led->ble_status(ble_connected);
 }
 
 void Keyboard::wakeup() {

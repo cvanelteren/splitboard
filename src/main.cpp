@@ -61,7 +61,8 @@ void loop() {
   keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
 
   keyboard.update();
-  keyboard.led->cycle();
+  // keyboard.led->serial_cycle();
+  // keyboard.led->cycle();
   manager.add_event("display");
   // if (keyboard.bluetooth.isConnected()) {
   //   keyboard.bluetooth.print("A");
@@ -72,5 +73,4 @@ void loop() {
   // digitalWrite(led_pin, HIGH);
   // digitalWrite(led_pin, LOW);
 }
-
 #endif

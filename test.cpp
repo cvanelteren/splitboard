@@ -56,19 +56,65 @@ public:
 };
 
 uint8_t downcast(size_t x) { return x; };
+
+#define layer_tap 4096
+#define LT(key, layer) (key | layer_tap | (layer & 0xf) << 8)
+// Function to toggle bits in the given range
+int toggleBitsFromLToR(int n, int l, int r) {
+  // calculating a number 'num' having 'r' number of bits
+  // and bits in the range l to r are the only set bits
+  int num = ((1 << r) - 1) ^ ((1 << (l - 1)) - 1);
+
+  // toggle the bits in the range l to r in 'n'
+  // and return the number
+  return (n ^ num);
+}
+
+// Function to unset bits in the given range
+int unsetBitsInGivenRange(int n, int l, int r) {
+  // 'num' is the highest positive integer number
+  // all the bits of 'num' are set
+  long num = (1ll << (4 * 8 - 1)) - 1;
+
+  // toggle the bits in the range l to r in 'num'
+  num = toggleBitsFromLToR(num, l, r);
+
+  // unset the bits in the range l to r in 'n'
+  // and return the number
+  return (n & num);
+}
+
 int main() {
 
-  Test *tester = new Test();
-  void (Test::*fptr)() = &Test::func;
+  uint16_t x = LT(2, 3);
+  // x = 0x01;
+  // uint16_t x = 0x01;
 
-  (tester->*fptr)();
+  // unset first 8 bits
+  uint16_t bitmask = ((1 << 8) - 1) ^ ((1 << (17 - 1)) - 1);
+
+  printf("%d %d \n", x, x & bitmask);
+  size_t tmp;
+  switch (unsetBitsInGivenRange(x, 12, 0)) {
+  case (layer_tap):
+    printf("layer tap\n");
+    tmp = unsetBitsInGivenRange(unsetBitsInGivenRange(x, 16, 12), 8, 0) >> 8;
+    printf("%d\n", tmp);
+    switch (tmp) {
+    case 3:
+      printf("Layer 3 \n");
+      break;
+    default:
+      printf("No layer\n");
+    }
+
+    break;
+  default:
+    printf("Default \n!");
+    break;
+  }
+
   // printf("test %d  \n", b);
-
-  uint16_t x = 256;
-
-  auto a = downcast(x);
-
-  printf("%d %d \n", x, a);
 
   // std::vector<const bla *> E;
   // E.push_back(&D);

@@ -38,8 +38,8 @@ typedef struct {
 
 // typedef std::unordered_map<uint8_t, layer_t> layers_t;
 //
-typedef std::vector<std::vector<uint8_t>> layer_t;
-typedef std::vector<std::vector<std::vector<uint8_t>>> layers_t;
+typedef std::vector<std::vector<uint16_t>> layer_t;
+typedef std::vector<std::vector<std::vector<uint16_t>>> layers_t;
 
 typedef std::unordered_map<uint8_t, std::unordered_map<uint8_t, keyswitch_t>>
     matrix_t;

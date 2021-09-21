@@ -15,6 +15,8 @@ class LED {
 private:
   std::vector<uint8_t> led_col_bins;
   std::vector<size_t> last_activity;
+  typedef void (LED::*update_method)();
+  update_method update_func_ptr;
 
 public:
   void begin();
@@ -26,6 +28,8 @@ public:
   void ble_status(bool connected);
   void turn_off_all();
   void battery_level();
+
+  void update();
 
   // drive specific locations
   std::pair<uint8_t, uint8_t> int2grid(uint8_t idx);

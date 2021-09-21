@@ -92,8 +92,6 @@ auto *font = u8g2_font_7x14B_mr;
 
 double Keyboard::get_battery_level() { return 0.0; }
 void Keyboard::begin() {
-
-  // print info on bluetooth
   Serial.println("Starting keyboard");
   Serial.println(printf("Am I a server? %d\n", this->is_server));
   Serial.print("MAC address is: ");
@@ -102,7 +100,9 @@ void Keyboard::begin() {
   }
   Serial.println();
 
+  this->led->begin();
   this->mesh->begin();
+  this->rotary_encoder->begin();
 
   // setup start display
   if (this->display != nullptr) {
@@ -121,14 +121,6 @@ void Keyboard::begin() {
     Serial.println("Starting bluetooth");
     this->bluetooth.begin();
     this->bluetooth.releaseAll();
-  }
-
-  if (this->led != nullptr) {
-    this->led->begin();
-  }
-
-  if (this->rotary_encoder != NULL) {
-    this->rotary_encoder->begin();
   }
 }
 
@@ -311,40 +303,9 @@ void Keyboard::update() {
   static bool ble_connected;
   if (this->bluetooth.isConnected()) {
     ble_connected = 1;
-    // this->display->log.print("\rhello:)");
-    // this->display->clearBuffer();
-    // this->display->log.print("\rhello:)");
-    // this->display->sendBuffer();
-
-    // // this->display->firstPage();
-    //   do {
-    //     this->display->log.println("");
-    //     this->display->log.print("\rhello:)");
-    //     // this->display->log.print(printf("Connected to %s", "test"));
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "hello :)");
-
-    //   } while (this->display->nextPage());
-    // } else {
-    //   // this->display->clearDisplay();
-    //   this->display->firstPage();
-    //   do {
-    //     // this->display->log.println("");
-    //     this->display->log.print("\rNo Bluetooth :(");
-    //     // this->display->setFont(font);
-    //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
-
-    //   }
-    // while (this->display->nextPage())
-    // ;
   } else {
     ble_connected = 0;
-    // this->display->clearBuffer();
-    // this->display->log.print("\rNo BLE :(");
-    // this->display->sendBuffer();
   }
-
-  this->led->ble_status(ble_connected);
 }
 
 void Keyboard::wakeup() {
@@ -373,7 +334,6 @@ void Keyboard::wakeup() {
     Serial.println("Wakeup not caused by deep sleep");
     break;
   }
-
   this->matrix->wakeup();
   this->led->wakeup();
   this->display->wakeup();

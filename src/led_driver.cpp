@@ -2,8 +2,8 @@
 #include <utility>
 
 LED::LED(Config *config) {
-
   Serial.printf("Setting %d leds", config->num_led);
+  this->update_func_ptr = &LED::cycle;
   this->num_leds = config->num_led;
   this->led_pin = Config::led_pin;
   this->leds = new CRGB[num_leds];
@@ -12,9 +12,40 @@ LED::LED(Config *config) {
   // this->saturation = 0;
   // this->hue = 0;
   // this->value = 0;
-  this->brightness = 128;
+  this->brightness = 64;
   this->sleep();
   FastLED.setBrightness(brightness);
+}
+
+void LED::update() {
+  static uint8_t status;
+  static size_t time;
+
+  size_t delta = millis() - time;
+  // printf("\rDelta %d", delta);
+
+  if (delta > 2000) {
+    status = (status + 1) % 3;
+    time = millis();
+  }
+
+  switch (status) {
+  case 0: {
+    this->update_func_ptr = &LED::serial_cycle;
+    break;
+  }
+  case 1: {
+    this->update_func_ptr = &LED::cycle;
+    break;
+  }
+  case 2: {
+    // this->update_func_ptr = &LED::ble_status(c);
+    break;
+  }
+  }
+
+  (this->*(update_func_ptr))();
+  FastLED.show();
 }
 
 LED::~LED() { delete this->leds; }
@@ -59,27 +90,36 @@ void LED::cycle() {
     // leds[idx] = CRGB(hue, saturation, value);
     leds[idx].setHSV(hue, saturation, value);
   }
-  FastLED.show();
 }
 
 void LED::ble_status(bool connected) {
   static size_t time, delta;
+  static uint8_t value;
   static bool connected_;
+  static uint8_t counter;
 
   if (connected_ ^ connected) {
     connected_ = connected;
     if (connected_ == 0)
       this->sleep();
-    else
-      FastLED.setBrightness(255);
+    else {
+      FastLED.setBrightness(128);
+      counter = 0;
+    }
   }
 
   delta = millis() - time;
   // printf("Delta \t %d\n", delta);
-  for (auto idx = 0; idx < 5; idx++) {
-    leds[idx].setHSV(128, 255, 255);
-  }
-  FastLED.show();
+  if ((delta > 1000) && (counter < 3)) {
+    time = millis();
+    value += 255;
+    counter++;
+    for (auto idx = 0; idx < 5; idx++) {
+      leds[idx].setHSV(128, 255, value);
+    }
+  } else if (counter == 3)
+    counter++;
+  this->sleep();
 }
 
 void LED::serial_cycle() {
@@ -105,13 +145,13 @@ void LED::serial_cycle() {
   }
   if (!(active_led % 5)) {
     hue++;
-    value += 10;
+    value = 50;
+    // value += 10;
   }
 
   if (active_led == num_leds) {
     active_led %= num_leds;
   }
-  FastLED.show();
 }
 
 uint8_t LED::grid2int(std::pair<uint8_t, uint8_t> grid) {

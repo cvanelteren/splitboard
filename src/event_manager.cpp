@@ -21,14 +21,16 @@ void EventManager::add_event(std::string event) {
 void EventManager::update() {
   static uint8_t idx;
   static bool update_battery;
-  char test[] = "abcdefghijklmnopqrstuvw";
-  // deal with events
 
-  // keyboard.display->setFont(u8g2_font_open_iconic_all_1x_t);
-  // keyboard.display->setPowerSave(0);
+  char test[] = "abcdefghijklmnopqrstuvw";
+  std::string event;
+  // deal with events
   if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
-    for (size_t idx = queue.size(); idx >= 0; --idx) {
-      if (this->queue[idx] == "display") {
+    // printf("Q:\t%d\n", queue.size());
+    while (queue.size()) {
+      event = queue.back();
+      queue.pop_back();
+      if (event == "display") {
         idx++;
         idx %= sizeof(test);
         keyboard.display->setCursor(10, 5);
@@ -47,12 +49,10 @@ void EventManager::update() {
 
           // keyboard.display->log.print("\rhello:)");
         } while (keyboard.display->nextPage());
-      } else if (this->queue[idx] == "led") {
-        // keyboard.led->update();
+      } else if (event == "led") {
+        keyboard.led->update();
       }
-      // queue.pop_back();
     }
-    this->queue.clear();
     xSemaphoreGive(mutex);
   }
 }

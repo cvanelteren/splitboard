@@ -16,31 +16,29 @@ void setup() {
   WiFi.mode(WIFI_STA);
   Serial.begin(config.baud_rate);
 
-  Serial.printf("------------SPLITBOARD------------\n");
   keyboard.begin();
-  Serial.printf("layers size %d\n", keyboard.layers.size());
-
-  manager.begin();
 
   // keyboard.wakeup();
   // keyboard.sleep();
+  manager.begin();
+
+  Serial.printf("------------SPLITBOARD------------\n");
+  Serial.printf("layers size %d\n", keyboard.layers.size());
 }
 
+static uint8_t counter;
 void loop() {
-
-  // Print a number on the U8g2log window
-  keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
   keyboard.update();
-  keyboard.led->update();
+  // keyboard.led->update();
 
-  // static uint8_t counter;
-  // counter <<= 1;
-  // if (counter == 0x0) {
-  //   manager.add_event(std::string("display"));
-  //   counter += 1;
-  // }
-
-  // else
-  // manager.add_event(std::string("led"));
+  // tmp stuff
+  // printf("Counter \t %d \n", counter);
+  if (counter == 0x0) {
+    counter = 1;
+    manager.add_event(std::string("display"));
+  } else {
+    manager.add_event(std::string("led"));
+  }
+  counter <<= 1;
 }
 #endif

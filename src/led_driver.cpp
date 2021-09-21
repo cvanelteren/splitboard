@@ -9,9 +9,6 @@ LED::LED(Config *config) {
   this->leds = new CRGB[num_leds];
   this->led_col_bins = config->led_col_bins;
 
-  // this->saturation = 0;
-  // this->hue = 0;
-  // this->value = 0;
   this->brightness = 64;
   this->sleep();
   FastLED.setBrightness(brightness);
@@ -29,22 +26,24 @@ void LED::update() {
     time = millis();
   }
 
-  switch (status) {
-  case 0: {
-    this->update_func_ptr = &LED::serial_cycle;
-    break;
-  }
-  case 1: {
-    this->update_func_ptr = &LED::cycle;
-    break;
-  }
-  case 2: {
-    // this->update_func_ptr = &LED::ble_status(c);
-    break;
-  }
-  }
+  // switch (status) {
+  // case 0: {
+  //   this->update_func_ptr = &LED::serial_cycle;
+  //   break;
+  // }
+  // case 1: {
+  //   this->update_func_ptr = &LED::cycle;
+  //   break;
+  // }
+  // case 2: {
+  //   // this->update_func_ptr = &LED::ble_status(c);
+  //   break;
+  // }
+  // default:
+  //   break;
+  // }
 
-  (this->*(update_func_ptr))();
+  // (this->*(update_func_ptr))();
   FastLED.show();
 }
 

@@ -31,14 +31,16 @@ void loop() {
   // Print a number on the U8g2log window
   keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
   keyboard.update();
-  // keyboard.led->update();
+  keyboard.led->update();
 
-  static uint8_t counter;
-  counter <<= 1;
-  if (counter == 0x0) {
-    manager.add_event(std::string("display"));
-    counter += 1;
-  } else
-    manager.add_event(std::string("led"));
+  // static uint8_t counter;
+  // counter <<= 1;
+  // if (counter == 0x0) {
+  //   manager.add_event(std::string("display"));
+  //   counter += 1;
+  // }
+
+  // else
+  // manager.add_event(std::string("led"));
 }
 #endif

@@ -12,7 +12,7 @@ EventManager::EventManager() {
   mutex = xSemaphoreCreateMutex();
 }
 void EventManager::add_event(std::string event) {
-  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+  if (xSemaphoreTake(mutex, 0) == pdTRUE) {
     queue.push_back(event);
     xSemaphoreGive(mutex);
   }
@@ -25,12 +25,13 @@ void EventManager::update() {
   char test[] = "abcdefghijklmnopqrstuvw";
   std::string event;
   // deal with events
-  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+  if (xSemaphoreTake(mutex, 0) == pdTRUE) {
     // printf("Q:\t%d\n", queue.size());
     while (queue.size()) {
       event = queue.back();
       queue.pop_back();
       if (event == "display") {
+        // emulate dummy data for now
         idx++;
         idx %= sizeof(test);
         keyboard.display->setCursor(10, 5);

@@ -17,13 +17,14 @@ void setup() {
   Serial.begin(config.baud_rate);
 
   keyboard.begin();
-
-  // keyboard.wakeup();
-  // keyboard.sleep();
   manager.begin();
 
   Serial.printf("------------SPLITBOARD------------\n");
   Serial.printf("layers size %d\n", keyboard.layers.size());
+
+  // debug stuff
+  // keyboard.wakeup();
+  // keyboard.sleep();
 }
 
 static uint8_t counter;

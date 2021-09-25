@@ -12,6 +12,9 @@ time to work on it./
 
 #+toc: headlines 2
 
+* TODOS
+- [ ] sleeping  needs to be synced from the  server side. If
+  the server goes to sleep the other half needs to follow too.
 * Introduction
 <2021-06-21 Mon>
 Mechanical keyboards  are somewhat  of a dated  concept that
@@ -108,7 +111,6 @@ To give a course overview consider the following picture:
 
 #+attr_html: :alt   :class img
 [[file:./figures/overview.png]]
-
 
 * ESP32
 <2021-07-12 Mon>-
@@ -625,7 +627,6 @@ would require either the columns or the rows to be hooked up
 to the  touch sensors. By  monitoring any current  change of
 the rows  or columns would  result in  the board to  wake up
 from sleep (which is ideal).
-
 ** Changes
 :LOGBOOK:
 CLOCK: [2021-08-05 Thu 11:58]--[2021-08-05 Thu 12:43] =>  0:45
@@ -1288,39 +1289,37 @@ set to layers. QK_LAYER_TAP = 0x400. We can use this number.
 
 * Final checklist
 Check that the following components work:
-+ [ ] Matrix
-  - [ ] Does scanning work?
-  - [ ] Does ghosting occur?
-+ [ ] ESPNOW [hard to write unit test for]
-  - [ ] Does the wireless bridge work?
-+ [ ] Bluetooth
-  - [ ] Is the unit detected as a keyboard?
-+ [ ] Rotary encoder
-  - [ ] Are single ticks detected?
-  - [ ] Are both positive as well as negative clicks detected?
-  - [ ]  Does the esp32  flash regardless of  the rotary
-    encoder position?
-+ [ ] LEDs
-  - [ ] Can colors be encoded?
-  - [ ] No shorting to ground?
-+ [ ] Display
-  - [ ] Do they display the GUI?
-+ [ ] PCB
-  - [ ] Are all the components connected?
-    + [ ] Are touch pins  connected to the pins that go high
-      in the code? (sinc pins)
-    + [ ] Are the leds VSS connected to the 5v line?
-    + [ ] Are the rotary encoder pins A and B matching
++ [X] Matrix
+  - [X] Does scanning work?
+  - [X] Does ghosting occur?
++ [X] ESPNOW [hard to write unit test for]
+  - [X] Does the wireless bridge work?
++ [X] Bluetooth
+  - [X] Is the unit detected as a keyboard?
++ [X] Rotary encoder
+  - [X] Are single ticks detected?
+  - [X] Are both positive as well as negative clicks detected?
+  - [X]  Does the esp32  flash regardless of  the rotary encoder position?
++ [X] LEDs
+  - [X] Can colors be encoded?
+  - [X] No shorting to ground?
++ [X] Display
+  - [X] Do they display the GUI?
++ [X] PCB
+  - [X] Are all the components connected?
+    + [X] Are touch pins connected to the pins that go high in the code? (sinc pins)
+    + [X] Are the leds VSS connected to the 5v line?
+    + [X] Are the rotary encoder pins A and B matching
       what is defined in the Code base to be A and B?
-    + [ ] Do the LEDS go from DIN to DOUT in series?
-      - [ ]  is the first  LED connected  to DIN pin  on the
+    + [X] Do the LEDS go from DIN to DOUT in series?
+      - [X]  is the first  LED connected  to DIN pin  on the
         micro controller?
-  - [ ]  Is the  ground plate present  and connected  to all
+  - [X]  Is the  ground plate present  and connected  to all
     ground pins?
-  - [ ] Are the pins present with enough clearance?
-    - [ ] Use the clearance guide at  https://jlcpcb.com/capabilities/Capabilities
-+ [ ] Software hardware interface
-  - [ ] verify that no pins are used that will cause issues,
+  - [X] Are the pins present with enough clearance?
+    - [X] Use the clearance guide at  https://jlcpcb.com/capabilities/Capabilities
++ [X] Software hardware interface
+  - [X] verify that no pins are used that will cause issues,
     for example input pins in the 3x range.
   Good luck :)!
 

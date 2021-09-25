@@ -5,19 +5,16 @@
 
 #define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
 Keyboard::Keyboard(Config *config) {
-
   this->config = config;
   // init the keyboard
   this->matrix = new Matrix(config);
   // this->layout = new Layout(config);
-
   // setup esp_now
   // setting station wifi mode
   this->mesh = new Mesh(config);
 
   // setup display
   this->display = new Display(config);
-
   this->led = new LED(config);
 
   byte mac_addr[6];
@@ -33,12 +30,8 @@ Keyboard::Keyboard(Config *config) {
   // default to client
   if (this->is_server) {
     Serial.println("Setting up bluetooth");
-    // this->bluetooth =
-    // new BleKeyboard(config->device_name, config->device_manufacturer,
-    // this->get_battery_level());
     this->bluetooth = BleKeyboard(
         config->device_name, config->device_manufacturer, get_battery_level());
-    // this->bluetooth = new Bluetooth(config);
   }
 
   layer_t qwerty = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
@@ -51,25 +44,11 @@ Keyboard::Keyboard(Config *config) {
                      KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
                     {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, KC_SPC, KC_ENTER,
                      KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
-  // // std::unordered_map
-  // layer_t qwerty = {{KC_B, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
-  // KC_9,
-  //                    KC_0, KC_BSPC},
-  //                   {KC_A, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
-  //                   KC_O,
-  //                    KC_P, KC_OBRACKET, KC_CBRACKET},
-  //                   {KC_B, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
-  //                   KC_L,
-  //                    KC_COLON, KC_SQUOTE},
-  //                   {KC_C, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
-  //                   KC_COMMA,
-  //                    KC_DOT, KC_SLASH, KC_RSHIFT},
-  //                   {KC_NO, KC_NO, KC_NO, KC_LCTL, KC_ALT, KC_SPC, KC_ENTER,
-  //                    KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
 
-  this->layers = {key_layers::qwerty};
-  this->layers = {qwerty};
-  this->active_layer = &(this->layers[0]);
+  this->layers = {qwerty, qwerty};
+  // this->layers.push_back(qwerty);
+  // this->layers.push_back(qwerty);
+  this->set_active_layer(0);
 
   // setup rotary encoder
   this->rotary_encoder = new RotaryEncoder(config);
@@ -149,9 +128,20 @@ int unsetBitsInGivenRange(int n, int l, int r) {
   return (n & num);
 }
 
-uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
+// TODO: this needs a cleaner interface..
+// perhaps a separate event class
+void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
+  /**
+   * @brief      Process the keyswitches
+   *
+   * @details    keywsitches map to a keycode. Some of the keycodes are special.
+   * That is, the allow for temporary switching to another layer when a key is
+   *pressed, etc. This function deals with the various different functions.
+   *It is highly likely that I will separate these into different events.
+   * @return     return type
+   */
+  static uint8_t toggle_active_layer; // remember the past active layer
   // encodes pin switch to actual char
-
   Serial.printf("row %d \t col %d (%d, %d)\t %d \n", keyswitch.row,
                 keyswitch.col, keyswitch.source, keyswitch.sinc,
                 keyswitch.time);
@@ -163,8 +153,7 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
     Serial.println("Key release");
   }
 
-  auto keycode = (*this->active_layer)[keyswitch.col][keyswitch.row];
-  size_t tmp;
+  uint16_t keycode = (*active_layer)[keyswitch.col][keyswitch.row];
   switch (unsetBitsInGivenRange(keycode, 12, 0)) {
   case KC_SLEEP: {
     if (keyswitch.pressed_down) {
@@ -172,23 +161,70 @@ uint8_t Keyboard::read_key(keyswitch_t &keyswitch) {
     }
     break;
   }
-  case (LAYER_TAP):
+    // TODO: move this to separate function
+  case (LAYER_TAP): {
     // deal with layer tap stuff
     Serial.printf("Layer tap!");
-    tmp = unsetBitsInGivenRange(keycode, 16, 12);
-    tmp = unsetBitsInGivenRange(tmp, 8, 0) >> 8;
-    // this->active_layer = tmp;
+    // adding event
+    if (add_special) {
+      special_keycodes.push_back(keyswitch);
+    }
+    // key press event
+    // TODO remove 100 to a config number
+    else if ((keyswitch.pressed_down) & ((millis() - keyswitch.time) > 100)) {
+      // switch layer
+      uint16_t layer = unsetBitsInGivenRange(keycode, 16, 12);
+      layer = unsetBitsInGivenRange(layer, 8, 0) >> 8;
+      if (layer != active_layer_num) {
+        toggle_active_layer = active_layer_num;
+        set_active_layer(layer);
+      }
+    }
+    // key release event
+    else if (!keyswitch.pressed_down) {
+      set_active_layer(toggle_active_layer);
+      if ((millis() - keyswitch.time) < 100) {
+        this->bluetooth.press(keycode);
+        this->bluetooth.release(keycode);
+      }
+    }
     break;
+  }
   default: {
     Serial.printf("Sending a keycode \n");
-    return keycode;
+    if (this->bluetooth.isConnected()) {
+      if (keyswitch.pressed_down) {
+        Serial.printf("BLE send\n");
+        this->bluetooth.press(keycode);
+      } else {
+        Serial.printf("BLE release\n");
+        // this->bluetooth.write(key);
+        // this->bluetooth.press(key);
+        this->bluetooth.release(keycode);
+      }
+    }
     break;
   }
   }
 }
 
-void Keyboard::send_keys() {
-
+void Keyboard::process_special_keycodes() {
+  uint16_t keycode;
+  keyswitch_t *keyswitch;
+  // printf("Processing special keycodes\n");
+  // printf("Num special keys: \t %d\n", special_keycodes.size());
+  for (int idx = special_keycodes.size() - 1; idx >= 0; idx--) {
+    keyswitch = &special_keycodes[idx];
+    process_keyswitch(*keyswitch);
+    // event dealt with
+    if (!keyswitch->pressed_down) {
+      special_keycodes.erase(special_keycodes.begin() + idx);
+    }
+  }
+}
+void Keyboard::process_keyswitches() {
+  // if non-empty deal with special keycodes first
+  process_special_keycodes();
   // read the mesh
   auto client_keys = Mesh::get_buffer();
   // Mesh::buffer.fill({});
@@ -219,6 +255,7 @@ void Keyboard::send_keys() {
     if (keyswitch->source == config->rot_a_pin or
         keyswitch->source == config->rot_b_pin) {
       Serial.printf("Received encoder key!\n");
+
       // server encoder
       if (keyswitch->buffer == 1) {
         encoder_code =
@@ -235,21 +272,10 @@ void Keyboard::send_keys() {
     }
     // read keycode
     else {
-      key = this->read_key(*keyswitch);
-      if (this->bluetooth.isConnected()) {
-        if (keyswitch->pressed_down) {
-          Serial.printf("BLE send\n");
-          this->bluetooth.press(key);
-          // this->bluetooth->write(97);
-        } else {
-          Serial.printf("BLE release\n");
-          this->bluetooth.release(key);
-        }
-      }
+      this->process_keyswitch(*keyswitch, 1);
     }
   }
 }
-
 void Keyboard::update() {
   /**
    * @brief     keyboard updater
@@ -276,6 +302,7 @@ void Keyboard::update() {
     this->matrix->active_keys.push_back(elem);
   }
 
+  // ensures each half remains active
   if (this->matrix->active_keys.size()) {
     this->last_activity = millis();
   }
@@ -284,7 +311,7 @@ void Keyboard::update() {
   // handle sending keys
   // handle server
   if (this->is_server) {
-    this->send_keys();
+    this->process_keyswitches();
   }
   // handle client
   else {
@@ -302,8 +329,12 @@ void Keyboard::update() {
 
   static bool ble_connected;
   if (this->bluetooth.isConnected()) {
+    if (bluetooth.isConnected() ^ ble_connected)
+      printf("Bluetooth is connected\n");
     ble_connected = 1;
   } else {
+    if (bluetooth.isConnected() ^ ble_connected)
+      printf("Bluetooth disconnected\n");
     ble_connected = 0;
   }
 }
@@ -370,4 +401,13 @@ void Keyboard::sleep() {
   // esp_deep_sleep_start();
   Serial.println("Sleeping"); // shouldn't print
   this->wakeup();
+}
+
+void Keyboard::set_active_layer(uint8_t layer) {
+  if (layer < layers.size()) {
+    active_layer = &layers[layer];
+    active_layer_num = layer;
+  } else {
+    printf("Warning setting layer larger than max number of layers\n");
+  }
 }

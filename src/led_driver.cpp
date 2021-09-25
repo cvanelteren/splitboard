@@ -28,7 +28,8 @@ void LED::update() {
 
   switch (status) {
   case 0: {
-    this->update_func_ptr = &LED::serial_cycle;
+    this->update_func_ptr = &LED::cycle;
+    // this->update_func_ptr = &LED::serial_cycle;
     break;
   }
   case 1: {

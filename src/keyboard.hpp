@@ -48,25 +48,27 @@ public:
   void begin();
   void update();
   // communicate with bluetooth
-  void send_keys();
-
-  uint8_t read_key(keyswitch_t &keyswitch);
+  void process_keyswitches();
+  void process_keyswitch(keyswitch_t &keyswitch, bool add_special);
+  void process_special_keycodes();
 
   bool is_server;
   double get_battery_level();
 
   layers_t layers;
-
   void sleep();
   void wakeup();
 
 private:
   layer_t *active_layer;
+  uint8_t active_layer_num;
   size_t last_activity;
   std::unordered_map<std::string,
                      std::unordered_map<std::string, const MediaKeyReport *>>
       encoder_codes;
+  std::vector<keyswitch_t> special_keycodes;
 
   size_t get_last_activity();
+  void set_active_layer(uint8_t layer);
 };
 #endif

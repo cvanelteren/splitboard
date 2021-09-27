@@ -1,0 +1,1366 @@
+#+options: toc:nil
+/This is  work in progress -  the post is updated  as I find
+time to work on it./
+
+# * Tracking :noexport:
+# https://t.17track.net/en#nums=1511258884
+
+
+#+begin_export md
+<img src="./figures/logo.svg" width = "100%"></img>
+#+end_export
+
+#+toc: headlines 2
+
+* TODOS
+- [ ] sleeping  needs to be synced from the  server side. If
+  the server goes to sleep the other half needs to follow too.
+* Introduction
+<2021-06-21 Mon>
+Mechanical keyboards  are somewhat  of a dated  concept that
+has  gathered some  speed in  more recent  years. Back  when
+computers were  first coming  out for the  public, keyboards
+had  mechanical connections  that would  allow a  current to
+activate a  switch. Then as  economics got wind,  somehow we
+got used  to membrane  keyboards; virtually every  office in
+the  world   has  these  membrane  keyboards.   Compared  to
+mechanical keyboards, membrane  keyboards feel more "mushy".
+In contrast,  mechanical keyboards  may have  different feel
+based  on  the  springs  or  whether the  key  switch  has  a
+noticeable  "bump".   They  can   be  clicky  or   not;  the
+possibility are wild now.
+
+A  few  years  ago  I started  following  the  subreddit  on
+mechanical keyboards.  Back then,  the community  had little
+options and cherry still had patents on the switches. Cherry
+MX keys were virtually found in every commercial keyboard on
+the market. Now,  the landscape has changed quite  a bit and
+more and more different types of switches are available.
+
+Why do  I prefer mechanical keyboards?  Mechanical keyboards
+give a "joy" to typing.  Membrane keyboards are fine to type
+on, but  they aren't fun.  Generally my fingers  get "tired"
+after typing  on membrane keyboards  as the keys feel  a bit
+mushy, i.e.  you get no relief  when pushing down a  key and
+the key press does not feel crisp.
+
+After  following  / r / mechanicalkeyboards   for  a  while,  I
+decided to  /build/ my  own keyboard. Within  the community,
+there is a wide variety  of switches and shapes of keyboards
+available. The one I wanted, an orthonormal keyboard, wasn't
+commercially available. Plus I liked the idea of building my
+own keyboard.  In my work,  the keyboard is my  primary tool
+and why not  key a custom version of it  for myself. I ended
+up  building 2  handwired  versions of  65  percent with  85
+switches  in  a  grid  layout.   In  addition,  I  modded  a
+MagSafe-inspired cable to it which allowed it to be nice and
+portable. After  every build I told  myself : " This  is the
+last one I'll build".
+
+Enter  this blog,  where I  again tell  myself "this  is the
+last  one I  build!". What  changed? Since  I learned  about
+split-style keyboard,  I always wanted one.  The keyboards I
+had  made   so  far  weren't.  Split   would  be  completely
+ergonomical,  but  unfortunately,  none (that  I  know  of)
+exists that are both (a) wireless and (b) split. As always
+I aimed to high and wanted to emulate the many features that
+QMK implements. Most importantly, I  wanted to get back into
+writing more low  level languages like c++, and  I take this
+project as  a nice  opportunity to get  into c++  again, and
+work with micro-controllers.
+
+This post  will serve as  my log for building  the keyboard.
+The post will updated as I work on it.
+
+Core feature targets
+- Split _wireless_ keyboard
+- Hot swappable key sockets
+- Portable, not a full keyboard
+- Battery control
+- OLED display
+- Rotary encoders
+
+* Outline
+The keyboard is split; it has two halves. The right and left
+half will have  most of the same  "base" functionality. Most
+importantly, each  half needs to  scan the matrix  to obtain
+which keys are being pressed. One of the halves will act as a
+server, the other will act as a client. The server will need
+the following capabilities
+
+*Server abilities*
+- Read matrix
+- Setup a bluetooth connection
+  + HID Device
+  + Mouse emulation
+- Setup connection with client
+  + Merge keys pressed and send to bluetooth controller
+- Control LEDs on both client and server
+
+*Client abilities*
+- Read matrix
+- Find server and send pressed keys to server
+
+Due to the heavier load of  the server, I prefer to make the
+role of  who is server and  who is client dynamic.  That is,
+with some heuristic (for example  deep sleep), the roles may
+switch to prolong batter life of both units.
+
+
+To give a course overview consider the following picture:
+
+#+attr_html: :alt   :class img
+[[file:./figures/overview.png]]
+
+* ESP32
+<2021-07-12 Mon>-
+I  opted for  a micro-controller  as this  would allow  me to
+prototype without  worrying about my electronic  skills. The
+controller needed  to have  battery control,  bluetooth, and
+preferable an  energy efficient screen;  I ended up  with an
+esp32.
+
+The esp32 is a hybrid chip that has both Wi-Fi and bluetooth
+capabilities. The esp32 consists  of different versions that
+varies in (mainly) in the number of pins, battery connector,
+and  or screen.  The version  I ended  with (LORA-V2)  had a
+battery connector and a tiny OLED screen.
+
+The  ecosystem  of  ESP32   is  well-developed  albeit  less
+convenient  than  its  arduino  counterparts.  Luckily,  the
+opensource community has taken it upon themselves to provide
+lots  of  arduino bindings  to  the  libraries by  espressif
+(manufacturer of esp32).
+
+Especially important  (as it turned  out later) is  that the
+esp32 has the capabilities of using both Wi-Fi and bluetooth
+low  energy simultanaously.  In  addition, through  ESP-NOW,
+different  eps32  modules can  form  a  mesh, which  I  will
+harness to do server-client communication.
+
+#+caption: Pin-out ESP32 LORA-V2
+[[file:./figures/pinout.jpg]]
+
+* Matrix scanning
+<2021-07-12 Mon> A keyboard  matrix scanning circuit is used
+to enhance the  number of keys, while keeping  the number of
+pins low.  A micro-controller uses general  pin input/output
+(GPIO) to  register currents.  If a  singular key  switch is
+wired to  a single pin,  96 pins would  be needed for  a 104
+sized keyboard (full-size). This would be unpractical.
+
+As an alternative  one could apply matrix  scanning. In this
+method,  the keys  are wired  as  a grid  where each  column
+connects to each  row effectively forming a  "switch". For a
+total for 100 keys, one would need 10x10 grid. The grid acts
+as a force multiplier for the number of switches. Instead of
+needing 100  separate keys,  we merely need  10 rows  and 10
+columns (20 pins) to wire our 100 switch keyboard.
+
+The  matrix is  repeatedly  scanned to  determine  if a  row
+column form  an open circuit.  That is,  if a key  switch is
+pressed down, current  can flow between the  row and column.
+The scanning occurs at a high scan rate, making it seemingly
+instantaneous.
+** Ghosting
+Matrix  scanning  forms  an excellent  idea  to  efficiently
+represent our electronic  switches. However, merely scanning
+does  not  correctly records  all  key  presses. Under  some
+conditions, a matrix  can record ghost keys,  i.e. keys that
+are  registered  but not  pressed.  This  process is  called
+ghosting.
+
+Ghosting  occurs  when  current   can  freely  flow  between
+separate  rows or  columns due  to another  row/column being
+open.  For example  consider a  simple two  row, two  column
+keyboard. This board can support 4 keys. When two keys along
+the diagonal  are pressed,  we register  4 keys(!).  This is
+obviously wrong and  needs to be corrected.  The most common
+approach is to put a diode  right after the switch either on
+the columns or rows,  which prevents current from traversing
+and causing ghosting.
+
+#+caption: Ghosting example. Ghosting occurs when current can flow freely across columns and rows. (Left) one key is pressed down bottom left.
+#+caption: (Middle) A key across from the first is activated which causes ghosting (right); current flows from the second row, first column to the
+#+caption: second row, second column etc.
+[[file:./figures/ghosting.png]]
+
+#+name: ghosting
+#+begin_src jupyter-python :exports none :eval never-exports
+import matplotlib.pyplot as plt, cmasher as cmr
+import numpy as np, os, sys, networkx as nx, warnings
+warnings.simplefilter("ignore");
+plt.style.use("fivethirtyeight spooky".split())
+
+
+g = nx.grid_graph((2,2))
+pos = {k : np.array(k) for k in g.nodes()}
+
+c1 = [cmr.guppy(0) if k == (0,0) else cmr.guppy(255) for k in g.nodes()]
+c3 = []
+for node in g.nodes():
+    if node == (0,0) or node == (1,1):
+        c = cmr.guppy(0)
+    elif node == (0,1) or node == (1,0):
+        c = cmr.guppy(128)
+    else:
+        c = cmr.guppy(255)
+    c3.append(c)
+
+c2 = [cmr.guppy(0) if k == (0,0) or k == (1,1) else cmr.guppy(255) for k in g.nodes()]
+fig, ax = plt.subplots(1, 3)
+nx.draw(g, pos = pos, ax = ax[0], node_color = c1)
+nx.draw(g, pos = pos, ax = ax[1], node_color = c2)
+nx.draw(g, pos = pos, ax = ax[2], node_color = c3)
+
+[axi.axis('equal') for axi in ax]
+
+labels = "Active Inactive Ghosting".split()
+colors = [cmr.guppy(0), cmr.guppy(255), cmr.guppy(128)]
+handles = [plt.Line2D([], [], color = c, marker = 'o', linestyle = 'none', label = l) for l, c in zip(labels, colors)]
+ax[0].legend(handles = handles, loc = 'upper left')
+fig.savefig("./figures/ghosting.png", transparent = False)
+fig.show()
+
+
+#+end_src
+
+#+caption: testing
+
+
+** Key debouncing
+Key  debounce is  a mechanism  to filter  out erroneous  key
+activity.  When  two metal  plates  come  into contact,  the
+signal does not form a clean  square wave. In order to clean
+up  this  signal, key  debouncing  is  used to  reflect  the
+"press"  of  key switch.  Initially  I  used a  simple  time
+filter, i.e.  ensuring that  the keyswitch was  pressed down
+between  x ms.  This ended  up being  a bit  noisy with  the
+switches I  was using; I  ended up writing a  digital filter
+that worked fairly well.
+
+** Changes
+- [X] Added matrix class
+  + [X] added matrix scan
+  + [X] added key debounce
+  + [X] added (whole) matrix debounce
+    - [X] filters out erroneous key presses
+
+* ESP-Now
+<2021-06-19 Sat>
+The two  halves need to  communicate to eachother.  There is
+only one half that is connected through bluetooth to another
+device. We call  this the server, and the  other the client.
+Keys pressed on  the client needs to be  communicated to the
+server  which   processes  the  keys,  and   sends  it  over
+bluetooth. Luckily,  ESP-now offers a mesh  interface we can
+utilize for  this purpose.  This is easier  to setup  than a
+bluetooth mesh interface and should be relatively secure for
+foreign attackers. From the website we read:
+
+#+begin_quote
+ESP-NOW is yet another protocol developed by Espressif, which enables multiple devices to communicate with one another without using Wi-Fi. The protocol is similar to the low-power 2.4GHz wireless connectivity that is often deployed in wireless mouses. So, the pairing between devices is needed prior to their communication. After the pairing is done, the connection is secure and peer-to-peer, with no handshake being required.
+#+end_quote
+
+
+** Mesh interface class
+The mesh class is responsible for:
+- Setup / deinit the ESP-now connection
+- Holding a buffer that is sent over the ESP-now connection.
+  The buffer holds information that needs to be communicated
+  between each  halves.
+
+At  the moment  of writing,  the mesh  class holds  a static
+buffer   which  holds   `keyswitch_t`.  These   are  structs
+containing when the last time  the pins were read as active.
+In addition, it contains information  on the source and sinc
+pins, and column and row indices. These last two are used to
+index into the final keymap on the server side. This way, no
+actual key information is send, but the server reads the key
+from the  col and row,  then they are combined.  This solves
+the issue of sending ascii shifted codes or media keys.
+
+** Changes
+- [X] Implemented mesh interface class
+- [X] Added server capabilities to join the keys from both half and communicate through bluetooth
+
+* Modifier keys
+<2021-07-26  Mon>  My  initial implementation  measures  the
+onset of  keys. That is,  debounce worked by  measuring when
+the "square  wave" of the  key was pressed. This  allows for
+fast  and  accurate  detection  detecting  key  press  down.
+Initially my intentions was to merge the other keys together
+such that multiple keys are registered at the same time. For
+example, the shift key needs to register two keys at minimum
+to shift the ascii code around for let's say `a` to `A`.
+
+Consequently, I need to both  register the key press down as
+well as the  key release; I modified  the debounce mechanism
+to also detect the key release.
+
+** Changes
+- [X] Change key detection. Register key press and key release
+- [X] Mesh buffer management is moved out of the keyboard class.
+- [X] Fixed wrong indexing in reading the active keys on the server.
+
+* Bluetooth
+Bluetooth  is  rather  complicated. The  Bluetooth  Keyboard
+class takes  care of  most of the  heavy lifting.  Key codes
+have an associated  ascii code, these are put  into an ascii
+code map. Note that the over bluetooth (for whatever reason)
+these keycodes are remapped to different numbers.
+
+** Changes
+- [ ] Expand  this section with info  on characteristics and
+  services.
+- [X]    Figure out  how  the key  codes  are organized  The
+  symbols are organized in a 128 ascii keymap containing the
+  hex codes to  a symbol. Hex codes can be  send directly in
+  addition to  normal strings  over bluetooth.  The modifier
+  keys  in  combination with  some  media  control keys  are
+  defined   in  "BleKeyboard.h",   the  ascii   map  is   in
+  "BleKeyboard.cpp".  I  have  written a  short  wrapper  in
+  "key_defintions.hpp".
+- [X]  Add functions for  interfacing with bluetooth  to the
+  keyboard class
+  + [X] Pressing down keys
+  + [X] Releasing keys
+- [ ] Convert config class  to static class
+- [-] Write layer keymap for keyboard
+  + [X] Wrote qwerty base layer
+  + [ ] Add fixed array check to the layers (add to constant
+    config class steps)
+
+* Keyboard layers
+:LOGBOOK:
+CLOCK: [2021-07-29 Thu 09:27]--[2021-07-29 Thu 10:57] =>  1:30
+:END:
+A layer  is implemented as a  2D vector for the  moment, but
+will  likely change  in finalizing  the keyboard.  An active
+layer is set as a pointer  to the current active layer. Each
+keyswitch has  information on  where in  the grid  they fit;
+keys are read by using these indices in the 2D vector. I did
+consider an  unordered_map use the keyswitch  directly as an
+indicator. This could then be combined with pointers to make
+a  layer dynamic,  i.e.  instead of  having  the concept  of
+layers, each key has a different layer that can be accessed.
+This adds  some complexity and  I decided against  this. The
+main reason is that the client side would then need to store
+information  on what  each keyswitch  points to.  This would
+increase communication between each  halves if modifiers are
+used for example. I am  afraid that this added communication
+is not as trivially solved,  i.e. one needs to send modifier
+key across ESP-NOW and then shift all affected keys and when
+activated send this information back. The ESP-NOW channel is
+not designed for high information throughput.
+
+The keyboard is  not going to be full size.  That is, purely
+based on the number of keys,  this keyboard will not be able
+to have a 1-to-1 mapping  from symbol to keyswitch. Luckily,
+we  can  greatly  increase  the number  of  symbols  on  the
+keyboard by hosting the missing symbols on different layers.
+This means we have to implement a feature that allows one to
+switch  between   different  layers.  For  example   we  may
+implement a layer up and layer  down key, or allow to switch
+directly between different  layers. In QMK is  worked out by
+an `enum struct`.  Layers are stacked on top  of each other.
+This has the  added feature of allowing  a "transparent" key
+to access on a layer below. I wish to emulate this feature.
+
+I currently host my key layer  as a 2d vector. In finalizing
+my build this  may change to a fixed array  size. As vectors
+can be arbitrary sized, I need to add a check to the vectors
+to not allow uses to  define oddly sized arrays (which would
+lead to  seg faults).  This will be  added to  the finalized
+checks.
+
+In  QMK layers  are `enum` type, which  means the  layers are
+number  and tracked  through an  int. Here,  I will  have an
+`active_layer`  which points  to the  `layer_t` hosting  the
+current  active keys.  With transparent  keys I  can imagine
+that this approach will not work.
+
+** Changes
+- [ ] Implement key layers
+  + [ ] KC_TRANS accesses key below the current layer
+    - [ ] This effect may  stack until a non-transparent key
+      is found
+    - [ ] Layer switch keys
+      + [ ] Up and down
+    - [ ] Hold  layer switch key: similar  to modifier keys,
+      these  keys  temporarily   shift  the  key layer  while
+      holding down this key.
+* Rotary encoder
+:LOGBOOK:
+CLOCK: [2021-08-08 Sun 14:28]--[2021-08-08 Sun 15:36] =>  1:08
+CLOCK: [2021-08-05 Thu 11:48]--[2021-08-05 Thu 11:54] =>  0:06
+CLOCK: [2021-07-31 Sat 06:01]--[2021-07-31 Sat 08:21] =>  1:20
+:END:
+The keyboard  has two rotary  encoder (one on  each halves).
+The encoders  I added were mostly  as a gimmick, but  can be
+used as slider controls for volume control and or scrolling.
+
+#+name: fig:encoder
+#+caption: (left) Schematic rotary encoder. The A and B pin are 90 degrees out of phase and produce a quadrature signal (right). In the rest state both A and B pin register 0. The quadrature encoding for the A and B pin are given in ref:encoder_scheme.
+[[file:./figures/encoder.png]]
+
+The rotary encoder has two  pins that are shifted 90 degrees
+out  of  phase  (see  figure  ref:fig:encoder).  Each  click
+produces a  quadrature signal  that is fixed.  Unknowingly I
+bought encoders that are  extremely noisy (KY-040). When the
+encoder clicks,  contacts are  moved across a  terminal. The
+signal  produced  are  ideally  two  square  offsets  by  90
+degrees.  In  practice  however, the  signal  debounces  and
+produces  more  signal. They  are  three  traditional ways  of
+taming noisy signals
+
+1. Hardware filtering
+2. Digital filtering
+3. Decoding
+
+I don't know  much about the first method or  last method. I
+initially tried  method 2, i.e. measuring  the pins, waiting
+for  some  time and  measure  again.  This however  did  not
+correctly measure the rotations.  I tried multiple libraries
+that used interrupt  routines that did not  end up correctly
+measuring the  clicks of the  encoder. Finally I  found [[https://www.best-microcontroller-projects.com/rotary-encoder.html][this
+blog  post]] which  highlighted exactly  the problem  with the
+KY-040. The  decoder method  worked like  a charm,  but took
+some  time to  figure out.  Below is  the exploration  I had
+trying to figure out how this code worked.
+
+** Taming the KY-040 with decoding
+
+The quadrature signal per click  produces a fixed output for
+either clockwise or anti-clockwise rotation. The encoder can
+be thought of  as a fixed state machine  that moves between
+different states (ref:table_transition).
+
+#+name:table_transition
+#+label: table_transition
+|---------------+-------+-----------+-------+----------------|
+| Current state |       | New state |       | Direction      |
+|---------------+-------+-----------+-------+----------------|
+|         A pin | B pin |     A pin | B pin |                |
+|---------------+-------+-----------+-------+----------------|
+|             1 |     1 |         0 |     1 | clockwise      |
+|             0 |     1 |         0 |     0 | clockwise      |
+|             0 |     0 |         1 |     0 | clockwise      |
+|             1 |     0 |         1 |     1 | clockwise      |
+|             1 |     1 |         1 |     0 | anti-clockwise |
+|             0 |     1 |         1 |     1 | anti-clockwise |
+|             0 |     0 |         0 |     1 | anti-clockwise |
+|             1 |     0 |         0 |     0 | anti-clockwise |
+|---------------+-------+-----------+-------+----------------|
+
+In practice however, a noisy rotary encoder will also output
+some state transitions that are not allowed, e.g. 11->00. In
+order to  correctly read which direction  the rotary encoder
+was turned in, a digital filter can be used. A simple filter
+would be something like
+
+$$ signal = (signal << 1) | digitalRead(A_{pin}) | 0xF000$$
+
+A signal is  only read if the integer value  reaches the all
+ones state, then resets and  waits again. Trying this method
+did not end well for me.  I ended up using sequence decoder;
+the pattern are listed in ref:encoder_scheme.
+
+We can  group the  current state  and new state  as a  4 bit
+number,  i.e. $\\{a,  b, a',  b'\\}$  where $a$,  $b$ are  the
+current state of the A and B  pin and $a'$, $b'$ are the new
+state of the A  and B pin. This implies that  2^4 = 16 state
+transitions are possible and we only allow for 8 of these to
+occur (see table ref:table_transition).
+
+#+name: table_transition
+| state (bit mask) | Allowed | Direction      | State |
+|------------------+---------+----------------+-------|
+|             0000 | False   |                |     0 |
+|             0001 | True    | clockwise      |     1 |
+|             0010 | True    | anti-clockwise |     2 |
+|             0011 | False   |                |     3 |
+|             0100 | True    | clockwise      |     4 |
+|             0101 | False   |                |     5 |
+|             0110 | False   |                |     6 |
+|             0111 | True    | anti-clockwise |     7 |
+|             1000 | True    | anti-clockwise |     8 |
+|             1001 | False   |                |     9 |
+|             1010 | False   |                |    10 |
+|             1011 | True    | clockwise      |    11 |
+|             1100 | False   |                |    12 |
+|             1101 | True    | clockwise      |    13 |
+|             1110 | True    | anti-clockwise |    14 |
+|             1111 | False   |                |    15 |
+|------------------+---------+----------------+-------|
+
+#+name: encoder_scheme
+|-----------+------+----------------|
+| Bitmask   |  Hex | Direction      |
+|-----------+------+----------------|
+| 0001 0111 | 0x17 | clockwise      |
+| 0010 1011 | 0x2b | anti-clockwise |
+|-----------+------+----------------|
+
+
+
+** Changes
+:LOGBOOK:
+CLOCK: [2021-07-30 Fri 10:07]--[2021-07-30 Fri 10:08] =>  0:01
+CLOCK: [2021-07-30 Fri 09:00]--[2021-07-30 Fri 10:07] =>  1:07
+:END:
+- [X] Add rotary encoder to keyboard class
+* LED driver: FastLED
+I generally don't care  for LED under keyboard. However, as  this was a "bigger"
+project, I  decided to play  around with LED  support. Different LEDs  types are
+possible, I  ended up  going with  the SK6812  which offer  RGB support  and are
+generally easier  to hand  solder than the  popular WS2812(B).  After purchasing
+however, I turned out that finding a LED  driver posed to be a bit cumbersome. I
+tried a few different code bases and they  ended up not working out the box. Not
+sure  why.  After  some  searching,  I stumbled  on  the  library  FastLED.  The
+documentation  does not  explicitly  support  the SK6812.  The  git issue  page,
+however, showed  that there  is some support  for it. In  addition, some  of the
+example code had mentions of it. Anyhoozle, after some tweaking around (and some
+ugly soldering) I achieved:
+
+#+begin_export md
+ <video width="320" height="240" controls>
+  <source src="./figures/leds_cycle.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+#+end_export
+
+Happy days! The  LED driver was one of  the last parts of the  list, which means
+that the end is  in sight! The coming week I will integrate  the driver with the
+keyboard class and check the box below.
+
+** Changes
+- [X] LED driver
+  - [X] Initialize LED driver
+  - [X] Make LED wrapper in keyboard class
+
+* OLED Display
+** Changes
+- [ ] Start creating interface for display management
+- [ ] Find interesting functions to put on the screen
+  + [ ] WiFi notifications?
+  + [ ] Keyboard status info
+    - [ ] Keyboard layer info
+    - [ ] Battery level info
+
+* Deep sleep
+:LOGBOOK:
+CLOCK: [2021-08-08 Sun 12:41]--[2021-08-08 Sun 14:19] =>  1:38
+:END:
+When not  in use I  aim to put  the keyboard in  deep sleep.
+Some pins  on the esp32 can  be used to wakeup  the keyboard
+from deep  sleep. The  RTC_GPIO pins and  Touch pins  can be
+used for waking the device from deep sleep. The RTC pins are
+
+#+name: sleep_pins
+|------------+--------+-------------------------|
+| RTC Pin    | GPIO   | Comment                 |
+|------------+--------+-------------------------|
+| RTC GPIO12 | GPIO02 | had issues with encoder |
+| RTC GPIO10 | GPIO04 | OLED SDA                |
+| RTC GPIO15 | GPIO12 |                         |
+| RTC GPIO14 | GPIO13 |                         |
+| RTC GPIO16 | GPIO14 |                         |
+| RTC GPIO13 | GPIO15 | OLED SLK                |
+| RTC GPIO09 | GPIO32 | input only              |
+| RTC GPIO08 | GPIO33 | input only              |
+| RTC GPIO04 | GPIO34 | input only              |
+| RTC GPIO05 | GPIO35 | input only              |
+| RTC GPIO00 | GPIO36 | input only              |
+| RTC GPIO03 | GPIO39 | input only              |
+| RTC GPIO06 | GPIO25 |                         |
+| RTC GPIO07 | GPIO26 |                         |
+| RTC GPIO17 | GPIO27 |                         |
+| RTC GPIO11 | GPIO00 | button pin(?)           |
+|------------+--------+-------------------------|
+
+  The set  GPIO12/13/14/25/26/27 could form a  set for which
+  all the columns or rows will  have a key that is connected
+  to  deep sleep;  this would  mean either  the rows  or the
+  columns are connected to a pin that is reachable from deep
+  sleep. I will  have to run some experiments  if that could
+  allow the keyboard to wake up from deep sleep, i.e. if the
+  the  column or  row  is not  active I  wonder  if the  the
+  current will  be low, i.e. if  the pins are in  deep sleep
+  and  a small  current is  tested on  the active  pins (set
+  above),   does  the   current   go  from   HIGH  to   LOW?
+  Alternatively,  I could  connect the  pins to  the set  3x
+  range only for deep sleep mode.
+
+  There are two sleep modes; light sleep and deep sleep. For
+  light sleep the internal state of the system is preserved,
+  which is not the case for deep sleep. This would mean that
+  for deep sleep the keyboard effectively reboots.
+
+  There are 4 ways to wake up from deep sleep:
+  1. External current
+     a. Either through ext0 or ext1 wake up
+  2. Touch pins
+  3. Timer
+  4. ULP co-processor.
+
+I aim  to be able to  wake up the keyboard  from any regular
+key presses. That is, after some time-out, the user need not
+press a  button. Instead, a  control signal will  monitor if
+some current  changed and then  reboot the device.  Method 1
+would  be suitable  if the  pins are  directly connected  to
+ground. With  the matrix  scan setup,  there are  not enough
+pins to measure  a current difference if one of  the keys in
+the matrix would  be pressed. Method 3 is  also not suitable
+as the input to the keyboard does not happen at a fixed time
+interval. Method 4 requires coding for the ULP co-processor.
+This requires knowledge  of assembly which I do  not have. I
+think it is  possible that this would reduce  the deep sleep
+current even more. However, in the end it still utilizes the
+RTC pins.
+
+Luckily, my  keyboard will  only require  5 +  6 =  11 pins.
+There are  in total 10  touch pins  which would make  this a
+possible target if  they work. Initial testing  shows that a
+touch wake up would work with  a touch threshold of 45. This
+would require either the columns or the rows to be hooked up
+to the  touch sensors. By  monitoring any current  change of
+the rows  or columns would  result in  the board to  wake up
+from sleep (which is ideal).
+** Changes
+:LOGBOOK:
+CLOCK: [2021-08-05 Thu 11:58]--[2021-08-05 Thu 12:43] =>  0:45
+:END:
+- [X] Implement deep sleep
+  + [X] added deep sleep time-out to config
+  + [X] Touch pins will be either rows or columns
+  + [X]  Test matrix  scan diodes  with deep  sleep feature,
+    i.e.  does  deep  sleep   current  still  register  with
+    row2column or reverse connection.
+
+* Battery control
+** Changes
+- [ ] Implement battery control
+- [ ] Add power button to PCB design
+  + [ ] Inline to battery directly.
+
+* Backlog and weird behavior notes
+** DONE Repated key presses.
+
+Pressing  down  a  key   repeatedly  and  then  another  key
+afterwards, stops  sending the  initially pressed  down key.
+For example holding down `a` and then pressing any other key
+(including modifies) stops sending `a`.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+** DONE Figure out bug  where `-` is sent  repeatedly.
+
+This occurs especially  when sending `a` key. I  think it is
+related to the ascii code for for `a` and `-`.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+** DONE Figure out bug  where 'up arrow' is  sent repeatedly.
+
+This occurs when the keyboard is  connected to bluetooth. No keys
+are send on my part.
+
+This problem went  away after replacing the  debounce with a
+digital filter. It may have  been related to the cheapo test
+buttons.
+
+** DONE Odd symbols rotary encoder
+
+Connecting  the rotary  encoder to  GPIO1, GPIO3  causes odd
+symbol to  appear when rotating  In addition, when set  in a
+particular  condition it  will cause  the rotary  encoder to
+fail to upload code. This  effect is gone with an additional
+turn. Apparently,  the esp32 has  some flaw in it  that some
+pins are sensitive to inputs  when uploading code. More info
+can               be                found               here
+https://github.com/espressif/arduino-esp32/issues/1497.    I
+have changed pin  1 to pin 2 which seemed  to have fixed the
+issue.
+
+GPIO0, GPIO02  seemed to both  be sensitive to  noise. Don't
+use these pins for sensitive  operations. Moving the GPIO to
+another  range   (currently  25   for  LED)   is  relatively
+noiseless.
+
+* Unit tests
+Start writing unit tests
+- [-] matrix scanner
+  + [ ] Pin modes
+  + [X] Debouncing
+  + [X] Registry of multiple keys simultaneously
+
+- [ ] Keyboard
+  + [ ] Sending of messages without being connected to bluetooth
+
+* PCB layout design
+
+I used  kicad for PCB  design. The  layout of the  keys were
+determined by tracing out my  hand and determining the shift
+in the  columns by  the mount of  "natural bend"  my fingers
+have. I traced  my hand and made a horizontal  line from the
+pinky; this served as my zero line. Columns 1, 2, and 6 were
+determined to lie on this zero line. The remaining 3 columns
+were shifted. upwards sequentially.
+
+The bottom row (id 5) contains merely 3 keys and they are rotated from left to right as 5, 10, 15 degrees. These were determined based on "angle" of my thumb. It was judge sort of by eye (and a ruler).
+
+Below is some code I wrote to determined the outline. The end result is:
+
+#+attr_html: :alt  :align left :class img
+[[file:./figures/pcb3d.png]]
+
+** Making the layout
+The code below are some scripts I wrote to determined the relative position between keys. It is (very) uggly code but worked for this simple purpose. Future me may want to make it look prettier for the outside world.
+
+
+#+name: board layout
+#+begin_src jupyter-python
+from matplotlib import style
+
+style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt, sys, os
+
+sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+import pcbnew
+from itertools import product
+
+board_fp = "miniv2/mini.kicad_pcb"
+base = os.path.expanduser("~/projects/mini_ble")
+pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+unit = 1
+scale = 19e6
+nrows, ncols = 5, 6
+
+row_offset = [0, 0, 1.3, 1.7, 0.9, 0]  # cm
+rows = np.arange(0, nrows)  # - nrows / 2
+cols = np.arange(0, ncols) * unit
+
+key = {}
+modules = {m.GetReference(): m for m in pcb.GetModules()}
+fig, ax = plt.subplots()
+
+degs = dict(K54=5, K55=10, K56=15)
+center = np.array((15.25, 0.76))  # center of work area
+# center = modules.get("K11").GetCenter()
+# center = np.array((center.x, center.y))
+for idx, (col, offset) in enumerate(zip(cols, row_offset)):
+    for jdx, row in enumerate(rows[::-1]):
+        # the offset was determined based on my hand.
+        # it contains the entire length from one finger to the next.
+        # The /4 here refers to the quarter that a full length would be
+        pos = np.array((col, row + offset / 4))
+        gp = f"{jdx + 1}{idx + 1}"
+        # plot
+        ax.scatter(*pos)
+        ax.annotate(gp, pos, ha="center", va="bottom")
+
+        switch = f"K{gp}"
+        deg = degs.get(switch, 0)
+        switch_pos = dict(pos=(center + pos) * scale, deg=deg)
+        key[switch] = switch_pos
+
+        diode = f"D{gp}"
+        tmp = 180
+        diode_pos = dict(
+            pos=(pos + center + np.array([0, unit / 2.25])) * scale, deg=tmp
+        )
+        key[diode] = diode_pos
+
+        led = f"LED{gp}"
+        # led_pos = dict(pos=(pos + center + np.array([0, -unit * 0.27])) * scale, deg=0)
+        led_pos = dict(pos=(pos + center + np.array([0, -unit * 0.27])) * scale, deg=0)
+        key[led] = led_pos
+
+md = 1 / 8
+
+
+def move_angle(pos, r, theta):
+    x = np.exp(theta * 1j) * r
+    update = np.array([x.real, x.imag])
+    pos += update
+    return pos
+
+
+for k, v in key.items():
+    if m := modules.get(k):
+        pos = v.get("pos")
+        deg = v.get("deg")
+
+        # deal with leds
+        if k.startswith("L"):
+            p = k[-2:]
+            n = f"K{p}"
+            keysw = modules.get(n)
+            deg = keysw.GetOrientationDegrees()
+            keypos = key.get(n).get("pos")
+
+            keysw.SetOrientationDegrees(0)
+            center_bb = keysw.GetBoundingBox()
+            center_sw = center_bb.GetCenter()
+            height_sw = center_bb.GetHeight()
+
+            # keypos = np.array([center_sw.x, center_sw.y - heigth_sw / 2 ])
+
+            keypos = np.array([center_sw.x, center_sw.y], dtype = float)
+            # print(m.GetOrientationDegrees(), deg)
+            # pos = move_angle(keypos, (2.5 + 1.8) * unit * 1e6, m.GetOrientation())
+            # 1.4mm refers to half the width of the SK6812mini-e
+
+            distance_edge = modules.get("K11").GetBoundingBox().GetHeight() / 2 - (2.5 + 1.4  + .4) * 1e6
+
+
+            pos = move_angle(keypos, distance_edge , (270 - deg) * 2 * np.pi / 360)
+            keysw.SetOrientationDegrees(deg)
+
+        if k == "K54":
+            pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
+            m.SetOrientationDegrees(deg)
+        if k == "K55":
+            pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
+            m.SetOrientationDegrees(deg)
+        if k == "K56":
+            pos = move_angle(pos, 8 * unit * 1e6, (270 + deg) * 2 * np.pi / 360)
+            m.SetOrientationDegrees(deg)
+
+        point = pcbnew.wxPoint(*pos)
+        m.SetPosition(point)
+        m.SetOrientationDegrees(deg)
+        if not m.IsFlipped():
+            m.Flip(aCentre=point)
+
+# for k, v in key.items():
+#     if k.startswith("D"):
+#         if k[-2:] in "54 55 56":
+#             sw = modules.get(k)
+#             n = f"K{k[-2:]}"
+#             keypos = key.get(n).get('pos')
+#             deg = key.get(n).get('deg')
+
+# pos  = move_angle(keypos, -18 * unit * 1e6, (270) * 2* np.pi / 360)
+# sw.SetPosition(pcbnew.wxPoint(*pos))
+# sw.SetOrientationDegrees(deg)
+
+import shapely.geometry
+
+ps = np.zeros((1, 2))
+for m, v in modules.items():
+    points = None
+
+    # stand off for top plate
+    if m == "C11":
+        # gather top left
+        points = "K11 K12 K22 K21".split()
+    if m == "C15":
+        # gather bottom left
+        points = "K31 K32 K42 K41".split()
+    if m == "C33":
+        # gather center
+        points = "K23 K24 K34 K33".split()
+    if m == "C51":
+        # gather top right
+        points = "K15 K16 K26 K25".split()
+    if m == "C55":
+        # gather bottom right
+        # points = "K45 K46 K56 K55".split()
+        points = "K44 K45 K55 K54".split()
+
+    if points:
+        points = np.array([modules.get(k).GetPosition() for k in points])
+        shape = shapely.geometry.Polygon(points)
+        center = list(shape.centroid.coords)[0]
+        v.SetPosition(pcbnew.wxPoint(*center))
+    # microcontrollers
+    if m.lower().startswith("u2"):
+        # move the rotary encoder next to k46
+        keyswitch = modules.get("K46")
+        bb = keyswitch.GetBoundingBox()
+        pos = np.array(list(keyswitch.GetCenter()), dtype = float)
+
+        # pos = move_angle(pos, 1.1 * scale * unit, 0)
+
+        v.SetOrientationDegrees(90)
+        pos = move_angle(pos, bb.GetWidth() / 2 + v.GetBoundingBox().GetWidth() / 2, 0)
+        pos[1] += v.GetBoundingBox().GetHeight() / 2
+        # pos = move_angle(pos, 0.9 * scale * unit, 0)
+
+        if m.lower().endswith("right1"):
+            # if not v.IsFlipped():
+            # v.Flip(v.GetPosition())
+            # pos[0] += .075 *  scale
+            w = v.GetBoundingBox().GetWidth()
+            pos = move_angle(pos, 3.5e6, theta=0)
+            print(pos)
+
+        v.SetPosition(pcbnew.wxPoint(*pos))
+    if m.lower().startswith("rot"):
+        ks = modules.get("K56")
+        # point = np.array(list(ks.GetPosition()), dtype=float)
+        point = np.array(list(ks.GetCenter()), dtype = float)
+        deg = ks.GetOrientationDegrees()
+        # print(deg, type(deg))
+        ks.SetOrientationDegrees(0)
+        width = ks.GetBoundingBox().GetWidth()
+        ks.SetOrientationDegrees(deg)
+        point = move_angle(point, width + 8e6, 0)
+        # point = move_angle(point, 1.25 * unit * scale, 0)
+
+        point = pcbnew.wxPoint(*point)
+        v.SetPosition(point)
+
+        v.SetOrientationDegrees(ks.GetOrientationDegrees())
+        # v.SetOrientationDegrees(90)
+
+    p = np.array(list(v.GetPosition())).reshape(-1, 2)
+    ps = np.concatenate((ps, p), axis=0)
+
+# add columns pillars to the rotary encoder
+for m, v in modules.items():
+
+    if m == "EC11":
+        esp = modules.get("U2_LEFT1")
+
+        pos = esp.GetCenter()
+        bb = esp.GetBoundingBox()
+        width = bb.GetWidth()
+        height = bb.GetHeight()
+
+        pos = np.array([pos.x - width / 4, pos.y - height / 2 - 6e6], dtype = float)
+        print(pos)
+        pos = pcbnew.wxPoint(*pos)
+        v.SetPosition(pos)
+    elif m == "EC12":
+        esp = modules.get("U2_RIGHT1")
+
+        pos = esp.GetPosition()
+        bb = esp.GetBoundingBox()
+        width = bb.GetWidth()
+        height = bb.GetHeight()
+
+        pos = np.array([pos.x + width / 4, pos.y - height / 2 - 6e6], dtype = float)
+        print(pos)
+        pos = pcbnew.wxPoint(*pos)
+        v.SetPosition(pos)
+
+
+print("adding rot")
+m = modules.get("DROT1")
+print(m)
+rot = modules.get("ROT1")
+rot.SetOrientationDegrees(modules.get("K56").GetOrientationDegrees() )
+pos  = rot.GetPosition()
+other = modules.get("D56").GetPosition()
+pos = np.array([pos.x, other.y * .7], dtype = float)
+pos = pcbnew.wxPoint(*pos)
+m.SetPosition(pos)
+
+
+# center = np.array((62.5, 47.6)) # center of work area
+# for k, v in modules.items():
+#     pos = v.GetPosition()
+#     #recenter
+#     rc = [i - j for i, j in zip(pos, center)]
+#     v.SetPosition(pcbnew.wxPoint(*rc))
+
+# print(pos)
+ps = ps[1:]
+from scipy.spatial import ConvexHull as ch
+
+h = ps[ch(ps).simplices]
+pcb.Save(os.path.join(base, board_fp))
+fig.show()
+ #+end_src
+
+
+ #+name: edgecuts
+ #+begin_src jupyter-python
+ import matplotlib.pyplot as plt, cmasher as cmr
+ import numpy as np, os, sys, networkx as nx, warnings
+ from plexsim import models
+ from imi import infcy
+ warnings.simplefilter("ignore"); plt.style.use("fivethirtyeight spooky".split())
+
+ sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+ import pcbnew
+ board_fp = "miniv2/mini.kicad_pcb"
+ base = os.path.expanduser("~/projects/mini_ble")
+ pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+
+ bb = pcb.GetBoundingBox()
+ ec = pcb.GetLayerID("Edge.Cuts")
+
+
+ rect = bb.getWxRect()
+ modules = {m.GetReference(): m for m in pcb.GetModules()}
+ def get_outline(module):
+     bbox = module.GetBoundingBox()
+     x, width, y, height = (bbox.GetX(), bbox.GetWidth(), bbox.GetY(), bbox.GetHeight())
+
+     # if abs(x + width) > abs(x):
+         # x = x+width
+     # if abs(y + height) > abs(y):
+         # y = y + height
+
+     return x, y, width, height
+
+ pos = []
+ for idx, (k, v) in enumerate(modules.items()):
+     # print(k)
+     if k.lower().startswith("k") or k.lower().startswith("rot") or k.lower().startswith("u2"):
+         # print(k)
+         x, y, w, h = get_outline(v)
+         # print(k, x, y)
+         pos.append((x, y))
+         pos.append((x + w, y))
+         pos.append((x, y + h))
+         pos.append((x + w, y + h))
+ pos = np.array(pos)
+ import alphashape
+ from shapely import geometry
+ from descartes import PolygonPatch
+ print(pos.shape)
+ alpha = 0
+ alpha = alphashape.alphashape(pos, alpha = alpha)
+ fig, ax = plt.subplots()
+ ax.scatter(*pos.T, s = 10)
+ # ax.scatter(*pos[:, [0, 2]].T)
+ # ax.scatter(*pos[:, [1, 2]].T)
+ # ax.scatter(*pos[:, [1, 3]].T)
+
+ # ax.add_patch(alpha)
+ ax.plot(*alpha.exterior.xy)
+ fig.show()
+
+ ec_id = pcb.GetLayerID("Edge.Cuts")
+
+ def move_angle(pos, r, theta):
+     x = np.exp(theta * 1j) * r
+     update = np.array([x.real, x.imag])
+     pos += update
+     return pos
+
+
+ def rescale(xy, r = 1.1):
+     # theta = np.arctan2(xy[1] / xy[0])
+     theta = np.arctan2(xy[1], xy[0]) #* 180 / np.pi
+     p = np.exp(1j * theta) * r
+     return xy + np.array([p.real, p.imag])
+
+
+ from shapely import affinity as aff
+ r = 1.0
+ alpha = aff.scale(alpha, xfact = r, yfact = r)
+ xy = np.array(alpha.exterior.xy).T
+ for idx in range(xy.shape[0]):
+     tmp = np.roll(xy, idx, axis = 0)
+     start, end = tmp[0], tmp[1]
+     # start = rescale(start, r = r)
+     # end   = rescale(end, r = r)
+     x1 = pcbnew.wxPoint(*start.astype(float))
+     x2 = pcbnew.wxPoint(*end.astype(float))
+     ec = pcbnew.DRAWSEGMENT(pcb)
+     pcb.Add(ec)
+     ec.SetStart(x1)
+     ec.SetEnd(x2)
+     ec.SetLayer(ec_id)
+     ax.scatter(*start, color = 'red', s = 30)
+
+
+ax.axis('off')
+# fig.savefig("/home/casper/Documents/PlatformIO/Projects/arduino_esp32/figures/test.svg")
+ # k1 = modules.get("K11")
+ # k2 = modules.get("K21")
+ # c1 = k1.GetBoundingBox().GetCenter()
+ # k2.SetPosition(pcbnew.wxPoint(c1.x, c1.y - 1 * unit * 1e6))
+
+ # ax.set_xscale("log")
+ # ax.set_yscale("log")
+ pcb.Save(os.path.join(base, board_fp))
+ #+end_src
+
+
+
+#+name: moving c55
+#+begin_src jupyter-python
+# this code moves the C55 column to the center of the middle half left keys.
+from matplotlib import style
+style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt, sys, os
+
+sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+import pcbnew
+board_fp = "miniv2/mini.kicad_pcb"
+base = os.path.expanduser("~/projects/mini_ble")
+pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+
+modules = {m.GetReference(): m for m in pcb.GetModules()}
+
+targets = "K44 K45 K55 K54".split()
+points = np.array([modules.get(k).GetCenter() for k in targets])
+col1 = modules.get("C55")
+
+
+print(col1.GetPosition())
+from shapely import geometry
+shape = geometry.Polygon(points)
+center = list(shape.centroid.coords)[0]
+col1.SetPosition(pcbnew.wxPoint(*center))
+
+for t in targets:
+    m = modules.get(t)
+    print(t)
+    print(m.GetPosition())
+    print(m.GetCenter())
+
+pcb.Save(os.path.join(base, board_fp))
+print("Done")
+
+
+#+end_src
+
+
+
+
+** Edge cut pcb
+Kicad prefers to make edge cuts relatively simple, i.e. straight lines. I attempted to round most corners, but the odd layouts of the bottom keys (K54, K55, K56) made it a bit hard given the odd angle. I put some effort in making it somewhat curved.
+
+
+** TODO implement hid_le_env
+ The hid_le_env seems to control the bluetooth stuff at the low-end
+ - What are its functions?
+ - Do I need to bind them or just wrap them?
+ - It contains a lot of definitions and spans multiple files; worth it?
+
+** misc
+ - http://amasci.com/miscon/whyhard2.html
+ - https://wiki.liutyi.info/display/ARDUINO/ESP32+TTGO+V2.0+OLED+Drawing+Demo
+ - https://github.com/ThingPulse/esp8266-oled-ssd1306
+ - https://complexityexplained.github.io/
+ - https://www.math.uh.edu/~dblecher/pf2.html
+ - https://hbr.org/2019/02/how-big-a-problem-is-it-that-a-few-shareholders-own-stock-in-so-many-competing-companies
+* Case design
+The  case is  going to  be a  sandwich style  case. It  will
+consist at minimum of 3 layers: the bottom plate, the middle
+plate and  the top plate.  The top  plate will host  the key
+switches, reliefs ar cut such that the key top can be opened
+while the  key is  mounted. A  plate in  this design  is not
+necessary but  preferred as  the key  sockets are  not super
+rigid, i.e. you could theoretically  have a lose switch over
+time. A plate fixes the keys in place.
+
+The  edge cut  layers,  court yards  and  user drawings  are
+combined and exported  from kicad to svg format.  I used the
+keyboard layout editor together  with the codeblock below to
+determine where the  cuts would have to be made  for the top
+plate.
+
+For the keyswitch  cutouts, I took a shortcut.  By using the
+[[https://keyboard-layout-editor.com][keyboard layout  editor]] in conjunction with  [[https://builder.swillkb.com][case builder]], I
+was  able  to export  the  keyboard  layout and  obtain  the
+correct keyswitch footprint for  the plate. The case builder
+website takes  json as  input which  is compatible  with the
+keyboard  layout  editor. The  output  of  the case  builder
+software allows for automatic screw hole and plate clearance
+for  simple pcb  designs (i.e.  rectangular). Unfortunately,
+this design is not well suited  for this. As such I exported
+the drawings  to svg and  overlayed it with the  export from
+kicad.
+
+ The  top  plate is  nearly  done.  I  am currently  in  the
+ progress  of  making the  curves  a  bit smoother  for  the
+ outside. I  will work on  the middle and bottom  plate from
+ this top plate design.
+
+#+attr_html: :alt  :align left :class img
+[[file:./figures/elanor_top.png]]
+
+#+name: creating outline svg
+#+begin_src jupyter-python
+from matplotlib import style
+style.use("fivethirtyeight".split())
+import numpy as np, matplotlib.pyplot as plt, sys, os
+from matplotlib.collections import LineCollection
+sys.path.insert(0, "/usr/lib/python3.9/site-packages/")
+import pcbnew
+board_fp = "elanor.kicad_pcb"
+base = os.path.expanduser("~/Documents/PlatformIO/Projects/arduino_esp32/pcb/elanor")
+pcb = pcbnew.LoadBoard(os.path.join(base, board_fp))
+
+
+ec = pcb.GetLayerID("Edge.Cuts")
+
+modules = {m.GetReference(): m for m in pcb.GetModules()}
+def compute_components(x):
+    x1 = x[0].GetCenter()
+    x2 = x[1].GetCenter()
+    return (x2.x - x1.x) / (1e6 * 19.05), (x2.y - x1.y) / (1e6 * 19.05)
+for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
+    tmp = tuple(modules.get(i) for i in x)
+    print(x, compute_components(tmp))
+
+# lc = []
+# for drawing in pcb.GetDrawings():
+#     start, end = drawing.GetStart(), drawing.GetEnd()
+#     lc.append((start, end))
+# lc = np.asarray(lc)
+# print(lc.shape)
+
+# tmp = lc.reshape(-1 ,2)
+# xma, yma  = np.max(tmp[..., 0]), np.max(tmp[..., 1])
+# xmi, ymi  = np.min(tmp[..., 0]), np.min(tmp[..., 1])
+# lc_a = LineCollection(lc, lw = 1)
+
+
+
+# for x in (("K44", "K54"), ("K45", "K55"), ("K46", "K56")):
+#     tmp = tuple(modules.get(i) for i in x)
+#     print(compute_components(tmp))
+
+# fig, ax = plt.subplots()
+# for m in pcb.GetModules():
+#     ref = m.GetReference()
+#     if ref.startswith("K") or  ref.startswith("ROT"):
+#         ax.scatter(*m.GetCenter(), color = 'red')
+
+# ax.add_artist(lc_a)
+# ax.set_xlim(xmi * .8, xma * 1.2)
+# ax.set_ylim(ymi * .8, yma * 1.2)
+
+# from shapely import geometry
+# shape = geometry.Polygon(lc.reshape(-1, 2))
+# # ax.plot(*shape.exterior.xy, lw = .2)
+# ax.axis('off')
+# # fig.savefig("./figures/test_outline.svg", transparent = 1)
+# fig.show()
+s = """
+Note  to future self: In the online keyboard layout editor, you have to add half a unit (.5) to both x and y as the rotation puts the center in the
+wrong place
+"""
+print(s)
+#+end_src
+
+*** Links
+- For case http://builder.swillkb.com/
+- For layout http://www.keyboard-layout-editor.com/#/
+
+*** Changes
+- [-] construct plate layer
+  + [ ] 4x 5mm screw holes
+  + [X] 1x diameter (5mm) clearance outside
+  + [X] add key switch mounting holes
+- [ ] construct top layer
+- [ ] construct middle layer
+- [ ] construct bottom layer
+
+* Layer taps
+The keyboard  will have (27  + 1)  * 2 keys  (in principle).
+This is not  enough to emulate a real keyboard.  For this we
+need  to utilize  more "layers"  to create  more degrees  of
+freedom.  In  QMK  there  are  various  different  modes  of
+activating  a different  keycode depending  on how  long you
+press a keycode. For example:
+
+#+begin_src c++
+// L-ayer, T-ap - 256 keycode max, 16 layer max
+#define LT(layer, kc) (kc | QK_LAYER_TAP | ((layer & 0xF) << 8))
+#+end_src
+
+All ascii codes can be encoded  in 255 characters. In QMK 16
+bits are used to encode the symbol. The remaining 8 bits are
+divided  in  two: 4  bits  are  given  to encode  the  layer
+information, 4 bits are given for a "special" range of keys.
+
+Layer  tap give  you the  ability to  switch to  a different
+layer  by holding  on  to a  key for  a  longer time,  while
+sending  a keycode  when holding  for a  shorter time.  This
+allows for  sacrificing one key  for quickly switching  to a
+layer momentarily while holding  down the designated key. In
+my  opinion this  works better  than a  layer switch  up and
+down. For single  keypresses. In the future I  may look into
+single tap modifier  keys similar to the  leader key concept
+in vim/emacs.
+
+** Changes
+- [X] Add layer tap keys
+
+* Final checklist
+Check that the following components work:
++ [X] Matrix
+  - [X] Does scanning work?
+  - [X] Does ghosting occur?
++ [X] ESPNOW [hard to write unit test for]
+  - [X] Does the wireless bridge work?
++ [X] Bluetooth
+  - [X] Is the unit detected as a keyboard?
++ [X] Rotary encoder
+  - [X] Are single ticks detected?
+  - [X] Are both positive as well as negative clicks detected?
+  - [X]  Does the esp32  flash regardless of  the rotary encoder position?
++ [X] LEDs
+  - [X] Can colors be encoded?
+  - [X] No shorting to ground?
++ [X] Display
+  - [X] Do they display the GUI?
++ [X] PCB
+  - [X] Are all the components connected?
+    + [X] Are touch pins connected to the pins that go high in the code? (sinc pins)
+    + [X] Are the leds VSS connected to the 5v line?
+    + [X] Are the rotary encoder pins A and B matching
+      what is defined in the Code base to be A and B?
+    + [X] Do the LEDS go from DIN to DOUT in series?
+      - [X]  is the first  LED connected  to DIN pin  on the
+        micro controller?
+  - [X]  Is the  ground plate present  and connected  to all
+    ground pins?
+  - [X] Are the pins present with enough clearance?
+    - [X] Use the clearance guide at  https://jlcpcb.com/capabilities/Capabilities
++ [X] Software hardware interface
+  - [X] verify that no pins are used that will cause issues,
+    for example input pins in the 3x range.
+  Good luck :)!
+
+* Bk code :noexport:
+# #+name: display printing
+# #+begin_src c++
+#     // this->mesh->buffer.active_keys = this->matrix->active_keys;
+#     // 1. collect message from client
+#     // 2. collect active keys
+#     // 3. merge the keys
+#     // 4. send through bluetooth
+#     // if (this->bluetooth->connection->connected) {
+
+#     //   this->display->firstPage();
+#     //   do {
+#     //     this->display->log.println("");
+#     //     this->display->log.print("\rhello:)");
+#     //     // this->display->log.print(printf("Connected to %s", "test"));
+#     //     // this->display->setFont(font);
+#     //     // this->display->drawUTF8(1, 30, "hello :)");
+
+#     //   } while (this->display->nextPage());
+#     // } else {
+#     //   // this->display->clearDisplay();
+#     //   this->display->firstPage();
+#     //   do {
+#     //     // this->display->log.println("");
+#     //     this->display->log.print("\rNo Bluetooth :(");
+#     //     // this->display->setFont(font);
+#     //     // this->display->drawUTF8(1, 30, "No bluetooth :(");
+
+#     //   } while (this->display->nextPage());
+#     //   // delay(10);
+#     // }
+
+# #+end_src

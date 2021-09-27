@@ -3,7 +3,6 @@
 
 #include "driver/rtc_io.h"
 
-#define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
 Keyboard::Keyboard(Config *config) {
   this->config = config;
   // init the keyboard
@@ -37,15 +36,38 @@ Keyboard::Keyboard(Config *config) {
   layer_t qwerty = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
                      KC_9, KC_0, KC_BSPC},
                     {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
-                     KC_O, KC_P, KC_OBRACKET, KC_CBRACKET},
+                     KC_O, KC_P, KC_LCBRACKET, KC_RCBRACKET},
                     {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
                      KC_L, KC_COLON, KC_SQUOTE},
                     {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
                      KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
-                    {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, KC_SPC, KC_ENTER,
-                     KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
+                    {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, LT(1, KC_SPC),
+                     KC_ENTER, KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
 
-  this->layers = {qwerty, qwerty};
+  layer_t program = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
+                      KC_9, KC_0, KC_BSPC},
+                     {
+                         KC_TAB,
+                         KC_Q,
+                         KC_W,
+                         KC_LCBRACKET,
+                         KC_RCBRACKET,
+                         KC_PLUS,
+                         KC_Y,
+                         KC_U,
+                         KC_I,
+                         KC_O,
+                         KC_LBRACKET,
+                         KC_RBRACKET,
+                     },
+                     {KC_TAB, KC_K, KC_S, KC_LBRACKET, KC_RBRACKET, KC_EQ, KC_H,
+                      KC_J, KC_K, KC_L, KC_COLON, KC_SQUOTE},
+                     {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
+                      KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+                     {KC_NO, KC_NO, KC_NO, KC_ALT, KC_TRNS, KC_SPC, KC_ENTER,
+                      KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
+
+  this->layers = {qwerty, program};
   // this->layers.push_back(qwerty);
   // this->layers.push_back(qwerty);
   this->set_active_layer(0);
@@ -142,19 +164,27 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
    */
   static uint8_t toggle_active_layer; // remember the past active layer
   // encodes pin switch to actual char
-  Serial.printf("row %d \t col %d (%d, %d)\t %d \n", keyswitch.row,
-                keyswitch.col, keyswitch.source, keyswitch.sinc,
-                keyswitch.time);
-  if (keyswitch.pressed_down) {
-    Serial.println("Key press");
-  }
-  // release event
-  else {
-    Serial.println("Key release");
-  }
+
+  // Serial.printf("row %d \t col %d (%d, %d)\t %d \n", keyswitch.row,
+  //               keyswitch.col, keyswitch.source, keyswitch.sinc,
+  //               keyswitch.time);
+  // if (keyswitch.pressed_down) {
+  //   Serial.println("Key press");
+  // }
+  // // release event
+  // else {
+  //   Serial.println("Key release");
+  // }
 
   uint16_t keycode = (*active_layer)[keyswitch.col][keyswitch.row];
-  switch (unsetBitsInGivenRange(keycode, 12, 0)) {
+  bool add_special_key;
+  uint16_t layer;
+
+  switch ((keycode >> 12) << 12) {
+  case (KC_TRNS): {
+    break;
+  }
+
   case KC_SLEEP: {
     if (keyswitch.pressed_down) {
       this->sleep();
@@ -164,28 +194,54 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
     // TODO: move this to separate function
   case (LAYER_TAP): {
     // deal with layer tap stuff
-    Serial.printf("Layer tap!");
+    // Serial.printf("Layer tap!\n");
     // adding event
     if (add_special) {
-      special_keycodes.push_back(keyswitch);
+      add_special_key = true;
+      // copy press down or release evet in the prevent buffer
+      for (auto &elem : special_keycodes) {
+        if ((elem.sinc == keyswitch.sinc) &&
+            (elem.source == keyswitch.source)) {
+          elem.pressed_down = keyswitch.pressed_down;
+          add_special_key = false;
+        }
+      }
+      if (add_special_key) {
+        special_keycodes.push_back(keyswitch);
+      }
     }
     // key press event
     // TODO remove 100 to a config number
-    else if ((keyswitch.pressed_down) & ((millis() - keyswitch.time) > 100)) {
+    else if ((keyswitch.pressed_down) &
+             ((millis() - keyswitch.time) >= LAYER_TAP_DELAY_MS)) {
       // switch layer
-      uint16_t layer = unsetBitsInGivenRange(keycode, 16, 12);
-      layer = unsetBitsInGivenRange(layer, 8, 0) >> 8;
+      // uint16_t layer = unsetBitsInGivenRange(keycode, 16, 12);
+      layer = ((keycode >> 8) & 0xF);
+      printf("Layer %d %d %d\r", layer, keycode >> 8, keycode);
+      // layer = unsetBitsInGivenRange(layer, 8, 0) >> 8;
       if (layer != active_layer_num) {
+        Serial.printf("Layer tap holding\n");
         toggle_active_layer = active_layer_num;
         set_active_layer(layer);
+        // set layer_tap info to keycode in higher layer
+        (*active_layer)[keyswitch.col][keyswitch.row] = (keycode | LAYER_TAP);
       }
     }
     // key release event
     else if (!keyswitch.pressed_down) {
+      printf("Layer tap release!\n");
+
+      // reset the keycode; NOTE this prevents keycode from being pressed twice?
+      // (*active_layer)[keyswitch.col][keyswitch.row] &= ~LAYER_TAP;
       set_active_layer(toggle_active_layer);
-      if ((millis() - keyswitch.time) < 100) {
+      if ((millis() - keyswitch.time) < LAYER_TAP_DELAY_MS) {
         this->bluetooth.press(keycode);
         this->bluetooth.release(keycode);
+      }
+      // TODO: if layer is released before key is released, the keycode is
+      // This temporary fixes is
+      else {
+        this->bluetooth.releaseAll();
       }
     }
     break;
@@ -211,11 +267,12 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
 void Keyboard::process_special_keycodes() {
   uint16_t keycode;
   keyswitch_t *keyswitch;
+
   // printf("Processing special keycodes\n");
   // printf("Num special keys: \t %d\n", special_keycodes.size());
   for (int idx = special_keycodes.size() - 1; idx >= 0; idx--) {
     keyswitch = &special_keycodes[idx];
-    process_keyswitch(*keyswitch);
+    process_keyswitch(*keyswitch, 0);
     // event dealt with
     if (!keyswitch->pressed_down) {
       special_keycodes.erase(special_keycodes.begin() + idx);
@@ -405,6 +462,7 @@ void Keyboard::sleep() {
 
 void Keyboard::set_active_layer(uint8_t layer) {
   if (layer < layers.size()) {
+    printf("Switching to layer %d\n", layer);
     active_layer = &layers[layer];
     active_layer_num = layer;
   } else {

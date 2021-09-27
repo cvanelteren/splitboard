@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 // bluetooth keyboard holding
+#define USE_NIMBLE
 #include <BleKeyboard.h>
 
 #include <cstddef>
@@ -23,6 +24,8 @@
 #include "rotary_encoder.hpp"
 #include "types.hpp"
 #include <BleKeyboard.h>
+
+#define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
 
 class Keyboard {
   /**

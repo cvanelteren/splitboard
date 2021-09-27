@@ -1,16 +1,14 @@
 #ifndef CONFIG_CPP
 #define CONFIG_CPP
-#include <cstddef>
-#include <string>
-#include <vector>
-
+#include "types.hpp"
 #include <U8g2lib.h>
+#include <cstddef>
 #include <driver/gpio.h>
 #include <driver/spi_master.h>
-
+#include <string>
 #include <unordered_map>
+#include <vector>
 
-#include "types.hpp"
 // #include <nlohmann/json.hpp>
 // for convenience
 // using json = nlohmann::json;
@@ -18,8 +16,10 @@
 // layer_t c({{s, b}});
 
 // layout: 8 bits of keycodes, 4 bits of layer info, 4 bits of special keys
-#define LAYER_TAP 1 << 12
-#define KC_SLEEP 1 << 13
+#define LAYER_TAP (1 << 12)
+#define LAYER_TAP_DELAY_MS 100
+#define KC_SLEEP (1 << 13)
+#define KC_TRNS (1 << 14)
 #define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
 
 class Config { // see constructor in cpp file

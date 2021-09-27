@@ -104,7 +104,8 @@ void test_timing() {
   Serial.println();
   for (size_t idx = 0; idx < time.size(); idx++) {
     avg += time[idx];
-    Serial.printf("%d idx \t timing %f \t cumsum %f\n", idx, time[idx], avg);
+    Serial.printf("%d idx \t timing %l \t cumsum %f\n", idx, time[idx],
+                  avg / idx);
   }
   Serial.printf("avg \t %f\n", avg / time.size());
 }

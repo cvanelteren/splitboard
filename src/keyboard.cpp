@@ -165,19 +165,6 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
    * @return     return type
    */
   static uint8_t toggle_active_layer; // remember the past active layer
-  // encodes pin switch to actual char
-
-  // Serial.printf("row %d \t col %d (%d, %d)\t %d \n", keyswitch.row,
-  //               keyswitch.col, keyswitch.source, keyswitch.sinc,
-  //               keyswitch.time);
-  // if (keyswitch.pressed_down) {
-  //   Serial.println("Key press");
-  // }
-  // // release event
-  // else {
-  //   Serial.println("Key release");
-  // }
-
   uint16_t keycode = (*active_layer)[keyswitch.col][keyswitch.row];
   bool add_special_key;
   uint16_t layer;
@@ -276,232 +263,222 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       break;
     }
     break;
+  }
+  }
 
-    // if (this->bluetooth.isConnected()) {
-    //   if (keyswitch.pressed_down) {
-    //     Serial.printf("BLE send\n");
-    //     this->bluetooth.press(keycode);
-    //   } else {
-    //     Serial.printf("BLE release\n");
-    //     this->bluetooth.release(keycode);
-    //   }
+  void Keyboard::process_special_keycodes() {
+    uint16_t keycode;
+    keyswitch_t *keyswitch;
+
+    // printf("Processing special keycodes\n");
+    // printf("Num special keys: \t %d\n", special_keycodes.size());
+    for (int idx = special_keycodes.size() - 1; idx >= 0; idx--) {
+      keyswitch = &special_keycodes[idx];
+      process_keyswitch(*keyswitch, 0);
+      // event dealt with
+      if (!keyswitch->pressed_down) {
+        special_keycodes.erase(special_keycodes.begin() + idx);
+      }
+    }
+  }
+  void Keyboard::process_keyswitches() {
+    // if non-empty deal with special keycodes first
+    process_special_keycodes();
+    // read the mesh
+    auto client_keys = Mesh::get_buffer();
+    // Mesh::buffer.fill({});
+    // read server keys
+    auto &active_keys = this->matrix->active_keys;
+
+    // std::copy(client_keys.begin(), client_keys.end(),
+    // std::back_inserter(active_keys));
+
+    // join the two lists
+    uint8_t n_server_keys = active_keys.size();
+    uint8_t total_keys = client_keys.size() + n_server_keys;
+
+    if (total_keys) {
+      Serial.printf("Active keys %d\n", total_keys);
+      Serial.printf("Client keys %d\n", client_keys.size());
+    }
+    // read server active keys
+
+    keyswitch_t *keyswitch;
+    uint8_t key;
+    const MediaKeyReport *encoder_code;
+    for (int idx = 0; idx < total_keys; idx++) {
+      // read switch
+      keyswitch =
+          &(idx < active_keys.size() ? active_keys[idx]
+                                     : client_keys[idx - n_server_keys]);
+
+      if (idx >= active_keys.size()) {
+        // TODO: FIX THIS
+        keyswitch->row = 11 - keyswitch->row;
+      }
+      // read encoder state
+      Serial.printf("%d %d\n", keyswitch->source, keyswitch->sinc);
+      if (keyswitch->source == config->rot_a_pin or
+          keyswitch->source == config->rot_b_pin) {
+        Serial.printf("Received encoder key!\n");
+
+        // server encoder
+        if (keyswitch->buffer == 1) {
+          encoder_code =
+              (idx < active_keys.size() ? this->encoder_codes["LEFT"]["UP"]
+                                        : this->encoder_codes["RIGHT"]["DOWN"]);
+        } else {
+          encoder_code =
+              (idx < active_keys.size() ? this->encoder_codes["LEFT"]["DOWN"]
+                                        : this->encoder_codes["RIGHT"]["UP"]);
+        }
+        if (this->bluetooth.isConnected()) {
+          bluetooth.write(*encoder_code);
+        }
+      }
+      // read keycode
+      else {
+        this->process_keyswitch(*keyswitch, 1);
+      }
+    }
+  }
+  void Keyboard::update() {
+    /**
+     * @brief     keyboard updater
+     * @details  Main controller  for keyboard  functionality.
+     * Reads switch states and pushes it to bluetooth.
+     *
+     */
+    // Serial.println("Scanning");
+
+    // bool state;
+    // if (millis() - last_led_time > 1000) {
+    //   pinMode(2, OUTPUT);
+    //   state = (digitalRead(2) ? LOW : HIGH);
+    //   digitalWrite(2, state);
+    //   Serial.printf("Writing state as %d \n", state);
+    //   last_led_time = millis();
     // }
-  }
-  }
-}
 
-void Keyboard::process_special_keycodes() {
-  uint16_t keycode;
-  keyswitch_t *keyswitch;
-
-  // printf("Processing special keycodes\n");
-  // printf("Num special keys: \t %d\n", special_keycodes.size());
-  for (int idx = special_keycodes.size() - 1; idx >= 0; idx--) {
-    keyswitch = &special_keycodes[idx];
-    process_keyswitch(*keyswitch, 0);
-    // event dealt with
-    if (!keyswitch->pressed_down) {
-      special_keycodes.erase(special_keycodes.begin() + idx);
-    }
-  }
-}
-void Keyboard::process_keyswitches() {
-  // if non-empty deal with special keycodes first
-  process_special_keycodes();
-  // read the mesh
-  auto client_keys = Mesh::get_buffer();
-  // Mesh::buffer.fill({});
-  // read server keys
-  auto &active_keys = this->matrix->active_keys;
-
-  // std::copy(client_keys.begin(), client_keys.end(),
-  // std::back_inserter(active_keys));
-
-  // join the two lists
-  uint8_t n_server_keys = active_keys.size();
-  uint8_t total_keys = client_keys.size() + n_server_keys;
-
-  if (total_keys) {
-    Serial.printf("Active keys %d\n", total_keys);
-    Serial.printf("Client keys %d\n", client_keys.size());
-  }
-  // read server active keys
-
-  keyswitch_t *keyswitch;
-  uint8_t key;
-  const MediaKeyReport *encoder_code;
-  for (int idx = 0; idx < total_keys; idx++) {
-    // read switch
-    keyswitch = &(idx < active_keys.size() ? active_keys[idx]
-                                           : client_keys[idx - n_server_keys]);
-
-    if (idx >= active_keys.size()) {
-      // TODO: FIX THIS
-      keyswitch->row = 11 - keyswitch->row;
-    }
-    // read encoder state
-    Serial.printf("%d %d\n", keyswitch->source, keyswitch->sinc);
-    if (keyswitch->source == config->rot_a_pin or
-        keyswitch->source == config->rot_b_pin) {
-      Serial.printf("Received encoder key!\n");
-
-      // server encoder
-      if (keyswitch->buffer == 1) {
-        encoder_code =
-            (idx < active_keys.size() ? this->encoder_codes["LEFT"]["UP"]
-                                      : this->encoder_codes["RIGHT"]["DOWN"]);
-      } else {
-        encoder_code =
-            (idx < active_keys.size() ? this->encoder_codes["LEFT"]["DOWN"]
-                                      : this->encoder_codes["RIGHT"]["UP"]);
-      }
-      if (this->bluetooth.isConnected()) {
-        bluetooth.write(*encoder_code);
-      }
-    }
-    // read keycode
-    else {
-      this->process_keyswitch(*keyswitch, 1);
-    }
-  }
-}
-void Keyboard::update() {
-  /**
-   * @brief     keyboard updater
-   * @details  Main controller  for keyboard  functionality.
-   * Reads switch states and pushes it to bluetooth.
-   *
-   */
-  // Serial.println("Scanning");
-
-  // bool state;
-  // if (millis() - last_led_time > 1000) {
-  //   pinMode(2, OUTPUT);
-  //   state = (digitalRead(2) ? LOW : HIGH);
-  //   digitalWrite(2, state);
-  //   Serial.printf("Writing state as %d \n", state);
-  //   last_led_time = millis();
-  // }
-
-  // update components
-  this->matrix->update();
+    // update components
+    this->matrix->update();
 #ifdef USE_ENCODER
-  this->rotary_encoder->update();
+    this->rotary_encoder->update();
 #endif
-  // add rotary encoder key to matrix buffer
-  for (auto elem : this->rotary_encoder->active_keys) {
-    this->matrix->active_keys.push_back(elem);
-  }
-
-  // ensures each half remains active
-  if (this->matrix->active_keys.size()) {
-    this->last_activity = millis();
-  }
-  // Serial.printf("%d %d\n", last_activity, millis() - last_activity);
-
-  // handle sending keys
-  // handle server
-  if (this->is_server) {
-    this->process_keyswitches();
-  }
-  // handle client
-  else {
-    if (this->matrix->active_keys.size()) {
-      this->mesh->send(this->matrix->active_keys);
+    // add rotary encoder key to matrix buffer
+    for (auto elem : this->rotary_encoder->active_keys) {
+      this->matrix->active_keys.push_back(elem);
     }
-    // delay(10);
-  }
+
+    // ensures each half remains active
+    if (this->matrix->active_keys.size()) {
+      this->last_activity = millis();
+    }
+    // Serial.printf("%d %d\n", last_activity, millis() - last_activity);
+
+    // handle sending keys
+    // handle server
+    if (this->is_server) {
+      this->process_keyswitches();
+    }
+    // handle client
+    else {
+      if (this->matrix->active_keys.size()) {
+        this->mesh->send(this->matrix->active_keys);
+      }
+      // delay(10);
+    }
 
 #ifdef USE_SLEEP
-  // // idle check check
-  if ((millis() - this->get_last_activity()) >=
-      this->config->deep_sleep_timeout) {
-    this->sleep();
-  }
+    // // idle check check
+    if ((millis() - this->get_last_activity()) >=
+        this->config->deep_sleep_timeout) {
+      this->sleep();
+    }
 #endif
 
-  static bool ble_connected;
-  if (this->bluetooth.isConnected()) {
-    if (bluetooth.isConnected() ^ ble_connected)
-      printf("Bluetooth is connected\n");
-    ble_connected = 1;
-  } else {
-    if (bluetooth.isConnected() ^ ble_connected)
-      printf("Bluetooth disconnected\n");
-    ble_connected = 0;
+    static bool ble_connected;
+    if (this->bluetooth.isConnected()) {
+      if (bluetooth.isConnected() ^ ble_connected)
+        printf("Bluetooth is connected\n");
+      ble_connected = 1;
+    } else {
+      if (bluetooth.isConnected() ^ ble_connected)
+        printf("Bluetooth disconnected\n");
+      ble_connected = 0;
+    }
   }
-}
 
-void Keyboard::wakeup() {
-  /**
-   * @brief      Wake-up from deep sleep
-   */
+  void Keyboard::wakeup() {
+    /**
+     * @brief      Wake-up from deep sleep
+     */
 
-  esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
-  switch (reason) {
-  case ESP_SLEEP_WAKEUP_EXT0:
-    Serial.println("Wake up from ext0");
-    break;
-  case ESP_SLEEP_WAKEUP_EXT1:
-    Serial.println("Wake up from ext1");
-    break;
-  case ESP_SLEEP_WAKEUP_TIMER:
-    Serial.println("Wakeup caused by timer");
-    break;
-  case ESP_SLEEP_WAKEUP_TOUCHPAD:
-    Serial.println("Wakeup touch signal");
-    break;
-  case ESP_SLEEP_WAKEUP_ULP:
-    Serial.println("Wakeup from ULP");
-    break;
-  default:
-    Serial.println("Wakeup not caused by deep sleep");
-    break;
+    esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
+    switch (reason) {
+    case ESP_SLEEP_WAKEUP_EXT0:
+      Serial.println("Wake up from ext0");
+      break;
+    case ESP_SLEEP_WAKEUP_EXT1:
+      Serial.println("Wake up from ext1");
+      break;
+    case ESP_SLEEP_WAKEUP_TIMER:
+      Serial.println("Wakeup caused by timer");
+      break;
+    case ESP_SLEEP_WAKEUP_TOUCHPAD:
+      Serial.println("Wakeup touch signal");
+      break;
+    case ESP_SLEEP_WAKEUP_ULP:
+      Serial.println("Wakeup from ULP");
+      break;
+    default:
+      Serial.println("Wakeup not caused by deep sleep");
+      break;
+    }
+    this->matrix->wakeup();
+    this->led->wakeup();
+    this->display->wakeup();
+    this->last_activity = millis();
   }
-  this->matrix->wakeup();
-  this->led->wakeup();
-  this->display->wakeup();
-  this->last_activity = millis();
-}
 
-size_t Keyboard::get_last_activity() { return this->last_activity; }
+  size_t Keyboard::get_last_activity() { return this->last_activity; }
 
-void sleep_all_pin() {
-  // tmp function to set all pins to low before sleeping
-  auto pins = {0,  2,  4,  5,  12, 13, 14, 15, 16, 17, 18, 19, 21,
-               22, 23, 25, 26, 27, 32, 33, 34, 36, 37, 38, 39};
-  for (auto pin : pins) {
-    Serial.printf("Turning %d off\n", pin);
-    pinMode(pin, INPUT);
-    digitalWrite(pin, LOW);
+  void sleep_all_pin() {
+    // tmp function to set all pins to low before sleeping
+    auto pins = {0,  2,  4,  5,  12, 13, 14, 15, 16, 17, 18, 19, 21,
+                 22, 23, 25, 26, 27, 32, 33, 34, 36, 37, 38, 39};
+    for (auto pin : pins) {
+      Serial.printf("Turning %d off\n", pin);
+      pinMode(pin, INPUT);
+      digitalWrite(pin, LOW);
+    }
   }
-}
-void Keyboard::sleep() {
-  /**
-   * @brief      Enter deep sleep
-   */
-  this->led->sleep();
-  // prepare pins for sleep
-  this->matrix->sleep();
-  this->display->sleep();
+  void Keyboard::sleep() {
+    /**
+     * @brief      Enter deep sleep
+     */
+    this->led->sleep();
+    // prepare pins for sleep
+    this->matrix->sleep();
+    this->display->sleep();
 
-  esp_sleep_enable_touchpad_wakeup();
-  Serial.println("Going sleepy time!");
-  esp_light_sleep_start();
+    esp_sleep_enable_touchpad_wakeup();
+    Serial.println("Going sleepy time!");
+    esp_light_sleep_start();
 
-  // for deep sleep hold the energy state
-  // gpio_deep_sleep_hold_en();
-  // esp_deep_sleep_start();
-  Serial.println("Sleeping"); // shouldn't print
-  this->wakeup();
-}
-
-void Keyboard::set_active_layer(uint8_t layer) {
-  if (layer < layers.size()) {
-    printf("Switching to layer %d\n", layer);
-    active_layer = &layers[layer];
-    active_layer_num = layer;
-  } else {
-    printf("Warning setting layer larger than max number of layers\n");
+    // for deep sleep hold the energy state
+    // gpio_deep_sleep_hold_en();
+    // esp_deep_sleep_start();
+    Serial.println("Sleeping"); // shouldn't print
+    this->wakeup();
   }
-}
+
+  void Keyboard::set_active_layer(uint8_t layer) {
+    if (layer < layers.size()) {
+      printf("Switching to layer %d\n", layer);
+      active_layer = &layers[layer];
+      active_layer_num = layer;
+    } else {
+      printf("Warning setting layer larger than max number of layers\n");
+    }
+  }

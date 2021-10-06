@@ -1,4 +1,8 @@
+#+options: ^:{} toc:nil
 * Welcome to Splitboard
+
+#+html: <p align="center"><img src="figures/logo_firmware.svg" /></p>
+
 Keyboard firmware written for the  esp32. I wanted to have a
 bluetooth  split  keyboard  for  a while  so  I  wrote  this
 firmware. The software takes  heavy inspiration from the [[https://docs.qmk.fm/#/][QMK
@@ -6,10 +10,14 @@ firmware]], and was developed using Platformio.
 
 * Features
 ** Board features
-- [X] Split bidirectional communication over esp_now
+- [-] Split bidirectional communication over esp_now
+  - [X] Current support 2 elements
+  - [ ] Dynamic  mesh  feature (connect  arbitary units  in
+    neighborhood, e.g. numpad)
 - [X] Layer support (up to 16 layers)
 - [X] LED support through [[https://github.com/FastLED][FastLED]]
 - [X] OLED support through [[https://github.com/olikraus/u8g2][U8G2]]
+- [X] Rotary encoder support
 ** Special keys
 - [ ] Space cadet keys
   + Shift when tapped, shift was modifier.
@@ -18,5 +26,7 @@ firmware]], and was developed using Platformio.
   + Tap for keycode, hold for layer switch
 - [ ] Leader key
 
-* Know projects
+* Known keyboards
 - [[https://github.com/cvanelteren/Elanor][Elanor]]
+* Other projects
+- https://github.com/Galzai/MK32

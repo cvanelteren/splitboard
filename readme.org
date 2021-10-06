@@ -5,16 +5,18 @@ firmware. The software takes  heavy inspiration from the [[https://docs.qmk.fm/#
 firmware]], and was developed using Platformio.
 
 * Features
-- [X] Split communication over esp_now
-- [X] Layer support
-  + Up to 16 layers
+** Board features
+- [X] Split bidirectional communication over esp_now
+- [X] Layer support (up to 16 layers)
 - [X] LED support through [[https://github.com/FastLED][FastLED]]
 - [X] OLED support through [[https://github.com/olikraus/u8g2][U8G2]]
-- [X] Layer tap functionality
-  + Tap for keycode, hold for layer switch
+** Special keys
 - [ ] Space cadet keys
   + Shift when tapped, shift was modifier.
-
+- [X] Layer tap functionality
+- [ ] One tap modifier keys
+  + Tap for keycode, hold for layer switch
+- [ ] Leader key
 
 * Know projects
 - [[https://github.com/cvanelteren/Elanor][Elanor]]

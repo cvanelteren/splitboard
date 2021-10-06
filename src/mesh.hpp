@@ -25,6 +25,7 @@ public:
 
   KeyData receive();
   void begin();
+  void end();
 
   static void handle_input(const unsigned char *addr, const uint8_t *data,
                            int len);

@@ -1294,6 +1294,13 @@ in vim/emacs.
 
 ** Changes
 - [X] Add layer tap keys
+* One shot modifier keys
+A one  shot key allows for  chaining a pair of  keys together
+without holding  both keys  at the  same time.  For example,
+pressing CTLR + V can be  performed by tapping CTLR and then
+tapping V.
+
+* Leader key
 
 * Final checklist
 Check that the following components work:
@@ -1364,3 +1371,16 @@ Check that the following components work:
 #     // }
 
 # #+end_src
+* Power management
+Initial current draw measurements indicate that
+- ESP_NOW / WIFI draws about 70mA in current
+- Bluetooth and display on draws about 70mA
+
+  - Anne pro  has some battery  mods of which  the following
+    battery  is commonly  used. Another  option would  be to
+    chain 18650 batteries. These are  1.85cm x 6.5cm and are
+    about 2000mah. In the
+    same format you have  Panasonic NCR18650B which has 3250
+    mah capacity.
+  https://www.amazon.com/3000mAh-battery-Rechargeable-Lithium-Connector/dp/B07BTN8P26
+  https://www.sossolutions.nl/lithium-ion-batterij-3-7v-3000mah

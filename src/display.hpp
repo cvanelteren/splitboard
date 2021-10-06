@@ -7,6 +7,9 @@
 
 class Display : public U8G2_SSD1306_128X64_NONAME_F_HW_I2C {
 private:
+  void setPreChargePeriod(uint8_t p1, uint8_t p2);
+  void setVComDeselect(uint8_t v);
+
 public:
   U8G2LOG log;
   std::vector<uint8_t> log_buffer;

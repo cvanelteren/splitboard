@@ -17,10 +17,20 @@
 
 // layout: 8 bits of keycodes, 4 bits of layer info, 4 bits of special keys
 #define LAYER_TAP (1 << 12)
-#define LAYER_TAP_DELAY_MS 100
-#define KC_SLEEP (1 << 13)
-#define KC_TRNS (1 << 14)
+#define ONESHOT (1 << 13)
+// TODO: move these to a "normal" key range
+#define KC_SLEEP (1 << 14)
+#define KC_TRNS (1 << 15)
+
+#define LAYER_TAP_DELAY_MS 150
+#define ONESHOT_TIMEOUT 100
 #define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
+
+// --- Configuration ---
+#define USE_SLEEP 1
+#define USE_ENCODER 1
+#define USE_LED 1
+#define USE_OLED
 
 class Config { // see constructor in cpp file
 public:

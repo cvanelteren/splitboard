@@ -70,6 +70,12 @@ void Mesh::init_esp_now() {
   return;
 }
 
+void Mesh::end() {
+  esp_now_deinit();
+  WiFi.mode(WIFI_OFF);
+  printf("Deinit esp_now\n");
+}
+
 void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
                         int len) {
 

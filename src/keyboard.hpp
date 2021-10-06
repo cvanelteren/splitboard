@@ -3,7 +3,10 @@
 #include <Arduino.h>
 
 // bluetooth keyboard holding
+#ifndef USE_NIMBLE
 #define USE_NIMBLE
+#endif
+
 #include <BleKeyboard.h>
 
 #include <cstddef>

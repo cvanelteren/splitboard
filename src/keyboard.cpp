@@ -41,9 +41,10 @@ Keyboard::Keyboard(Config *config) {
                      KC_L, KC_COLON, KC_SQUOTE},
                     {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
                      KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
-                    {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, LT(1, KC_SPC),
-                     KC_ENTER, KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
-
+                    {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, KC_SPC,
+                     LT(1, KC_ENTER), KC_SUPER, LT(1, KC_ALTGR), KC_NO, KC_NO,
+                     KC_NO}};
+  {} {}
   layer_t program = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
                       KC_9, KC_0, KC_BSPC},
                      {
@@ -60,12 +61,13 @@ Keyboard::Keyboard(Config *config) {
                          KC_LBRACKET,
                          KC_RBRACKET,
                      },
-                     {KC_TAB, KC_K, KC_S, KC_LBRACKET, KC_RBRACKET, KC_EQ, KC_H,
-                      KC_J, KC_K, KC_L, KC_COLON, KC_SQUOTE},
-                     {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
-                      KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
-                     {KC_NO, KC_NO, KC_NO, KC_ALT, KC_TRNS, KC_SPC, KC_ENTER,
-                      KC_SUPER, KC_SUPER, KC_NO, KC_NO, KC_NO}};
+                     {KC_TAB, KC_K, KC_S, KC_LBRACKET, KC_RBRACKET, KC_EQ,
+                      KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_SCOLON, KC_SQUOTE},
+                     {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_UNDERSCORE, KC_N,
+                      KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+                     {KC_NO, KC_NO, KC_NO, KC_ALT, KC_TRNS, KC_SPC,
+                      LT(1, KC_ENTER), KC_SUPER, KC_SUPER, KC_NO, KC_NO,
+                      KC_NO}};
 
   this->layers = {qwerty, program};
   // this->layers.push_back(qwerty);
@@ -207,11 +209,11 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
         }
       }
       if (add_special_key) {
+        keyswitch.time = millis();
         special_keycodes.push_back(keyswitch);
       }
     }
     // key press event
-    // TODO remove 100 to a config number
     else if ((keyswitch.pressed_down) &
              ((millis() - keyswitch.time) >= LAYER_TAP_DELAY_MS)) {
       // switch layer
@@ -232,8 +234,10 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       printf("Layer tap release!\n");
 
       // reset the keycode; NOTE this prevents keycode from being pressed twice?
-      // (*active_layer)[keyswitch.col][keyswitch.row] &= ~LAYER_TAP;
+      // (*active_layer)[keyswitch.col][keyswitch.row] &= ~(LAYER_TAP);
       set_active_layer(toggle_active_layer);
+      printf("Delta %d %d %d \n", (millis() - keyswitch.time), keyswitch.time,
+             millis());
       if ((millis() - keyswitch.time) < LAYER_TAP_DELAY_MS) {
         this->bluetooth.press(keycode);
         this->bluetooth.release(keycode);
@@ -246,20 +250,42 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
     }
     break;
   }
+  case ONESHOT: {
+    printf("One shot pressed!\n");
+    // outline:
+    // before another key is pressed
+    // ignore key release when one shot is pressed
+    // control this with a static flag inside this function?
+    // when second key is pressed release the modifier key pressed
+  }
   default: {
+    // TODO add KC_LEAD events
     Serial.printf("Sending a keycode \n");
-    if (this->bluetooth.isConnected()) {
-      if (keyswitch.pressed_down) {
+    switch (this->bluetooth.isConnected()) {
+    case true:
+      switch (keyswitch.pressed_down) {
+      case 0:
+        Serial.printf("BLE release\n");
+        this->bluetooth.release(keycode);
+        break;
+      case 1:
         Serial.printf("BLE send\n");
         this->bluetooth.press(keycode);
-      } else {
-        Serial.printf("BLE release\n");
-        // this->bluetooth.write(key);
-        // this->bluetooth.press(key);
-        this->bluetooth.release(keycode);
+        break;
       }
+      break;
     }
     break;
+
+    // if (this->bluetooth.isConnected()) {
+    //   if (keyswitch.pressed_down) {
+    //     Serial.printf("BLE send\n");
+    //     this->bluetooth.press(keycode);
+    //   } else {
+    //     Serial.printf("BLE release\n");
+    //     this->bluetooth.release(keycode);
+    //   }
+    // }
   }
   }
 }
@@ -287,8 +313,9 @@ void Keyboard::process_keyswitches() {
   // Mesh::buffer.fill({});
   // read server keys
   auto &active_keys = this->matrix->active_keys;
-  std::copy(client_keys.begin(), client_keys.end(),
-            std::back_inserter(active_keys));
+
+  // std::copy(client_keys.begin(), client_keys.end(),
+  // std::back_inserter(active_keys));
 
   // join the two lists
   uint8_t n_server_keys = active_keys.size();
@@ -307,6 +334,11 @@ void Keyboard::process_keyswitches() {
     // read switch
     keyswitch = &(idx < active_keys.size() ? active_keys[idx]
                                            : client_keys[idx - n_server_keys]);
+
+    if (idx >= active_keys.size()) {
+      // TODO: FIX THIS
+      keyswitch->row = 11 - keyswitch->row;
+    }
     // read encoder state
     Serial.printf("%d %d\n", keyswitch->source, keyswitch->sinc);
     if (keyswitch->source == config->rot_a_pin or
@@ -353,7 +385,9 @@ void Keyboard::update() {
 
   // update components
   this->matrix->update();
+#ifdef USE_ENCODER
   this->rotary_encoder->update();
+#endif
   // add rotary encoder key to matrix buffer
   for (auto elem : this->rotary_encoder->active_keys) {
     this->matrix->active_keys.push_back(elem);
@@ -378,11 +412,13 @@ void Keyboard::update() {
     // delay(10);
   }
 
-  // idle check check
+#ifdef USE_SLEEP
+  // // idle check check
   if ((millis() - this->get_last_activity()) >=
       this->config->deep_sleep_timeout) {
     this->sleep();
   }
+#endif
 
   static bool ble_connected;
   if (this->bluetooth.isConnected()) {

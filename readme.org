@@ -1,4 +1,8 @@
+#+options: ^:{} toc:nil
 * Welcome to Splitboard
+
+#+html: <p align="center"><img src="figures/logo_firmware.svg" /></p>
+
 Keyboard firmware written for the  esp32. I wanted to have a
 bluetooth  split  keyboard  for  a while  so  I  wrote  this
 firmware. The software takes  heavy inspiration from the [[https://docs.qmk.fm/#/][QMK
@@ -6,10 +10,16 @@ firmware]], and was developed using Platformio.
 
 * Features
 ** Board features
-- [X] Split bidirectional communication over esp_now
+- [-] Fully programmable split keyboard
+  - [-] Bluetooth support
+  - [-] Split bidirectional communication over esp_now
+    - [X] Current support 2 elements
+    - [ ] Dynamic  mesh  feature (connect  arbitrary units  in
+      neighborhood, e.g. numpad)
 - [X] Layer support (up to 16 layers)
 - [X] LED support through [[https://github.com/FastLED][FastLED]]
 - [X] OLED support through [[https://github.com/olikraus/u8g2][U8G2]]
+- [X] Rotary encoder support
 ** Special keys
 - [ ] Space cadet keys
   + Shift when tapped, shift was modifier.
@@ -17,6 +27,21 @@ firmware]], and was developed using Platformio.
 - [ ] One tap modifier keys
   + Tap for keycode, hold for layer switch
 - [ ] Leader key
+- [ ] Macro support
 
-* Know projects
+  
+* Instructions
+This firmware was  developed for [[https://github.com/cvanelteren/Elanor][Elanor]] which  uses a farely
+basic  setup  of 27  keys  +  1 rotary  encoder  (optional).
+Adaptations can be made to the setup and configurations are set
+in [[file:./src/config.hpp]].
+
+* History
+I     documented     the     design     process     (partly)
+[[https://cvanelteren.github.io/post/splitboard/][here]] for those that are interested.
+
+* Known keyboards
 - [[https://github.com/cvanelteren/Elanor][Elanor]]
+  #+html: <p align="center"><img src="figures/elanor.png"></p>
+* Other projects
+- https://github.com/Galzai/MK32

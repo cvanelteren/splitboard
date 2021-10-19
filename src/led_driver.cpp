@@ -208,6 +208,7 @@ uint8_t LED::grid2int(uint8_t row, uint8_t col) {
   } else {
     idx += row;
   }
+
   return idx;
 }
 

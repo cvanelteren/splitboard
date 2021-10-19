@@ -19,9 +19,9 @@
 //- 8 bits of keycodes
 //- 4 bits of layer info
 //- 4 bits of special keys
-#define LAYER_TAP (1 << 12)
-#define ONESHOT (1 << 13)
-#define MOD_TAP (1 << 14)
+#define LAYER_TAP 0b0001
+#define MOD_TAP 0b0010
+#define ONESHOT 0b0011
 
 // TODO: move these to a "normal" key range
 // TODO: check if this define does not cause an issue
@@ -32,10 +32,10 @@
 #define ONESHOT_TIMEOUT 100
 
 // read layer, shift it in the 4 bits of layer
-#define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
+#define LT(layer, kc) (kc | (LAYER_TAP << 12) | ((layer & 0xF) << 8))
 // mods start from > 128. This is outside the common ascii range
 // We only look at the first 6 bits and shift it into the proper range
-#define MT(mod, kc) (kc | MOD_TAP | (((mod)&0x1F) << 8))
+#define MT(mod, kc) (kc | (MOD_TAP << 12) | (((mod)&0x1F) << 8))
 
 // --- Configuration ---
 // TODO: tmp defs to use the features
@@ -61,8 +61,8 @@ public:
   // led settings
   static const uint8_t led_pin = 25;
   uint8_t num_led = 27;
-  std::vector<uint8_t> led_col_bins = {0,  5,  10,
-                                       15, 19, 23}; // count from the LED11 pin
+  std::vector<uint8_t> led_col_bins = {0,  5,  10, 15,
+                                       19, 23, 27}; // count from the LED11 pin
 
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);

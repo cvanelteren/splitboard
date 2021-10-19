@@ -28,8 +28,6 @@
 #include "types.hpp"
 #include <BleKeyboard.h>
 
-#define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
-
 class Keyboard {
   /**
    * @brief      Main keyboard class
@@ -56,7 +54,10 @@ public:
   // communicate with bluetooth
   void process_keyswitches();
   void process_keyswitch(keyswitch_t &keyswitch, bool add_special);
+
+  // special keycode functions
   void process_special_keycodes();
+  void keep_active(keyswitch_t &keyswitch);
 
   bool is_server;
   double get_battery_level();

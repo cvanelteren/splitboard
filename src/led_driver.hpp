@@ -24,16 +24,20 @@ public:
   ~LED();
   void cycle();
   void serial_cycle();
+  void follow_me();
   void set_color(uint8_t hue, uint8_t saturation, uint8_t value);
   void ble_status(bool connected);
   void turn_off_all();
   void battery_level();
 
+  // TODO: make some other interface for this
+  std::vector<keyswitch_t> *active_keys;
+
   void update();
 
   // drive specific locations
   std::pair<uint8_t, uint8_t> int2grid(uint8_t idx);
-  uint8_t grid2int(std::pair<uint8_t, uint8_t> grid);
+  uint8_t grid2int(uint8_t row, uint8_t col);
   void sleep();
   void wakeup();
 };

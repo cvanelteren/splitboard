@@ -152,6 +152,25 @@ int unsetBitsInGivenRange(int n, int l, int r) {
   return (n & num);
 }
 
+void Keyboard::keep_active(keyswitch_t &keyswitch) {
+  /**
+   * @brief add keyswitch to  the special keycode buffer for
+   * processing layer taps, leader key etc
+   */
+  bool add_special_key = true;
+  // copy press down or release evet in the prevent buffer
+  for (auto &elem : special_keycodes) {
+    if ((elem.sinc == keyswitch.sinc) && (elem.source == keyswitch.source)) {
+      elem.pressed_down = keyswitch.pressed_down;
+      add_special_key = false;
+    }
+  }
+  if (add_special_key) {
+    keyswitch.time = millis();
+    special_keycodes.push_back(keyswitch);
+  }
+}
+
 // TODO: this needs a cleaner interface..
 // perhaps a separate event class
 void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
@@ -169,45 +188,38 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
   bool add_special_key;
   uint16_t layer;
 
+  // read special keycodes
   switch ((keycode >> 12) << 12) {
-  case (KC_TRNS): {
-    break;
+  case (MOD_TAP): {
+    if (add_special) {
+      this->keep_active(keyswitch);
+    }
+    // send modifier
+    else if ((keyswitch.pressed_down) &
+             (millis() - keyswitch.time) >= LAYER_TAP_DELAY_MS) {
+      //
+
+    }
+    // release event
+    else if (!keyswitch.pressed_down) {
+      // release both keys?
+    }
   }
 
-  case KC_SLEEP: {
-    if (keyswitch.pressed_down) {
-      this->sleep();
-    }
-    break;
-  }
-    // TODO: move this to separate function
+  // TODO: move this to separate function
   case (LAYER_TAP): {
     // deal with layer tap stuff
     // Serial.printf("Layer tap!\n");
     // adding event
     if (add_special) {
-      add_special_key = true;
-      // copy press down or release evet in the prevent buffer
-      for (auto &elem : special_keycodes) {
-        if ((elem.sinc == keyswitch.sinc) &&
-            (elem.source == keyswitch.source)) {
-          elem.pressed_down = keyswitch.pressed_down;
-          add_special_key = false;
-        }
-      }
-      if (add_special_key) {
-        keyswitch.time = millis();
-        special_keycodes.push_back(keyswitch);
-      }
+      this->keep_active(keyswitch);
     }
     // key press event
     else if ((keyswitch.pressed_down) &
              ((millis() - keyswitch.time) >= LAYER_TAP_DELAY_MS)) {
       // switch layer
-      // uint16_t layer = unsetBitsInGivenRange(keycode, 16, 12);
       layer = ((keycode >> 8) & 0xF);
       printf("Layer %d %d %d\r", layer, keycode >> 8, keycode);
-      // layer = unsetBitsInGivenRange(layer, 8, 0) >> 8;
       if (layer != active_layer_num) {
         Serial.printf("Layer tap holding\n");
         toggle_active_layer = active_layer_num;
@@ -248,8 +260,22 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
   default: {
     // TODO add KC_LEAD events
     Serial.printf("Sending a keycode \n");
+
+    // deal non standard keycodes
+    switch (keycode) {
+    case (KC_TRNS): {
+      // TODO
+      break;
+    }
+    case KC_SLEEP: {
+      if (keyswitch.pressed_down) {
+        // TODO: send sleep message to other half
+        this->sleep();
+      }
+      break;
+    }
+    }
     switch (this->bluetooth.isConnected()) {
-    case true:
       switch (keyswitch.pressed_down) {
       case 0:
         Serial.printf("BLE release\n");
@@ -262,7 +288,6 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       }
       break;
     }
-    break;
   }
   }
 }
@@ -407,6 +432,7 @@ void Keyboard::update() {
       printf("Bluetooth disconnected\n");
     ble_connected = 0;
   }
+  led->update();
 }
 
 void Keyboard::wakeup() {
@@ -464,11 +490,11 @@ void Keyboard::sleep() {
 
   esp_sleep_enable_touchpad_wakeup();
   Serial.println("Going sleepy time!");
-  esp_light_sleep_start();
+  // esp_light_sleep_start();
 
   // for deep sleep hold the energy state
   // gpio_deep_sleep_hold_en();
-  // esp_deep_sleep_start();
+  esp_deep_sleep_start();
   Serial.println("Sleeping"); // shouldn't print
   this->wakeup();
 }

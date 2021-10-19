@@ -15,21 +15,33 @@
 
 // layer_t c({{s, b}});
 
-// layout: 8 bits of keycodes, 4 bits of layer info, 4 bits of special keys
+// layout keycode (16 bits):
+//- 8 bits of keycodes
+//- 4 bits of layer info
+//- 4 bits of special keys
 #define LAYER_TAP (1 << 12)
 #define ONESHOT (1 << 13)
+#define MOD_TAP (1 << 14)
+
 // TODO: move these to a "normal" key range
-#define KC_SLEEP (1 << 14)
-#define KC_TRNS (1 << 15)
+// TODO: check if this define does not cause an issue
+#define KC_SLEEP 0x88
+#define KC_TRNS 0x89
 
 #define LAYER_TAP_DELAY_MS 150
 #define ONESHOT_TIMEOUT 100
+
+// read layer, shift it in the 4 bits of layer
 #define LT(layer, kc) (kc | LAYER_TAP | ((layer & 0xF) << 8))
+// mods start from > 128. This is outside the common ascii range
+// We only look at the first 6 bits and shift it into the proper range
+#define MT(mod, kc) (kc | MOD_TAP | (((mod)&0x1F) << 8))
 
 // --- Configuration ---
-#define USE_SLEEP 1
-#define USE_ENCODER 1
-#define USE_LED 1
+// TODO: tmp defs to use the features
+// #define USE_SLEEP 1
+#define USE_ENCODER
+#define USE_LED
 #define USE_OLED
 
 class Config { // see constructor in cpp file
@@ -42,14 +54,15 @@ public:
   std::string scan_source = "col"; // diode direction
 
   // deep sleep settings
-  const size_t deep_sleep_timeout = 300000; // 5 minutes
+  const size_t deep_sleep_timeout = 10;
+  // 300000; // 5 minutes
   // const size_t deep_sleep_timeout = 3000; // 5 minutes
 
   // led settings
   static const uint8_t led_pin = 25;
   uint8_t num_led = 27;
   std::vector<uint8_t> led_col_bins = {0,  5,  10,
-                                       14, 18, 22}; // count from the LED11 pin
+                                       15, 19, 23}; // count from the LED11 pin
 
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);

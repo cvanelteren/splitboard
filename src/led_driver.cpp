@@ -9,9 +9,11 @@ LED::LED(Config *config) {
   this->leds = new CRGB[num_leds];
   this->led_col_bins = config->led_col_bins;
 
-  this->brightness = 64;
+  this->brightness = 128;
   this->sleep();
   FastLED.setBrightness(brightness);
+
+  this->active_keys = nullptr;
 }
 
 void LED::update() {
@@ -28,8 +30,7 @@ void LED::update() {
 
   switch (status) {
   case 0: {
-    this->update_func_ptr = &LED::cycle;
-    // this->update_func_ptr = &LED::serial_cycle;
+    this->update_func_ptr = &LED::serial_cycle;
     break;
   }
   case 1: {
@@ -37,13 +38,17 @@ void LED::update() {
     break;
   }
   case 2: {
-    // this->update_func_ptr = &LED::ble_status(c);
+    // this->update_func_ptr = &LED::ble_status();
     break;
+  }
+  case 3: {
+    this->update_func_ptr = &LED::follow_me;
   }
   default:
     break;
   }
 
+  this->update_func_ptr = &LED::follow_me;
   (this->*(update_func_ptr))();
   FastLED.show();
 }
@@ -148,13 +153,30 @@ void LED::serial_cycle() {
     value = 50;
     // value += 10;
   }
-
   if (active_led == num_leds) {
     active_led %= num_leds;
   }
 }
 
-uint8_t LED::grid2int(std::pair<uint8_t, uint8_t> grid) {
+void LED::follow_me() {
+  // Follows the keypresses and activates that key
+  size_t idx;
+  FastLED.setBrightness(brightness);
+  static size_t decay;
+  // decay
+  if ((millis() - decay) > 120) {
+    sleep();
+    decay = millis();
+  }
+
+  for (auto &key : (*active_keys)) {
+    idx = grid2int(key.col, key.row);
+    printf("Activating %d\n", idx);
+    leds[idx].setHSV(128, 128, 128);
+  }
+}
+
+uint8_t LED::grid2int(uint8_t row, uint8_t col) {
   /**
    * @details  The  leds  are   wired  like  a  snake.  Each
    * keyswitch has  an LED (except the  rotary encoder). The
@@ -176,13 +198,13 @@ uint8_t LED::grid2int(std::pair<uint8_t, uint8_t> grid) {
    * @return     linear index
    */
 
-  auto col = grid.second;
-  auto row = grid.first;
+  printf("Received row %d col %d \n", row, col);
+  // reverse the linear path as the columns start on the top left
+  col = led_col_bins.size() - col - 2;
   bool uneven = col % 2;
-
-  auto idx = this->led_col_bins[col];
+  uint8_t idx = this->led_col_bins[col];
   if (uneven) {
-    idx += this->led_col_bins.size() - row;
+    idx += (led_col_bins[col + 1] - led_col_bins[col]) - row - 1;
   } else {
     idx += row;
   }

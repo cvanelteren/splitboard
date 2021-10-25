@@ -37,6 +37,7 @@ void Mesh::add_peer(const uint8_t *peer_addr) {
 }
 
 void Mesh::begin() {
+  WiFi.mode(WIFI_STA);
   this->init_esp_now();
   // add peer
 
@@ -70,11 +71,15 @@ void Mesh::init_esp_now() {
   return;
 }
 
+void Mesh::sleep() { end(); }
+
 void Mesh::end() {
   esp_now_deinit();
   WiFi.mode(WIFI_OFF);
   printf("Deinit esp_now\n");
 }
+
+void Mesh::wakeup() { begin(); }
 
 void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
                         int len) {

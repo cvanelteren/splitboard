@@ -462,6 +462,7 @@ void Keyboard::wakeup() {
     break;
   }
   this->matrix->wakeup();
+  this->mesh->wakeup();
   this->led->wakeup();
   this->display->wakeup();
   this->last_activity = millis();
@@ -485,16 +486,17 @@ void Keyboard::sleep() {
    */
   this->led->sleep();
   // prepare pins for sleep
+  this->mesh->sleep();
   this->matrix->sleep();
   this->display->sleep();
 
   esp_sleep_enable_touchpad_wakeup();
   Serial.println("Going sleepy time!");
-  // esp_light_sleep_start();
+  esp_light_sleep_start();
 
   // for deep sleep hold the energy state
   // gpio_deep_sleep_hold_en();
-  esp_deep_sleep_start();
+  // esp_deep_sleep_start();
   Serial.println("Sleeping"); // shouldn't print
   this->wakeup();
 }

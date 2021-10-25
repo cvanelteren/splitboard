@@ -21,6 +21,8 @@ public:
   void add_peer(const uint8_t *peer_address);
   void send();
   void send(std::vector<keyswitch_t> &data);
+  void wakeup();
+  void sleep();
   // void send(KeyData);
 
   KeyData receive();

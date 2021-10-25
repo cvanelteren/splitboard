@@ -3,12 +3,12 @@
 
 LED::LED(Config *config) {
   Serial.printf("Setting %d leds", config->num_led);
+  this->config = config; // TODO: fix remove this
   this->update_func_ptr = &LED::cycle;
   this->num_leds = config->num_led;
   this->led_pin = Config::led_pin;
   this->leds = new CRGB[num_leds];
   this->led_col_bins = config->led_col_bins;
-
   this->brightness = 128;
   this->sleep();
   FastLED.setBrightness(brightness);
@@ -73,7 +73,7 @@ void LED::wakeup() {
   FastLED.setBrightness(brightness);
 }
 void LED::sleep() {
-  Serial.printf("LED power down\n");
+  // Serial.printf("LED power down\n");
   FastLED.setBrightness(0);
   for (auto idx = 0; idx < num_leds; idx++) {
     leds[idx].setHSV(0, 0, 0);
@@ -170,9 +170,11 @@ void LED::follow_me() {
   }
 
   for (auto &key : (*active_keys)) {
-    idx = grid2int(key.col, key.row);
-    printf("Activating %d\n", idx);
-    leds[idx].setHSV(128, 128, 128);
+    if (!(key.source == config->rot_a_pin or key.source == config->rot_b_pin)) {
+      idx = grid2int(key.col, key.row);
+      printf("Activating %d\n", idx);
+      leds[idx].setHSV(128, 128, 128);
+    }
   }
 }
 

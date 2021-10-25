@@ -17,6 +17,7 @@ private:
   std::vector<size_t> last_activity;
   typedef void (LED::*update_method)();
   update_method update_func_ptr;
+  Config *config; // TODO: remove this
 
 public:
   void begin();

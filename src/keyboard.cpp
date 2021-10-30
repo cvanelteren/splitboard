@@ -39,8 +39,8 @@ Keyboard::Keyboard(Config *config) {
                      KC_O, KC_P, KC_LCBRACKET, KC_RCBRACKET},
                     {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
                      KC_L, KC_SCOLON, KC_SQUOTE},
-                    {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
-                     KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+                    {MT(KC_LSHIFT, KC_OPAREN), KC_Z, KC_X, KC_C, KC_V, KC_B,
+                     KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
                     {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, KC_SPC,
                      LT(1, KC_ENTER), KC_SUPER, LT(1, KC_ALTGR), KC_NO, KC_NO,
                      KC_NO}};
@@ -183,13 +183,25 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
    *It is highly likely that I will separate these into different events.
    * @return     return type
    */
+  // TODO: This  function needs to  be replaced with  a more
+  // substantial method
+  //
+  // TODO: there  is a bug that switching
+  // layers  with   stacked  layer  taps  will   not  return
+  // properely to  the original layer. That  is, tapping one
+  // layer tap from 0 -> 1 and  then on layer 1 a tap from 1
+  // -> 2, will  have a  sequence effect where  depending on
+  // how the keys are released will return to either layer 1
+  // or 0
+  //
   static uint8_t toggle_active_layer; // remember the past active layer
+  static bool modifier_set;
   uint16_t keycode = (*active_layer)[keyswitch.col][keyswitch.row];
   bool add_special_key;
-  uint16_t layer;
+  uint16_t layer, modifier;
 
   // read special keycodes
-  switch ((keycode >> 12) << 12) {
+  switch ((keycode >> 12)) {
   case (MOD_TAP): {
     if (add_special) {
       this->keep_active(keyswitch);
@@ -197,16 +209,31 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
     // send modifier
     else if ((keyswitch.pressed_down) &
              (millis() - keyswitch.time) >= LAYER_TAP_DELAY_MS) {
-      //
+      // identify the modifier and shift it back to the correct
+      // range (> 128)
+      modifier = ((keycode >> 8) & 0xF) | 0x80;
+      if (!modifier_set) {
+        this->bluetooth.press(modifier);
+        modifier_set = true;
+      }
 
     }
     // release event
     else if (!keyswitch.pressed_down) {
-      // release both keys?
+      // send tapped key
+      if ((millis() - keyswitch.time) < LAYER_TAP_DELAY_MS) {
+        this->bluetooth.press(keycode & 0xFF);
+        this->bluetooth.release(keycode & 0xFF);
+      }
+      // release modifier
+      else {
+        modifier = ((keycode >> 8) & 0xF) | 0x80;
+        this->bluetooth.release(modifier);
+        modifier_set = false;
+      }
     }
+    break;
   }
-
-  // TODO: move this to separate function
   case (LAYER_TAP): {
     // deal with layer tap stuff
     // Serial.printf("Layer tap!\n");
@@ -225,7 +252,8 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
         toggle_active_layer = active_layer_num;
         set_active_layer(layer);
         // set layer_tap info to keycode in higher layer
-        (*active_layer)[keyswitch.col][keyswitch.row] = (keycode | LAYER_TAP);
+        (*active_layer)[keyswitch.col][keyswitch.row] =
+            (keycode | (LAYER_TAP << 12));
       }
     }
     // key release event
@@ -256,6 +284,7 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
     // ignore key release when one shot is pressed
     // control this with a static flag inside this function?
     // when second key is pressed release the modifier key pressed
+    break;
   }
   default: {
     // TODO add KC_LEAD events
@@ -274,19 +303,14 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       }
       break;
     }
-    }
-    switch (this->bluetooth.isConnected()) {
-      switch (keyswitch.pressed_down) {
-      case 0:
-        Serial.printf("BLE release\n");
-        this->bluetooth.release(keycode);
-        break;
-      case 1:
+    default:
+      if (keyswitch.pressed_down) {
         Serial.printf("BLE send\n");
         this->bluetooth.press(keycode);
-        break;
+      } else {
+        Serial.printf("BLE release\n");
+        this->bluetooth.release(keycode);
       }
-      break;
     }
   }
   }

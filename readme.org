@@ -21,8 +21,9 @@ firmware]], and was developed using Platformio.
 - [X] OLED support through [[https://github.com/olikraus/u8g2][U8G2]]
 - [X] Rotary encoder support
 ** Special keys
-- [ ] Space cadet keys
-  + Shift when tapped, shift was modifier.
+- [X] Mod tap keys: mod when held, keycode when tapped
+  - [X] Space cadet keys
+    - Shift when tapped, shift was modifier.
 - [X] Layer tap functionality
 - [ ] One tap modifier keys
   + Tap for keycode, hold for layer switch

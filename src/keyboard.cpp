@@ -183,6 +183,7 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
    *It is highly likely that I will separate these into different events.
    * @return     return type
    */
+
   // TODO: This  function needs to  be replaced with  a more
   // substantial method
   //
@@ -194,6 +195,9 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
   // how the keys are released will return to either layer 1
   // or 0
   //
+  static std::unordered_map<uint8_t, uint8_t> layer_tracer;
+  static std::unordered_map<uint8_t, uint8_t> modifier_tracker;
+
   static uint8_t toggle_active_layer; // remember the past active layer
   static bool modifier_set;
   uint16_t keycode = (*active_layer)[keyswitch.col][keyswitch.row];
@@ -212,9 +216,9 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       // identify the modifier and shift it back to the correct
       // range (> 128)
       modifier = ((keycode >> 8) & 0xF) | 0x80;
-      if (!modifier_set) {
+      if (!modifier_tracker[modifier]) {
         this->bluetooth.press(modifier);
-        modifier_set = true;
+        modifier_tracker[modifier] = true;
       }
 
     }
@@ -229,7 +233,7 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       else {
         modifier = ((keycode >> 8) & 0xF) | 0x80;
         this->bluetooth.release(modifier);
-        modifier_set = false;
+        modifier_tracker.erase(modifier);
       }
     }
     break;
@@ -249,7 +253,8 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
       printf("Layer %d %d %d\r", layer, keycode >> 8, keycode);
       if (layer != active_layer_num) {
         Serial.printf("Layer tap holding\n");
-        toggle_active_layer = active_layer_num;
+        // toggle_active_layer = active_layer_num;
+        layer_tracer[layer] = active_layer_num;
         set_active_layer(layer);
         // set layer_tap info to keycode in higher layer
         (*active_layer)[keyswitch.col][keyswitch.row] =
@@ -262,7 +267,10 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
 
       // reset the keycode; NOTE this prevents keycode from being pressed twice?
       // (*active_layer)[keyswitch.col][keyswitch.row] &= ~(LAYER_TAP);
-      set_active_layer(toggle_active_layer);
+      // set_active_layer(toggle_active_layer);
+      auto tmp = active_layer_num;
+      set_active_layer(layer_tracer[active_layer_num]);
+      layer_tracer.erase(tmp);
       printf("Delta %d %d %d \n", (millis() - keyswitch.time), keyswitch.time,
              millis());
       if ((millis() - keyswitch.time) < LAYER_TAP_DELAY_MS) {

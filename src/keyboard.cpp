@@ -3,6 +3,8 @@
 
 #include "driver/rtc_io.h"
 
+#include <unordered_map>
+
 Keyboard::Keyboard(Config *config) {
   this->config = config;
   // init the keyboard

@@ -35,21 +35,26 @@ void EventManager::update() {
         idx++;
         idx %= sizeof(test);
         keyboard.display->setCursor(10, 5);
-        keyboard.display->log.print(test[idx]);
         keyboard.display->firstPage();
         if (!idx) {
           keyboard.display->log.println();
         }
         do {
-          keyboard.display->setFont(u8g2_font_open_iconic_embedded_2x_t);
-          keyboard.display->setCursor(10, 80);
-          keyboard.display->drawStr(10, 80, "\x40");
+
+          // keyboard.display->setFont(u8g2_font_open_iconic_embedded_2x_t);
           keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
-          keyboard.display->setCursor(10, 5);
-          keyboard.display->drawLog(10, 5, keyboard.display->log);
+          auto x = keyboard.get_battery_level();
+          keyboard.display->log.printf("Bat %0.2f %% %0.2f V\r", x,
+                                       x / 100.0 * 3.7);
+
+          // keyboard.display->setCursor(10, 80);
+          // keyboard.display->drawStr(10, 80, "\x40");
+          // keyboard.display->setCursor(10, 5);
+          // keyboard.display->drawLog(10, 5, keyboard.display->log);
 
           // keyboard.display->log.print("\rhello:)");
         } while (keyboard.display->nextPage());
+
       } else if (event == "led") {
         keyboard.led->update();
       }

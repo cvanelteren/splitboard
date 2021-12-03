@@ -53,6 +53,11 @@ public:
   std::vector<uint8_t> row_pins = {0, 13, 12, 14, 27};
   std::string scan_source = "col"; // diode direction
 
+  // battery pin
+  // IMPORTANT: the pin needs to be connected to a voltage divider
+  // Connecting the battery directly to a pin, will damage the GPIO.
+  // Any ADC pin can be used.
+  static const uint8_t batt_pin = 36;
   // deep sleep settings
   const size_t deep_sleep_timeout = 10;
   // 300000; // 5 minutes
@@ -63,6 +68,8 @@ public:
   uint8_t num_led = 27;
   std::vector<uint8_t> led_col_bins = {0,  5,  10, 15,
                                        19, 23, 27}; // count from the LED11 pin
+                                                    // add the final number of
+                                                    // keys for good binning
 
   std::vector<uint8_t> frame_buffer = std::vector<uint8_t>(num_led, 0);
   std::vector<uint8_t> draw_buffer = std::vector<uint8_t>(num_led, 0);
@@ -92,13 +99,13 @@ public:
   // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
   // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
   // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2E, 0x44};
-  // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
+  uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
   // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
   // uint8_t client_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
   // uint8_t serv_add[6] = {0x80, 0x7D, 0x3A, 0xD4, 0x2C, 0x9C};
-  uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
-  // uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xD9, 0x78};
-  uint8_t client_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
+  // uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
+  uint8_t client_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xD9, 0x78};
+  // uint8_t client_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
   // uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};
   // uint8_t serv_add[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
   // uint8_t serv_add[6] = {0x7C, 0x9E, 0xBD, 0xFB, 0xDA, 0xD4};

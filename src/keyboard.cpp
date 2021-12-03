@@ -41,12 +41,11 @@ Keyboard::Keyboard(Config *config) {
                      KC_O, KC_P, KC_LCBRACKET, KC_RCBRACKET},
                     {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
                      KC_L, KC_SCOLON, KC_SQUOTE},
-                    {MT(KC_LSHIFT, KC_OPAREN), KC_Z, KC_X, KC_C, KC_V, KC_B,
-                     KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
+                    {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
+                     KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
                     {KC_NO, KC_NO, KC_NO, KC_ALT, KC_LCTL, KC_SPC,
                      LT(1, KC_ENTER), KC_SUPER, LT(1, KC_ALTGR), KC_NO, KC_NO,
                      KC_NO}};
-  {} {}
   layer_t program = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
                       KC_9, KC_0, KC_BSPC},
                      {
@@ -95,7 +94,22 @@ auto *font = u8g2_font_7x14B_mr;
 // start the keyboard
 //
 
-double Keyboard::get_battery_level() { return 0.0; }
+double Keyboard::get_battery_level() {
+  // All ADC pins have a 12 bit (4096) resolution. That is,
+  // the output for reads will be an integer between 0-4095.
+  // The max current on each pin is 3.3 volt. The 4095th bit, therefore,
+  // represents 100 percent and 3.3v. Using a voltage divider I can convert
+  // the 4.2V battery to within the 3.3V range and convert the output.
+  static size_t last_time;
+  // voltage divider needs correction factor 2
+  double x = 2 * 100 * analogRead(config->batt_pin) / 4096.0;
+  if ((millis() - last_time) > 100) {
+    printf("Battery level: %f %% \r", x);
+    last_time = millis();
+  }
+  return x;
+};
+
 void Keyboard::begin() {
   Serial.println("Starting keyboard");
   Serial.println(printf("Am I a server? %d\n", this->is_server));
@@ -406,7 +420,7 @@ void Keyboard::update() {
    * @brief     keyboard updater
    * @details  Main controller  for keyboard  functionality.
    * Reads switch states and pushes it to bluetooth.
-   *
+   *;
    */
   // Serial.println("Scanning");
 

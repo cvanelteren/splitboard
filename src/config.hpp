@@ -44,6 +44,17 @@
 #define USE_LED
 #define USE_OLED
 
+// battery voltage divider
+#define R1 100.0    // in kOhm
+#define R2 100.0    // in kOhm
+#define ADC_REF 1.1 // V
+#define VMAX 4200.0 // mV
+#define VMIN 3300.0 // mV
+#define VTOADC(in) ((ADC_REF * (in) / 4096.0))
+#define VOUT(vin) (((vin)*R2) / (R1 + R2)) // conversion to dividor voltage
+#define BAT_MAX_ADC VTOADC(VOUT(VMAX))
+#define BAT_MIN_ADC VTOADC(VOUT(VMIN))
+
 class Config { // see constructor in cpp file
 public:
   Config();
@@ -57,7 +68,7 @@ public:
   // IMPORTANT: the pin needs to be connected to a voltage divider
   // Connecting the battery directly to a pin, will damage the GPIO.
   // Any ADC pin can be used.
-  static const uint8_t batt_pin = 36;
+  static const uint8_t batt_pin = 37;
   // deep sleep settings
   const size_t deep_sleep_timeout = 10;
   // 300000; // 5 minutes

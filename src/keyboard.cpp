@@ -94,21 +94,49 @@ auto *font = u8g2_font_7x14B_mr;
 // start the keyboard
 //
 
+#include "esp_adc_cal.h"
+extern Config config;
+double read_voltage() {
+  float calibration = 1.01;
+  float vref = 1100;
+  esp_adc_cal_characteristics_t adc_chars;
+  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100,
+                           &adc_chars);
+  vref = adc_chars.vref;
+  return (analogRead(config.batt_pin) / 4096.0) * 3.3 * (1100.0 / vref) *
+         calibration;
+}
 double Keyboard::get_battery_level() {
+
   // All ADC pins have a 12 bit (4096) resolution. That is,
   // the output for reads will be an integer between 0-4095.
   // The max current on each pin is 3.3 volt. The 4095th bit, therefore,
   // represents 100 percent and 3.3v. Using a voltage divider I can convert
-  // the 4.2V battery to within the 3.3V range and convert the output.
+  // the 3.7V battery to within the 3.3V range and convert the output.
   static size_t last_time;
-  // voltage divider needs correction factor 2
-  double x = 2 * 100 * analogRead(config->batt_pin) / 4096.0;
+  // the range is 0.5V and the 2.0 is for the voltage dividor.
+
+  // this is the efuse "corrected" at the factory
+  // the db is necessary for the range 350mV -2250 mV
+  // esp_adc_cal_characteristics_t adc_chars;
+  // esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12,
+  // 1100,
+  //                          &adc_chars);
+  double correction = adc_chars.vref;
+  printf("%0.2f correction factor \n", correction);
+  double voltage = analogRead(config->batt_pin) / 4096.0;
+  double level = (voltage - BAT_MIN_ADC) / (BAT_MAX_ADC - BAT_MIN_ADC);
+
+  // change this to correct range. This assumes lipo battery
+  // double correction = ((3.7 - 3.2) / 3.3) * 4096.0;
   if ((millis() - last_time) > 100) {
-    printf("Battery level: %f %% \r", x);
+    printf("Battery level: %0.2f %% %0.2fV \t%d %f %f \n", level, voltage,
+           analogRead(config->batt_pin), BAT_MAX_ADC, BAT_MIN_ADC);
     last_time = millis();
   }
-  return x;
-};
+
+  return level;
+}
 
 void Keyboard::begin() {
   Serial.println("Starting keyboard");
@@ -193,10 +221,11 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
   /**
    * @brief      Process the keyswitches
    *
-   * @details    keywsitches map to a keycode. Some of the keycodes are special.
-   * That is, the allow for temporary switching to another layer when a key is
-   *pressed, etc. This function deals with the various different functions.
-   *It is highly likely that I will separate these into different events.
+   * @details    keywsitches map to a keycode. Some of the keycodes are
+   *special. That is, the allow for temporary switching to another layer when
+   *a key is pressed, etc. This function deals with the various different
+   *functions. It is highly likely that I will separate these into different
+   *events.
    * @return     return type
    */
 
@@ -281,7 +310,8 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
     else if (!keyswitch.pressed_down) {
       printf("Layer tap release!\n");
 
-      // reset the keycode; NOTE this prevents keycode from being pressed twice?
+      // reset the keycode; NOTE this prevents keycode from being pressed
+      // twice?
       // (*active_layer)[keyswitch.col][keyswitch.row] &= ~(LAYER_TAP);
       // set_active_layer(toggle_active_layer);
       auto tmp = active_layer_num;

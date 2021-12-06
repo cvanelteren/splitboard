@@ -122,8 +122,8 @@ double Keyboard::get_battery_level() {
   // esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12,
   // 1100,
   //                          &adc_chars);
-  double correction = adc_chars.vref;
-  printf("%0.2f correction factor \n", correction);
+  // double correction = adc_chars.vref;
+  // printf("%0.2f correction factor \n", correction);
   double voltage = analogRead(config->batt_pin) / 4096.0;
   double level = (voltage - BAT_MIN_ADC) / (BAT_MAX_ADC - BAT_MIN_ADC);
 

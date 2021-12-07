@@ -1,12 +1,9 @@
 #include "event_manager.hpp"
+
 #include "keyboard.hpp"
-#include <Arduino.h>
-
-#include <U8g2lib.h>
-#include <freertos/semphr.h>
-
 extern Keyboard keyboard;
 static SemaphoreHandle_t mutex;
+
 EventManager::EventManager() {
   queue = std::vector<std::string>();
   mutex = xSemaphoreCreateMutex();

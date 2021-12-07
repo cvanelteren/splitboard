@@ -165,7 +165,7 @@ void Keyboard::begin() {
 
   // start bluetooth when server
   if (this->is_server) {
-    Serial.println("Starting bluetooth");
+    printf("Starting bluetooth\n");
     this->bluetooth.begin();
     this->bluetooth.releaseAll();
   }
@@ -243,8 +243,6 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
   static std::unordered_map<uint8_t, uint8_t> layer_tracer;
   static std::unordered_map<uint8_t, uint8_t> modifier_tracker;
 
-  static uint8_t toggle_active_layer; // remember the past active layer
-  static bool modifier_set;
   uint16_t keycode = (*active_layer)[keyswitch.col][keyswitch.row];
   bool add_special_key;
   uint16_t layer, modifier;
@@ -371,7 +369,6 @@ void Keyboard::process_keyswitch(keyswitch_t &keyswitch, bool add_special = 0) {
 }
 
 void Keyboard::process_special_keycodes() {
-  uint16_t keycode;
   keyswitch_t *keyswitch;
 
   // printf("Processing special keycodes\n");
@@ -408,7 +405,6 @@ void Keyboard::process_keyswitches() {
   // read server active keys
 
   keyswitch_t *keyswitch;
-  uint8_t key;
   const MediaKeyReport *encoder_code;
   for (int idx = 0; idx < total_keys; idx++) {
     // read switch
@@ -510,7 +506,6 @@ void Keyboard::update() {
       printf("Bluetooth disconnected\n");
     ble_connected = 0;
   }
-  led->update();
 }
 
 void Keyboard::wakeup() {

@@ -14,7 +14,6 @@
 // using json = nlohmann::json;
 
 // layer_t c({{s, b}});
-
 // layout keycode (16 bits):
 //- 8 bits of keycodes
 //- 4 bits of layer info

@@ -1,4 +1,8 @@
+#ifndef KEY_DEFINITIONS_HPP
+#define KEY_DEFINTIONS_HPP
+
 #include <BleKeyboard.h>
+
 // * // controls
 #define KC_BSPC 0xB2  // BS	Backspace
 #define KC_TAB 0xB3   // TAB	Tab
@@ -169,3 +173,4 @@
 // /* #define RSA(kc) (QK_RSFT | QK_RALT | (kc)) */
 // /* #define RCS(kc) (QK_RCTL | QK_RSFT | (kc)) */
 // /* #define SAGR(kc) RSA(kc) */
+#endif

@@ -1,14 +1,8 @@
 #ifndef KEYBOARD_HPP
 #define KEYBOARD_HPP
-#include <Arduino.h>
-
-// bluetooth keyboard holding
-#ifndef USE_NIMBLE
-#define USE_NIMBLE
-#endif
 
 #include <BleKeyboard.h>
-
+// bluetooth keyboard holding
 #include <cstddef>
 #include <unordered_map>
 #include <utility>
@@ -18,7 +12,6 @@
 // internal to readout the pins
 #include "matrix.hpp"
 // holds layout keys
-#include "bluetooth.hpp"
 #include "display.hpp"
 #include "keymap.hpp"
 #include "layout.hpp"
@@ -26,8 +19,8 @@
 #include "mesh.hpp"
 #include "rotary_encoder.hpp"
 #include "types.hpp"
-#include <BleKeyboard.h>
 
+// #include "bluetooth.hpp"
 class Keyboard {
   /**
    * @brief      Main keyboard class

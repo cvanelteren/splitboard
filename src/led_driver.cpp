@@ -38,7 +38,7 @@ void LED::update() {
     break;
   }
   case 2: {
-    // this->update_func_ptr = &LED::ble_status();
+    // this->update_func_ptr = &LED::ble_status;
     break;
   }
   case 3: {
@@ -169,11 +169,14 @@ void LED::follow_me() {
     decay = millis();
   }
 
-  for (auto &key : (*active_keys)) {
-    if (!(key.source == config->rot_a_pin or key.source == config->rot_b_pin)) {
-      idx = grid2int(key.col, key.row);
-      printf("Activating %d\n", idx);
-      leds[idx].setHSV(128, 128, 128);
+  if (active_keys != nullptr) {
+    for (auto &key : (*active_keys)) {
+      if (!(key.source == config->rot_a_pin or
+            key.source == config->rot_b_pin)) {
+        idx = grid2int(key.col, key.row);
+        printf("Activating %d\n", idx);
+        leds[idx].setHSV(128, 128, 128);
+      }
     }
   }
 }

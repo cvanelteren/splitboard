@@ -1,7 +1,12 @@
-#ifndef EVENT_MANAGER_H_
-#define EVENT_MANAGER_H_
 #include <string>
 #include <vector>
+
+#include <Arduino.h>
+#include <U8g2lib.h>
+#include <freertos/semphr.h>
+
+#ifndef EVENT_MANAGER_H_
+#define EVENT_MANAGER_H_
 
 class EventManager {
 private:

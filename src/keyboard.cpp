@@ -1,7 +1,9 @@
-#include "keyboard.hpp"
-#include <WiFi.h>
+
+#include <BleKeyboard.h>
 
 #include "driver/rtc_io.h"
+#include "keyboard.hpp"
+#include <WiFi.h>
 
 #include <unordered_map>
 

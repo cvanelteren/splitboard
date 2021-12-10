@@ -49,6 +49,7 @@ void LED::update() {
   }
 
   this->update_func_ptr = &LED::follow_me;
+  this->update_func_ptr = &LED::cycle;
   (this->*(update_func_ptr))();
   FastLED.show();
 }

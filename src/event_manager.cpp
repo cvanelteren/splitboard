@@ -1,7 +1,9 @@
 #include "event_manager.hpp"
 
-#include "keyboard.hpp"
-extern Keyboard keyboard;
+#include <FreeRTOS.h>
+// #include "keyboard.hpp"
+// extern Keyboard keyboard;
+//
 static SemaphoreHandle_t mutex;
 
 EventManager::EventManager() {
@@ -27,35 +29,35 @@ void EventManager::update() {
     while (queue.size()) {
       event = queue.back();
       queue.pop_back();
-      if (event == "display") {
-        // emulate dummy data for now
-        idx++;
-        idx %= sizeof(test);
-        keyboard.display->setCursor(10, 5);
-        keyboard.display->firstPage();
-        // if (!idx) {
-        //   keyboard.display->log.println();
-        // }
+      // if (event == "display") {
+      //   // emulate dummy data for now
+      //   idx++;
+      //   idx %= sizeof(test);
+      //   keyboard.display->setCursor(10, 5);
+      //   keyboard.display->firstPage();
+      //   // if (!idx) {
+      //   //   keyboard.display->log.println();
+      //   // }
 
-        do {
+      //   do {
 
-          // keyboard.display->setFont(u8g2_font_open_iconic_embedded_2x_t);
-          keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
-          auto x = keyboard.get_battery_level();
-          keyboard.display->log.printf("%0.2f %d %d %d %d\r", x,
-                                       analogRead(keyboard.config->batt_pin),
-                                       BAT_MAX_ADC, BAT_MIN_ADC);
-          // keyboard.display->setCursor(10, 80);
-          // keyboard.display->drawStr(10, 80, "\x40");
-          // keyboard.display->setCursor(10, 5);
-          // keyboard.display->drawLog(10, 5, keyboard.display->log);
+      //     // keyboard.display->setFont(u8g2_font_open_iconic_embedded_2x_t);
+      //     keyboard.display->setFont(u8g2_font_tom_thumb_4x6_mf);
+      //     auto x = keyboard.get_battery_level();
+      //     keyboard.display->log.printf("%0.2f %d %d %d %d\r", x,
+      //                                  analogRead(keyboard.config->batt_pin),
+      //                                  BAT_MAX_ADC, BAT_MIN_ADC);
+      //     // keyboard.display->setCursor(10, 80);
+      //     // keyboard.display->drawStr(10, 80, "\x40");
+      //     // keyboard.display->setCursor(10, 5);
+      //     // keyboard.display->drawLog(10, 5, keyboard.display->log);
 
-          // keyboard.display->log.print("\rhello:)");
-        } while (keyboard.display->nextPage());
+      //     // keyboard.display->log.print("\rhello:)");
+      //   } while (keyboard.display->nextPage());
 
-      } else if (event == "led") {
-        keyboard.led->update();
-      }
+      // } else if (event == "led") {
+      //   keyboard.led->update();
+      // }
     }
     xSemaphoreGive(mutex);
   }

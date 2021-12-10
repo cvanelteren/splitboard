@@ -3,7 +3,6 @@
 
 #include "config.hpp"
 #include "types.hpp"
-#include <BleKeyboard.h>
 
 class RotaryEncoder {
   Config *config;

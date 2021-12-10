@@ -9,6 +9,11 @@
 
 // logs if a message was sent correctly
 // TODO
+//
+
+const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
+const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
+
 void handle_input(const unsigned char *addr, const uint8_t *data, int len){};
 
 Mesh::Mesh() {
@@ -180,3 +185,173 @@ std::vector<keyswitch_t> Mesh::get_buffer() {
 //     host_dev = other;
 //   }
 // }
+
+void scan_ended_cb(NimBLEScanResults results) { printf("Scan Ended\n"); }
+
+MeshClient::MeshClient(Config *confg) {
+
+  // if (!BLEDevice::getInitialized()) {
+  //   BLEDevice::init("Something went wrong");
+  // }
+
+  // setup callback
+  advertised_cb = AdvertisedClientCallback();
+  client_cb = ClientCallback();
+
+  create_client();
+  BLEScan *scan = BLEDevice::getScan();
+  scan->setAdvertisedDeviceCallbacks(&advertised_cb);
+  scan->setActiveScan(true);
+  scan->setInterval(40);
+  scan->setWindow(39);
+  size_t scanTime = 1;
+  scan->start(scanTime, &scan_ended_cb);
+}
+
+BLEClient *lookup_client(BLEAdvertisedDevice *host_dev) {
+  /**
+   * @brief      Looks up client on host device
+   *
+   * @param      BLEAdvertisedDevice host_dev: host device from  scan result
+   *
+   * @return     BLEClient* (possible null)
+   **/
+
+  BLEClient *client = nullptr;
+  printf("Looking for existing client\n");
+  // check for existing clients
+  if (BLEDevice::getClientListSize()) {
+    printf("Client size list %d\n", BLEDevice::getClientListSize());
+    client = BLEDevice::getClientByPeerAddress(host_dev->getAddress());
+    if (client) {
+      if (!(client->connect(host_dev, false))) {
+        printf("Reconnect failed\n");
+        return client;
+      }
+      printf("Reconnected to client");
+    } else {
+      client = BLEDevice::getDisconnectedClient();
+    }
+  }
+  return client;
+}
+
+void MeshClient::create_client() {
+  /**
+   * @details    Setup client for mesh communication
+   * It performs
+   * 1. check if client already exists
+   * 2. sets up the connection params
+   *
+   * @return     return type
+   */
+  // looking up client
+  client = lookup_client(&advertised_cb.host_dev);
+  if (!client) {
+    // create new client
+    if (BLEDevice::getClientListSize() >= BLE_MAX_CONNECTIONS) {
+      printf("Max client size reached - no more connections available\n");
+    }
+
+    printf("Creating client\n");
+    client = BLEDevice::createClient();
+    printf("New client created\n");
+
+    printf("Setting connection parameters\n");
+    client->setClientCallbacks(&client_cb, false);
+    client->setConnectionParams(12, 12, 0, 51);
+    client->setConnectTimeout(5);
+  }
+}
+
+// controls the write on receive of message
+void MeshClient::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
+                           uint8_t *data, size_t length, bool isNotify) {
+
+  // make some stuff happen here
+}
+bool MeshClient::connect() {
+  /**
+   * @brief     Connect to the host
+   * @return    true if correct, false otherwise
+   */
+
+  if (client == nullptr) {
+    printf("Client not initialized!\n");
+    return false;
+  }
+
+  if (!client->isConnected()) {
+    if (!client->connect(&advertised_cb.host_dev, false)) {
+      printf("Failed to connect \n");
+      return false;
+    }
+  }
+  // debug
+  printf("Connected to: %s\n", client->getPeerAddress().toString().c_str());
+  printf("SSRI: %d \n", client->getRssi());
+
+  // setup connection
+  BLERemoteService *remote_service;
+  BLERemoteCharacteristic *remote_characteristic;
+  // BLERemoteDescriptor *remote_description;
+
+  // subscribe to characterstic
+  remote_service = client->getService(split_channel_service_uuid);
+  if (remote_service) {
+    // subscribe to server for future notification
+    remote_characteristic =
+        remote_service->getCharacteristic(split_message_uuid);
+    if (remote_characteristic->canNotify()) {
+      if (!remote_characteristic->subscribe(true, notify_cb)) {
+        client->disconnect();
+        return false;
+      }
+    }
+
+  } else {
+    printf("Service not found\n");
+    return false;
+  }
+
+  printf("Done with device!\n");
+  return true;
+}
+
+MeshServer::MeshServer(Config *Config) {
+  // if (!BLEDevice::getInitialized()) {
+  // BLEDevice::init();
+  // }
+
+  // NimBLEDevice::setSecurityAuth(true, true, true);
+  // NimBLEDevice::setSecurityPasskey(123456);
+  // NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_ONLY);
+
+  // create server
+  server = BLEDevice::createServer();
+
+  // setup callback
+  server_cb = new ServerCallback();
+  server->setCallbacks(server_cb);
+
+  // configure service and make characteristic available
+  channel_service = server->createService(split_channel_service_uuid);
+  message_characteristic = channel_service->createCharacteristic(
+      split_message_uuid,
+      NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::NOTIFY);
+  message_characteristic->setCallbacks(&client_cb);
+
+  // advertising settings
+  server->advertiseOnDisconnect(true);
+
+  BLEAdvertising *advertising = server->getAdvertising();
+  advertising->addServiceUUID(split_channel_service_uuid);
+  advertising->setScanResponse(true);
+  advertising->setMinPreferred(
+      0x06); // functions that help with iPhone connections issue
+  advertising->setMinPreferred(0x12);
+
+  // spin up server
+  channel_service->start();
+  server->startAdvertising();
+}

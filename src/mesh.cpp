@@ -8,7 +8,6 @@
 // server
 
 // logs if a message was sent correctly
-
 // TODO
 void handle_input(const unsigned char *addr, const uint8_t *data, int len){};
 
@@ -171,3 +170,13 @@ std::vector<keyswitch_t> Mesh::get_buffer() {
   Mesh::buffer.fill({});
   return buffer;
 }
+
+// void AdvertisedClientCallback::onResult(BLEAdvertisedDevice *other) {
+//   if (other->isAdvertisingService(BLEUUID(split_channel_service_uuid))) {
+//     printf("Found other service!\n");
+//     printf("Found device %s \n", other->toString().c_str());
+//     BLEDevice::getScan()->stop();
+//     // scanning = false;
+//     host_dev = other;
+//   }
+// }

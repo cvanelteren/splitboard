@@ -23,6 +23,8 @@
 #define BLEServer NimBLEServer
 #define BLAdvertisedDeviceCallbacks NimBLEAdvertisedDeviceCallbacks
 
+#define BLE_MAX_CONNECTIONS NIMBLE_MAX_CONNECTIONS
+
 #else
 #include "BLE2902.h"
 #include "BLECharacteristic.h"
@@ -31,10 +33,6 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #endif // USE_NIMBLE
-
-// const char *split_channel_service_uuid =
-// "ee583eec-576b-11ec-bf63-0242ac130002"; const char *split_message_uuid =
-// "ee58419e-576b-11ec-bf63-0242ac130002";
 
 typedef struct {
   uint16_t keys;
@@ -45,6 +43,7 @@ typedef struct {
 // Handle events for server
 class ServerCallback : public BLEServerCallbacks {
 public:
+  ServerCallback();
   // connection
   void onConnect(BLEServer *server, ble_gap_conn_desc *desc);
   void onDisconnect(BLEServer *server);
@@ -85,22 +84,31 @@ class ClientCallback : public BLEClientCallbacks {
 class MeshServer {
 private:
   BLEServer *server;
+  BLEService *channel_service;
+  BLECharacteristic *message_characteristic;
 
   // handle events for server
-  ServerCallback server_cb;
+  ServerCallback *server_cb;
   // handle events for characteristic
   CharacteristicCallback client_cb;
 
 public:
+  MeshServer(Config *config);
 };
 
 class MeshClient {
 private:
   BLEClient *client;
+  AdvertisedClientCallback advertised_cb;
+  ClientCallback client_cb;
+
+  static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
+                        uint8_t *data, size_t length, bool isNotify);
 
 public:
-  AdvertisedClientCallback advertise_callback;
-  ClientCallback client_cb;
+  MeshClient(Config *config);
+  void create_client();
+  bool connect();
 };
 
 class Mesh {

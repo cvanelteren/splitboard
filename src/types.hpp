@@ -48,6 +48,6 @@ typedef struct {
   std::vector<keyswitch_t> active_keys;
 } KeyData;
 
-typedef std::array<keyswitch_t, 6> buffer_t;
+// typedef std::array<keyswitch_t, 6> buffer_t;
 
 #endif

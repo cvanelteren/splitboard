@@ -133,6 +133,8 @@ public:
 
 private:
   Config *config;
+  BLEService *channel_service;
+  BLECharacteristic *message_characteristic;
 
   bool is_server; // role indicator
   esp_now_peer_info_t peer;

@@ -44,14 +44,13 @@ Mesh::Mesh(Config *config) {
 
   // initialize the channel service and characteristic
   BLEServer *server = BLEDevice::createServer();
-  BLEService *channel_service =
-      server->createService(split_channel_service_uuid);
-  BLECharacteristic *message_characteristic =
-      channel_service->createCharacteristic(split_message_uuid,
-                                            NIMBLE_PROPERTY::READ_ENC |
-                                                NIMBLE_PROPERTY::WRITE_ENC |
-                                                NIMBLE_PROPERTY::NOTIFY);
+  channel_service = server->createService(split_channel_service_uuid);
+  message_characteristic = channel_service->createCharacteristic(
+      split_message_uuid, NIMBLE_PROPERTY::READ_ENC |
+                              NIMBLE_PROPERTY::WRITE_ENC |
+                              NIMBLE_PROPERTY::NOTIFY);
   message_characteristic->setCallbacks(this);
+  message_characteristic->notify(true);
   if (is_server) {
     // only start service if it is a server
     if (channel_service->start()) {
@@ -167,6 +166,12 @@ void Mesh::send_input(const uint8_t *addr, esp_now_send_status_t status) {
 }
 
 void Mesh::send(std::vector<keyswitch_t> &data) {
+  // fill the characterstic & notify subscribed clients
+  message_characteristic->setValue((uint8_t *)&data, sizeof(data));
+  message_characteristic->notify(true);
+}
+
+void Mesh::send(std::vector<keyswitch_t> &data) {
   // this->mesh->buffer.clear();
   for (int i = 0; i < data.size(); i++) {
     Serial.println("Adding keys");
@@ -176,7 +181,7 @@ void Mesh::send(std::vector<keyswitch_t> &data) {
       this->send();
     }
     if (i == data.size() - 1) {
-      this->send();
+      this this->send();
     }
   }
   // this->mesh->send();

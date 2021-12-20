@@ -167,8 +167,10 @@ void Mesh::send_input(const uint8_t *addr, esp_now_send_status_t status) {
 
 void Mesh::send(std::vector<keyswitch_t> &data) {
   // fill the characterstic & notify subscribed clients
-  message_characteristic->setValue((uint8_t *)&data, sizeof(data));
-  message_characteristic->notify(true);
+  if (data.size()) {
+    message_characteristic->setValue((uint8_t *)&data, sizeof(data));
+    message_characteristic->notify(true);
+  }
 }
 
 void Mesh::send(std::vector<keyswitch_t> &data) {

@@ -21,6 +21,7 @@
 #include <BleKeyboard.h>
 
 #include <NimBLEDevice.h>
+#include <mesh.hpp>
 
 // #include <NimBLEUUID.h>
 
@@ -35,14 +36,11 @@
 
 #include <iostream>
 #include <string>
+
+extern const char *split_channel_service_uuid;
+extern const char *split_message_uuid;
 using namespace std;
 
-// uuid for "private channel"
-const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
-// const char *channel_uuid = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
-// const char *message_uuid = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
-//
 typedef struct some_test {
   uint8_t x;
   int y;
@@ -287,9 +285,9 @@ bool connectToServer() {
   NimBLEClient *client = nullptr;
 
   // check for existing clients
-  if (NimBLEDevice::getClientListSize()) {
-    printf("Client size list %d\n", NimBLEDevice::getClientListSize());
-    client = NimBLEDevice::getClientByPeerAddress(host_dev->getAddress());
+  if (BLEDevice::getClientListSize()) {
+    printf("Client size list %d\n", BLEDevice::getClientListSize());
+    client = BLEDevice::getClientByPeerAddress(host_dev->getAddress());
     if (client) {
       if (!(client->connect(host_dev, false))) {
         printf("Reconnect failed\n");
@@ -297,20 +295,20 @@ bool connectToServer() {
       }
       printf("Reconnected to client");
     } else {
-      client = NimBLEDevice::getDisconnectedClient();
+      client = BLEDevice::getDisconnectedClient();
     }
   }
 
   printf("Reached here\n");
 
   if (!client) {
-    if (NimBLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
+    if (BLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
       printf("Max client size reached - no more connections available\n");
       return false;
     }
 
     printf("Creating client\n");
-    client = NimBLEDevice::createClient();
+    client = BLEDevice::createClient();
     printf("New client created\n");
 
     printf("Setting connection parameters\n");
@@ -319,7 +317,7 @@ bool connectToServer() {
     client->setConnectTimeout(5);
 
     if (!client->connect(host_dev)) {
-      NimBLEDevice::deleteClient(client);
+      BLEDevice::deleteClient(client);
       printf("Failed to connect, deleted client\n");
       return false;
     }
@@ -336,23 +334,23 @@ bool connectToServer() {
   printf("Connected to: %s\n", client->getPeerAddress().toString().c_str());
   printf("SSRI: %d \n", client->getRssi());
 
-  NimBLERemoteService *rSvc;
-  NimBLERemoteCharacteristic *rChr;
-  NimBLERemoteDescriptor *rDsc;
+  NimBLERemoteService *remote_service;
+  NimBLERemoteCharacteristic *remote_characteristic;
+  NimBLERemoteDescriptor *remote_description;
 
-  rSvc = client->getService(split_channel_service_uuid);
-  if (rSvc) {
-    rChr = rSvc->getCharacteristic(split_message_uuid);
-    if (rChr && rChr->canRead()) {
-      some_test_t read = rChr->readValue<some_test_t>();
+  remote_service = client->getService(split_channel_service_uuid);
+  if (remote_service) {
+    remote_characteristic =
+        remote_service->getCharacteristic(split_message_uuid);
+    if (remote_characteristic && remote_characteristic->canRead()) {
+      some_test_t read = remote_characteristic->readValue<some_test_t>();
       printf("Value is: %d, %d\n", read.x, read.y);
-      printf("-------------------------------\n");
       printf("-------------------------------\n");
     }
 
-    if (rChr->canNotify()) {
+    if (remote_characteristic->canNotify()) {
       // if(!pChr->registerForNotify(notifyCB)) {
-      if (!rChr->subscribe(true, notifyCB)) {
+      if (!remote_characteristic->subscribe(true, notifyCB)) {
         client->disconnect();
         return false;
       }

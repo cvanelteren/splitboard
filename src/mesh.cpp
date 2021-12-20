@@ -2,11 +2,26 @@
 
 #include <freertos/semphr.h>
 /** Design
- *  The keyboard consists of n-parts where only the server knows
- * what each parts should encode. In this way keybindings can be encoded
+ *  The  keyboard  consists of  n-parts.  Each  part
+ *  encodes a  particular hard coded role  it fullfills. Who
+ *  is the server and who is the client may change, but they
+ *  role they fullfill should be the same.
  *
+ *  Each unit  can function as  a server  or as a  client. A
+ *  server hosts the keys that  are being pressed by a user,
+ *  a client  connects to the  servers and pushes it  to the
+ *  the external client.  That is, the HID acts  as a server
+ *  which the  client (e.g.  phone, computer  etc), connects
+ *  to.  The  HID  server  also  has  several  clients  that
+ *  connects to other servers in  the mesh. Each of the mesh
+ *  servers present their pressed keys.
+ *
+ *  At the  time of wrinting,  there is one mesh  client and
+ *  one mesh server.
  **/
 
+// TODO: Implement dynamic client/server role in system for battery balancing.
+// TODO: test dynamic mesh, i.e. multiple clients presented to the HID.
 const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
 const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
 static SemaphoreHandle_t mesh_mutex = xSemaphoreCreateMutex();
@@ -378,7 +393,8 @@ void Mesh::onResult(BLEAdvertisedDevice *other) {
     printf("Found other service!\n");
     printf("Found device %s \n", other->toString().c_str());
     // TODO: push this into the mesh?
-    connect(create_client(other));
+    if (!is_server)
+      connect(create_client(other));
   }
 }
 // void scan_start() {

@@ -40,6 +40,9 @@ typedef struct {
 
 } msg_t;
 
+typedef std::vector<keyswitch_t> buffer_t;
+typedef std::array<keyswitch_t, 6> message_t;
+
 // Handle events for server
 class ServerCallback : public BLEServerCallbacks {
 public:
@@ -70,86 +73,72 @@ public:
 class AdvertisedClientCallback : public BLEAdvertisedDeviceCallbacks {
 private:
   // holds the host information
-  BLEAdvertisedDevice host_dev;
+  BLEAdvertisedDevice *host_dev;
   friend class MeshClient;
 
 public:
   void onResult(BLEAdvertisedDevice *other);
 };
 
-class ClientCallback : public BLEClientCallbacks {
-  void onConnect(BLEClient *client);
-};
-
-class MeshServer {
-private:
-  BLEServer *server;
-  BLEService *channel_service;
-  BLECharacteristic *message_characteristic;
-
-  // handle events for server
-  ServerCallback *server_cb;
-  // handle events for characteristic
-  CharacteristicCallback client_cb;
-
-public:
-  MeshServer(Config *config);
-};
-
-class MeshClient {
-private:
-  BLEClient *client;
-  AdvertisedClientCallback advertised_cb;
-  ClientCallback client_cb;
-
-  static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
-                        uint8_t *data, size_t length, bool isNotify);
-
-public:
-  MeshClient(Config *config);
-  void create_client();
-  bool connect();
-};
-
-class Mesh {
+class Mesh : public BLEServerCallbacks,
+             public BLECharacteristicCallbacks,
+             public BLEClientCallbacks,
+             public BLEAdvertisedDeviceCallbacks {
 public:
   Mesh();
   Mesh(Config *config);
 
-  void init_esp_now();
-  void add_peer(const uint8_t *peer_address);
   void send();
   void send(std::vector<keyswitch_t> &data);
   void wakeup();
   void sleep();
   // void send(KeyData);
 
-  KeyData receive();
   void begin();
   void end();
 
+  // advertising
+  void onResult(BLEAdvertisedDevice *other);
+  // client
+  // void onRead(BLECharacteristic *characteristic);
+  // void onNotify(BLECharacteristic *characteristic);
+  // void onSubscribe(BLECharacteristic *characteristic, ble_gap_conn_desc
+  // *desc, uint16_t subValue);
+
+  bool connect(BLEClient *client);
+  void onDisconnect(BLEClient *client);
+  BLEClient *create_client(BLEAdvertisedDevice *host_dev);
+  static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
+                        uint8_t *data, size_t length, bool isNotify);
+
+  // server
+  // has no functions as the moment
+  // esp now functions
+  void init_esp_now();
+  void add_peer(const uint8_t *peer_address);
+  // server
   static void handle_input(const unsigned char *addr, const uint8_t *data,
                            int len);
 
   static void send_input(const unsigned char *addr,
                          esp_now_send_status_t status);
 
-  // static KeyData *getBuffer();
+  // end esp now
+
+  // external interface to buffers
   static std::vector<keyswitch_t> *getBuffer();
   static std::vector<keyswitch_t> get_buffer();
 
-  // static KeyData buffer;
-  // static std::vector<keyswitch_t> buffer;
-  static buffer_t buffer;
-  // static std::vector<keyswitch_t> buffer;
+  static std::vector<keyswitch_t> buffer;
 
 private:
   Config *config;
 
+  bool is_server; // role indicator
   esp_now_peer_info_t peer;
 
-  MeshServer *server;
-  MeshClient *client;
+  // store message
+  friend class Keyboard;
 };
 
 void send_input(const unsigned char *addr, esp_now_send_status_t status);

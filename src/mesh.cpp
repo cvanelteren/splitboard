@@ -1,33 +1,68 @@
 #include "mesh.hpp"
 
-// TODO: write a keycode msg buffer
-// remove the static class property
-// add return types to the send functions
-// needs functions on data received for server
-// and for client; in this case let's focus only on the
-// server
-
-// logs if a message was sent correctly
-// TODO
-//
+#include <freertos/semphr.h>
+/** Design
+ *  The keyboard consists of n-parts where only the server knows
+ * what each parts should encode. In this way keybindings can be encoded
+ *
+ **/
 
 const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
 const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
-
+static SemaphoreHandle_t mesh_mutex = xSemaphoreCreateMutex();
 void handle_input(const unsigned char *addr, const uint8_t *data, int len){};
 
-Mesh::Mesh() {
-  // WiFi.mode(WIFI_MODE_STA);
-  // initialize wifi before esp-now
-}
-
-Mesh::Mesh(Config *config) : Mesh() {
-  // WiFi.mode(WIFI_STA);
+void scan_ended_cb(NimBLEScanResults results) { printf("Scan Ended\n"); }
+Mesh::Mesh(Config *config) {
   Serial.println("Setting up mesh connection");
   this->config = config;
+
+  // not the keyboard, warning: ble keyboard needs to be initialized
+  // first
+  // TODO: add flag for role in mesh
+  if (!BLEDevice::getInitialized()) {
+    BLEDevice::init(config->device_name);
+    // server if no ble is activated yet
+    // keyboard will activate ble
+    is_server = true;
+  }
+
+  // initialize the channel service and characteristic
+  BLEServer *server = BLEDevice::createServer();
+  BLEService *channel_service =
+      server->createService(split_channel_service_uuid);
+  BLECharacteristic *message_characteristic =
+      channel_service->createCharacteristic(split_message_uuid,
+                                            NIMBLE_PROPERTY::READ_ENC |
+                                                NIMBLE_PROPERTY::WRITE_ENC |
+                                                NIMBLE_PROPERTY::NOTIFY);
+  message_characteristic->setCallbacks(this);
+  if (is_server) {
+    // only start service if it is a server
+    if (channel_service->start()) {
+      printf("Channel service for mesh  not started\n");
+    }
+    printf("Channel service started\n");
+  } else {
+    // start scanning for a client
+    uint8_t scan_interval = 25;
+    uint8_t scan_window = scan_interval - 1;
+    uint8_t scan_time = 1;
+
+    // start scanning
+    BLEScan *scan = BLEDevice::getScan();
+    scan->setAdvertisedDeviceCallbacks(this);
+    scan->setActiveScan(true);
+    scan->setInterval(scan_interval);
+    scan->setWindow(scan_window);
+    scan->start(scan_time, &scan_ended_cb);
+  }
+
+  Mesh::buffer.clear(); // redundant
 }
 
 void Mesh::add_peer(const uint8_t *peer_addr) {
+
   this->peer = {};
   memcpy(this->peer.peer_addr, peer_addr, 6);
   this->peer.channel = 0;
@@ -63,7 +98,7 @@ void Mesh::begin() {
     esp_now_register_send_cb(this->send_input);
     esp_now_register_recv_cb(this->handle_input);
   }
-  Mesh::buffer.fill({});
+  Mesh::buffer.clear();
 };
 
 void Mesh::init_esp_now() {
@@ -98,32 +133,21 @@ void Mesh::handle_input(const unsigned char *addr, const uint8_t *data,
   for (keyswitch_t it : Mesh::buffer) {
     // print only non-empty
     if (it.pressed_down) {
-      Serial.print(it.source);
-      Serial.print(" ");
-      Serial.print(it.sinc);
-      Serial.print(" ");
-      Serial.println(it.time);
+      printf("Mesh key %d %d T: %d\n", it.source, it.sinc, it.time);
     }
   }
 };
 
-buffer_t Mesh::buffer = {};
-// KeyData Mesh::buffer = {};
-// KeyData *Mesh::getBuffer() { return &Mesh::buffer; }
-//
-// std::vector<keyswitch_t> Mesh::buffer = {};
-// std::vector<keyswitch_t> *Mesh::getBuffer() { return &Mesh::buffer; }
-
 void Mesh::send_input(const uint8_t *addr, esp_now_send_status_t status) {
 
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
-                                                : "Delivery Fail");
+  printf("\r\nLast Packet Send Status:\t");
+  printf("status == %s \n",
+         ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+
   if (status == ESP_NOW_SEND_SUCCESS) {
     Mesh::buffer = {};
   } else {
-    Serial.print("\r\nLast Packet Send Status:\t");
-    Serial.println("Delivery failed");
+    printf("\r\nLast Packet Send Status:\t Delivery failed\n");
   }
 }
 
@@ -156,56 +180,41 @@ void Mesh::send() {
   } else {
     Serial.println("\rMsg sent:\t failed");
   }
-  Mesh::buffer.fill({});
+  Mesh::buffer.clear();
 }
 
 std::vector<keyswitch_t> Mesh::get_buffer() {
   /**
    * @brief     Returns non-empty mesh keys
-   */
+   **/
   // std::vector<keyswitch_t> buffer = Mesh::buffer;
   std::vector<keyswitch_t> buffer;
 
   // buffer is an array of 6 and can be empty
-  for (auto &elem : Mesh::buffer) {
-    if (elem.time)
-      buffer.push_back(elem);
-  }
+  if (xSemaphoreTake(mesh_mutex, 0) == pdTRUE) {
 
-  Mesh::buffer.fill({});
+    for (auto &elem : Mesh::buffer) {
+      if (elem.time)
+        buffer.push_back(elem);
+    }
+    Mesh::buffer.clear();
+    xSemaphoreGive(mesh_mutex);
+  }
   return buffer;
 }
 
-// void AdvertisedClientCallback::onResult(BLEAdvertisedDevice *other) {
-//   if (other->isAdvertisingService(BLEUUID(split_channel_service_uuid))) {
-//     printf("Found other service!\n");
-//     printf("Found device %s \n", other->toString().c_str());
-//     BLEDevice::getScan()->stop();
-//     // scanning = false;
-//     host_dev = other;
-//   }
-// }
+// mesh client
+void Mesh::onDisconnect(BLEClient *client) {
+  uint8_t scan_interval = 25;
+  uint8_t scan_window = scan_interval - 1;
+  uint8_t scan_time = 1;
 
-void scan_ended_cb(NimBLEScanResults results) { printf("Scan Ended\n"); }
-
-MeshClient::MeshClient(Config *confg) {
-
-  // if (!BLEDevice::getInitialized()) {
-  //   BLEDevice::init("Something went wrong");
-  // }
-
-  // setup callback
-  advertised_cb = AdvertisedClientCallback();
-  client_cb = ClientCallback();
-
-  create_client();
+  // start scanning
   BLEScan *scan = BLEDevice::getScan();
-  scan->setAdvertisedDeviceCallbacks(&advertised_cb);
   scan->setActiveScan(true);
-  scan->setInterval(40);
-  scan->setWindow(39);
-  size_t scanTime = 1;
-  scan->start(scanTime, &scan_ended_cb);
+  scan->setInterval(scan_interval);
+  scan->setWindow(scan_window);
+  scan->start(scan_time, &scan_ended_cb);
 }
 
 BLEClient *lookup_client(BLEAdvertisedDevice *host_dev) {
@@ -214,29 +223,40 @@ BLEClient *lookup_client(BLEAdvertisedDevice *host_dev) {
    *
    * @param      BLEAdvertisedDevice host_dev: host device from  scan result
    *
-   * @return     BLEClient* (possible null)
+   * @return     BLEClient* (possibly null)
    **/
 
   BLEClient *client = nullptr;
-  printf("Looking for existing client\n");
-  // check for existing clients
-  if (BLEDevice::getClientListSize()) {
-    printf("Client size list %d\n", BLEDevice::getClientListSize());
-    client = BLEDevice::getClientByPeerAddress(host_dev->getAddress());
-    if (client) {
-      if (!(client->connect(host_dev, false))) {
-        printf("Reconnect failed\n");
-        return client;
+
+  // check existing connections
+  if (host_dev) {
+    // host device was found at some time
+    printf("Looking for existing client\n");
+    // check for existing clients
+    if (BLEDevice::getClientListSize()) {
+      printf("Client size list %d\n", BLEDevice::getClientListSize());
+      client = BLEDevice::getClientByPeerAddress(host_dev->getAddress());
+      if (client) {
+        if (!(client->connect(host_dev, false))) {
+          printf("Reconnect failed\n");
+          return client;
+        }
+        printf("Reconnected to client");
+      } else {
+        client = BLEDevice::getDisconnectedClient();
       }
-      printf("Reconnected to client");
-    } else {
-      client = BLEDevice::getDisconnectedClient();
     }
+  }
+  // no host device found
+  else {
+    printf("No host device found!\n");
   }
   return client;
 }
 
-void MeshClient::create_client() {
+// TODO tie this to a specific host_dev?
+// For a dynamic mesh multiple clients will be made
+BLEClient *Mesh::create_client(BLEAdvertisedDevice *host_dev) {
   /**
    * @details    Setup client for mesh communication
    * It performs
@@ -246,52 +266,84 @@ void MeshClient::create_client() {
    * @return     return type
    */
   // looking up client
-  client = lookup_client(&advertised_cb.host_dev);
+  BLEClient *client = lookup_client(host_dev);
   if (!client) {
     // create new client
     if (BLEDevice::getClientListSize() >= BLE_MAX_CONNECTIONS) {
       printf("Max client size reached - no more connections available\n");
+    } else {
+      printf("Creating client\n");
+      client = BLEDevice::createClient(host_dev->getAddress());
+      printf("New client created\n");
+
+      printf("Setting connection parameters\n");
+      client->setClientCallbacks(this, false);
+      client->setConnectionParams(12, 12, 0, 51);
+      client->setConnectTimeout(5);
     }
-
-    printf("Creating client\n");
-    client = BLEDevice::createClient();
-    printf("New client created\n");
-
-    printf("Setting connection parameters\n");
-    client->setClientCallbacks(&client_cb, false);
-    client->setConnectionParams(12, 12, 0, 51);
-    client->setConnectTimeout(5);
   }
+  return client;
 }
 
-// controls the write on receive of message
-void MeshClient::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
-                           uint8_t *data, size_t length, bool isNotify) {
+/**
+ * @brief Handle events from mesh network
+ *
+ * @details Copy  the information from the  mesh server into
+ * the main keyboard loop
+ */
+void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
+                     uint8_t *data, size_t length, bool isNotify) {
 
-  // make some stuff happen here
+  // TODO: check whether this does not cause infinite wait time with racing
+  // condition
+  printf("Received message from %s\n", remoteCharacteristic->getUUID());
+  message_t msg;
+  // wait for mutex release
+  printf("Waiting for release of mesh mutex\n");
+  while (!(xSemaphoreTake(mesh_mutex, 0) == pdTRUE)) {
+  }
+  printf("Mesh mutex obtained\n");
+  memcpy(&msg, (message_t *)data, length);
+  for (keyswitch_t &elem : msg) {
+    // only keep initialized keys
+    if (elem.time)
+      Mesh::buffer.push_back(elem);
+  }
+  printf("Added %d keys to mesh buffer\n", length);
+  xSemaphoreGive(mesh_mutex);
 }
-bool MeshClient::connect() {
+
+bool Mesh::connect(BLEClient *client) {
   /**
    * @brief     Connect to the host
    * @return    true if correct, false otherwise
    */
 
+  // ensure client connection exists
   if (client == nullptr) {
     printf("Client not initialized!\n");
     return false;
   }
 
+  // attempt connect
   if (!client->isConnected()) {
-    if (!client->connect(&advertised_cb.host_dev, false)) {
+    if (!client->connect(false)) {
       printf("Failed to connect \n");
       return false;
     }
   }
-  // debug
+
+  // ensure secure connection
+  if (client->secureConnection()) {
+    printf("Secure connection achieved\n");
+  } else {
+    printf("Warning connection is not secure\n");
+  }
+
   printf("Connected to: %s\n", client->getPeerAddress().toString().c_str());
   printf("SSRI: %d \n", client->getRssi());
 
-  // setup connection
+  // setup connection & subscribe to remote characteristic
   BLERemoteService *remote_service;
   BLERemoteCharacteristic *remote_characteristic;
   // BLERemoteDescriptor *remote_description;
@@ -302,56 +354,46 @@ bool MeshClient::connect() {
     // subscribe to server for future notification
     remote_characteristic =
         remote_service->getCharacteristic(split_message_uuid);
+    // subscribe to remote characteristic
     if (remote_characteristic->canNotify()) {
-      if (!remote_characteristic->subscribe(true, notify_cb)) {
+      if (!remote_characteristic->subscribe(true, Mesh::notify_cb)) {
         client->disconnect();
         return false;
       }
+      printf("Subscribed to remote characteristic\n");
     }
-
   } else {
     printf("Service not found\n");
     return false;
   }
-
   printf("Done with device!\n");
   return true;
 }
 
-MeshServer::MeshServer(Config *Config) {
-  // if (!BLEDevice::getInitialized()) {
-  // BLEDevice::init();
-  // }
+// end mesh client
 
-  // NimBLEDevice::setSecurityAuth(true, true, true);
-  // NimBLEDevice::setSecurityPasskey(123456);
-  // NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_ONLY);
-
-  // create server
-  server = BLEDevice::createServer();
-
-  // setup callback
-  server_cb = new ServerCallback();
-  server->setCallbacks(server_cb);
-
-  // configure service and make characteristic available
-  channel_service = server->createService(split_channel_service_uuid);
-  message_characteristic = channel_service->createCharacteristic(
-      split_message_uuid,
-      NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::NOTIFY);
-  message_characteristic->setCallbacks(&client_cb);
-
-  // advertising settings
-  server->advertiseOnDisconnect(true);
-
-  BLEAdvertising *advertising = server->getAdvertising();
-  advertising->addServiceUUID(split_channel_service_uuid);
-  advertising->setScanResponse(true);
-  advertising->setMinPreferred(
-      0x06); // functions that help with iPhone connections issue
-  advertising->setMinPreferred(0x12);
-
-  // spin up server
-  channel_service->start();
-  server->startAdvertising();
+// mesh advertising
+void Mesh::onResult(BLEAdvertisedDevice *other) {
+  if (other->isAdvertisingService(BLEUUID(split_channel_service_uuid))) {
+    printf("Found other service!\n");
+    printf("Found device %s \n", other->toString().c_str());
+    // TODO: push this into the mesh?
+    connect(create_client(other));
+  }
 }
+// void scan_start() {
+//   uint8_t scan_interval = 25;
+//   uint8_t scan_window = scan_interval - 1;
+//   uint8_t scan_time = 1;
+
+//   // start scanning
+//   BLEScan *scan = BLEDevice::getScan();
+//   // only 1 exists, overwrites if present
+//   AdvertisedClientCallback advertised_cb = AdvertisedClientCallback();
+//   scan->setAdvertisedDeviceCallbacks(&advertised_cb);
+//   scan->setActiveScan(true);
+//   scan->setInterval(scan_interval);
+//   scan->setWindow(scan_window);
+//   scan->start(scan_time, &scan_ended_cb);
+// }
+// end advertising

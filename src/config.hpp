@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
+#define COMPONENTS_IN_MESH 1 // n - 1
 // #include <nlohmann/json.hpp>
 // for convenience
 // using json = nlohmann::json;

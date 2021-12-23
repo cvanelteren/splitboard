@@ -88,11 +88,9 @@ public:
   Mesh();
   Mesh(Config *config);
 
-  void send();
   void send(std::vector<keyswitch_t> &data);
   void wakeup();
   void sleep();
-  // void send(KeyData);
 
   void begin();
   void end();
@@ -105,25 +103,12 @@ public:
   // void onSubscribe(BLECharacteristic *characteristic, ble_gap_conn_desc
   // *desc, uint16_t subValue);
 
+  void scan();
   bool connect(BLEClient *client);
   void onDisconnect(BLEClient *client);
   BLEClient *create_client(BLEAdvertisedDevice *host_dev);
   static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
                         uint8_t *data, size_t length, bool isNotify);
-
-  // server
-  // has no functions as the moment
-  // esp now functions
-  void init_esp_now();
-  void add_peer(const uint8_t *peer_address);
-  // server
-  static void handle_input(const unsigned char *addr, const uint8_t *data,
-                           int len);
-
-  static void send_input(const unsigned char *addr,
-                         esp_now_send_status_t status);
-
-  // end esp now
 
   // external interface to buffers
   static std::vector<keyswitch_t> *getBuffer();

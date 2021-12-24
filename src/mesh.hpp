@@ -96,7 +96,7 @@ public:
   void end();
 
   // advertising
-  void onResult(BLEAdvertisedDevice *other);
+  void onResult(BLEAdvertisedDevice *other) override;
   // client
   // void onRead(BLECharacteristic *characteristic);
   // void onNotify(BLECharacteristic *characteristic);
@@ -104,16 +104,15 @@ public:
   // *desc, uint16_t subValue);
 
   void scan();
-  bool connect(BLEClient *client);
-  void onDisconnect(BLEClient *client);
+  bool connect_to_server(BLEClient *client);
+  void onDisconnect(BLEClient *client) override;
+
   BLEClient *create_client(BLEAdvertisedDevice *host_dev);
   static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
                         uint8_t *data, size_t length, bool isNotify);
 
   // external interface to buffers
-  static std::vector<keyswitch_t> *getBuffer();
   static std::vector<keyswitch_t> get_buffer();
-
   static std::vector<keyswitch_t> buffer;
 
 private:
@@ -127,8 +126,5 @@ private:
   // store message
   friend class Keyboard;
 };
-
-void send_input(const unsigned char *addr, esp_now_send_status_t status);
-void handle_input(const unsigned char *addr, const uint8_t *data, int len);
 
 #endif

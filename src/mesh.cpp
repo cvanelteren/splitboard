@@ -1,5 +1,4 @@
 #include "mesh.hpp"
-
 #include <freertos/semphr.h>
 /** Design
  *  The  keyboard  consists of  n-parts.  Each  part
@@ -66,6 +65,7 @@ void Mesh::begin() {
 }
 
 void Mesh::scan() {
+  printf("Starting scan\n");
   uint8_t scan_interval = 25;
   uint8_t scan_window = scan_interval - 1;
   uint8_t scan_time = 1;
@@ -115,16 +115,8 @@ std::vector<keyswitch_t> Mesh::get_buffer() {
 
 // mesh client
 void Mesh::onDisconnect(BLEClient *client) {
-  uint8_t scan_interval = 25;
-  uint8_t scan_window = scan_interval - 1;
-  uint8_t scan_time = 1;
-
-  // start scanning
-  BLEScan *scan = BLEDevice::getScan();
-  scan->setActiveScan(true);
-  scan->setInterval(scan_interval);
-  scan->setWindow(scan_window);
-  scan->start(scan_time, &scan_ended_cb);
+  printf("Client disconnected\n");
+  scan();
 }
 
 BLEClient *lookup_client(BLEAdvertisedDevice *host_dev) {
@@ -223,7 +215,7 @@ void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
   xSemaphoreGive(mesh_mutex);
 }
 
-bool Mesh::connect(BLEClient *client) {
+bool Mesh::connect_to_server(BLEClient *client) {
   /**
    * @brief     Connect to the host
    * @return    true if correct, false otherwise
@@ -286,7 +278,7 @@ void Mesh::onResult(BLEAdvertisedDevice *other) {
     printf("Found other service!\n");
     printf("Found device %s \n", other->toString().c_str());
     if (!is_server) {
-      connect(create_client(other));
+      connect_to_server(create_client(other));
     }
     // look for other devices in mesh
     if (BLEDevice::getClientListSize() < COMPONENTS_IN_MESH) {

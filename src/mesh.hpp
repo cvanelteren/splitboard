@@ -3,8 +3,6 @@
 #include "config.hpp"
 
 #include "types.hpp"
-#include <WiFi.h>
-#include <esp_now.h>
 
 #if defined(USE_NIMBLE)
 #include "NimBLECharacteristic.h"
@@ -43,51 +41,12 @@ typedef struct {
 typedef std::vector<keyswitch_t> buffer_t;
 typedef std::array<keyswitch_t, 6> message_t;
 
-// Handle events for server
-class ServerCallback : public BLEServerCallbacks {
-public:
-  ServerCallback();
-  // connection
-  void onConnect(BLEServer *server, ble_gap_conn_desc *desc);
-  void onDisconnect(BLEServer *server);
-  // security
-  uint32_t onPassKeyRequest();
-  bool onConfirmPIN(uint32_t pass_key);
-  void onAuthenticationComplete(ble_gap_conn_desc *desc);
-  // sending
-  void onNotify(BLECharacteristic *characteristic);
-  void onSubscribe(BLECharacteristic *characteristic, ble_gap_conn_desc *desc,
-                   uint16_t subValue);
-};
-
-// Handle event for characteristic
-class CharacteristicCallback : public BLECharacteristicCallbacks {
-public:
-  void onRead(BLECharacteristic *characteristic);
-  void onNotify(BLECharacteristic *characteristic);
-  void onSubscribe(BLECharacteristic *characteristic, ble_gap_conn_desc *desc,
-                   uint16_t subValue);
-};
-
-// Look for advertised device
-class AdvertisedClientCallback : public BLEAdvertisedDeviceCallbacks {
-private:
-  // holds the host information
-  BLEAdvertisedDevice *host_dev;
-  friend class MeshClient;
-
-public:
-  void onResult(BLEAdvertisedDevice *other);
-};
-
 class Mesh : public BLEServerCallbacks,
              public BLECharacteristicCallbacks,
              public BLEClientCallbacks,
              public BLEAdvertisedDeviceCallbacks {
 public:
-  Mesh();
   Mesh(Config *config);
-
   void send(std::vector<keyswitch_t> &data);
   void wakeup();
   void sleep();
@@ -96,7 +55,7 @@ public:
   void end();
 
   // advertising
-  void onResult(BLEAdvertisedDevice *other) override;
+  void onResult(BLEAdvertisedDevice *other);
   // client
   // void onRead(BLECharacteristic *characteristic);
   // void onNotify(BLECharacteristic *characteristic);
@@ -105,7 +64,7 @@ public:
 
   void scan();
   bool connect_to_server(BLEClient *client);
-  void onDisconnect(BLEClient *client) override;
+  void onDisconnect(BLEClient *client);
 
   BLEClient *create_client(BLEAdvertisedDevice *host_dev);
   static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
@@ -121,7 +80,6 @@ private:
   BLECharacteristic *message_characteristic;
 
   bool is_server; // role indicator
-  esp_now_peer_info_t peer;
 
   // store message
   friend class Keyboard;

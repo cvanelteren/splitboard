@@ -201,7 +201,8 @@ void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
 
   // TODO: check whether this does not cause infinite wait time with racing
   // condition
-  printf("Received message from %s\n", remoteCharacteristic->getUUID());
+  printf("Received message from %s\n",
+         remoteCharacteristic->getUUID().toString().c_str());
   message_t msg;
   // wait for mutex release
   printf("Waiting for release of mesh mutex\n");

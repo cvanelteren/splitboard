@@ -25,7 +25,10 @@ const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
 const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
 static SemaphoreHandle_t mesh_mutex = xSemaphoreCreateMutex();
 
-void scan_ended_cb(NimBLEScanResults results) { printf("Scan Ended\n"); }
+std::vector<keyswitch_t> Mesh::buffer = {};
+
+void scan_ended_cb(BLEScanResults results) { printf("Scan Ended\n"); }
+
 Mesh::Mesh(Config *config) {
   Serial.println("Setting up mesh connection");
   this->config = config;
@@ -61,7 +64,7 @@ void Mesh::begin() {
     // start scanning for a client
     scan();
   }
-  Mesh::buffer.clear(); // redundant
+  Mesh::buffer.clear();
 }
 
 void Mesh::scan() {

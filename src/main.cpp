@@ -1,21 +1,18 @@
 #ifndef UNIT_TEST
 
-#define USE_NIMBLE
+#include <Arduino.h>
+#include <BleKeyboard.h>
 
 #include <iostream>
 #include <stdint.h>
 #include <string>
 
-#include <Arduino.h>
-#include <BleKeyboard.h>
-
 #include "esp32-hal-cpu.h"
 #include <esp_pm.h>
 
 #include "config.hpp"
-#include "keyboard.hpp"
-
 #include "event_manager.hpp"
+#include "keyboard.hpp"
 #include "mesh.hpp"
 
 Config config = Config();
@@ -39,11 +36,10 @@ void setup() {
 }
 
 void loop() {
+  static bool ble_connected;
 
   keyboard.update();
   keyboard.led->update();
-
-  // static bool ble_connected;
   // // manager.add_event("display");
   // if (keyboard.bluetooth.isConnected()) {
   //   // esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_CONN_HDL0, ESP_PWR_LVL_N11);

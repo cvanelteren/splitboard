@@ -1,5 +1,6 @@
 #include "mesh.hpp"
 #include <freertos/semphr.h>
+
 /** Design
  *  The  keyboard  consists of  n-parts.  Each  part
  *  encodes a  particular hard coded role  it fullfills. Who
@@ -91,7 +92,8 @@ void Mesh::wakeup() { begin(); }
 void Mesh::send(std::vector<keyswitch_t> &data) {
   // fill the characterstic & notify subscribed clients
   if (data.size()) {
-    message_characteristic->setValue((uint8_t *)&data, sizeof(data));
+    message_characteristic->setValue((uint8_t *)&data,
+                                     sizeof(data[0]) * data.size());
     message_characteristic->notify(true);
   }
 }

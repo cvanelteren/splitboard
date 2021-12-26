@@ -28,6 +28,7 @@ public:
   void serial_cycle();
   void follow_me();
   void set_color(uint8_t hue, uint8_t saturation, uint8_t value);
+  bool set_mode(uint8_t type);
   void ble_status(bool connected);
   void turn_off_all();
   void battery_level();

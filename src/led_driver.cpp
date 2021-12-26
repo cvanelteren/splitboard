@@ -1,6 +1,12 @@
 #include "led_driver.hpp"
 #include <utility>
 
+enum led_modes {
+  LED_SERIAL_CYCLE,
+  LED_CYCLE,
+  LED_FOLLOW_ME,
+};
+
 LED::LED(Config *config) {
   Serial.printf("Setting %d leds", config->num_led);
   this->config = config; // TODO: fix remove this
@@ -17,43 +23,27 @@ LED::LED(Config *config) {
 }
 
 void LED::update() {
-  static uint8_t status;
-  static size_t time;
-
-  size_t delta = millis() - time;
-  // printf("\rDelta %d", delta);
-
-  if (delta > 2000) {
-    status = (status + 1) % 3;
-    time = millis();
-  }
-
-  switch (status) {
-  case 0: {
-    this->update_func_ptr = &LED::serial_cycle;
-    break;
-  }
-  case 1: {
-    this->update_func_ptr = &LED::cycle;
-    break;
-  }
-  case 2: {
-    // this->update_func_ptr = &LED::ble_status;
-    break;
-  }
-  case 3: {
-    this->update_func_ptr = &LED::follow_me;
-  }
-  default:
-    break;
-  }
-
-  this->update_func_ptr = &LED::follow_me;
-  this->update_func_ptr = &LED::cycle;
   (this->*(update_func_ptr))();
   FastLED.show();
 }
 
+bool LED::set_mode(uint8_t mode) {
+  switch (mode) {
+  case LED_SERIAL_CYCLE:
+    update_func_ptr = &LED::serial_cycle;
+    break;
+  case LED_CYCLE:
+    update_func_ptr = &LED::cycle;
+    break;
+  case LED_FOLLOW_ME:
+    update_func_ptr = &LED::follow_me;
+    break;
+  default:
+    printf("No mode selected\n");
+    return 1;
+  };
+  return 0;
+}
 LED::~LED() { delete this->leds; }
 
 void LED::begin() {

@@ -6,28 +6,30 @@
 //
 static SemaphoreHandle_t mutex;
 
-EventManager::EventManager() {
-  queue = std::vector<std::string>();
-  mutex = xSemaphoreCreateMutex();
-}
-void EventManager::add_event(std::string event) {
+EventManager::EventManager() { mutex = xSemaphoreCreateMutex(); }
+
+void EventManager::add_event(AbstractEvent &event) {
   if (xSemaphoreTake(mutex, 0) == pdTRUE) {
-    queue.push_back(event);
+    // queue.push_back(&event));
+    queue.push_back(&event);
     xSemaphoreGive(mutex);
   }
 }
 
 void EventManager::update() {
-  static uint8_t idx;
-  static bool update_battery;
 
-  char test[] = "abcdefghijklmnopqrstuvw";
-  std::string event;
+  // char test[] = "abcdefghijklmnopqrstuvw";
+  AbstractEvent *event;
   // deal with events
   if (xSemaphoreTake(mutex, 0) == pdTRUE) {
     // printf("Q:\t%d\n", queue.size());
     while (queue.size()) {
+      // event = queue.back().run();
       event = queue.back();
+      if (!event->run()) {
+        printf("Event failed\n");
+      }
+      delete event;
       queue.pop_back();
       // if (event == "display") {
       //   // emulate dummy data for now
@@ -77,3 +79,37 @@ void EventManager::begin() {
   xTaskCreatePinnedToCore(this->start_xtask, "event_manager", 2048,
                           (void *)this, 1, NULL, 1);
 }
+
+AbstractEvent::AbstractEvent(std::string name, uint32_t type) {
+  this->name = name;
+  this->type = type;
+}
+
+std::string AbstractEvent::get_name() { return name; }
+
+uint32_t AbstractEvent::get_type() { return type; }
+
+template <class T>
+Event<T>::Event(std::string name, uint32_t type, T *device)
+    : AbstractEvent(name, type) {
+  this->component = component;
+}
+
+// TODO: implement
+bool DisplayEvent::run() {
+  return 0;
+
+  // switch (this->get_type()) {
+  // case DISPLAY_CENTER_EVENT:
+  //   break;
+  // case DISPLAY_NOTIFICATION_EVENT:
+  //   break;
+  // case DISPLAY_BATTERY_EVENT:
+  //   break;
+  // default:
+  //   break;
+  // }
+  // return 0;
+}
+
+bool LEDEvent::run() { return component->set_mode(type); }

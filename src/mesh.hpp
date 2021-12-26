@@ -32,6 +32,7 @@
 #include <BLEUtils.h>
 #endif // USE_NIMBLE
 
+// deprecated
 typedef struct {
   uint16_t keys;
   uint8_t layer;
@@ -40,6 +41,7 @@ typedef struct {
 
 typedef std::vector<keyswitch_t> buffer_t;
 typedef std::array<keyswitch_t, 6> message_t;
+// end deprecated
 
 class Mesh : public BLEServerCallbacks,
              public BLECharacteristicCallbacks,
@@ -55,7 +57,7 @@ public:
   void end();
 
   // advertising
-  void onResult(BLEAdvertisedDevice *other);
+  void onResult(BLEAdvertisedDevice *other) override;
   // client
   // void onRead(BLECharacteristic *characteristic);
   // void onNotify(BLECharacteristic *characteristic);
@@ -64,7 +66,9 @@ public:
 
   void scan();
   bool connect_to_server(BLEClient *client);
-  void onDisconnect(BLEClient *client);
+  void onDisconnect(BLEClient *client) override;
+  void onConnect(BLEClient *client) override;
+  bool onConfirmPIN(uint32_t pass_key) override;
 
   BLEClient *create_client(BLEAdvertisedDevice *host_dev);
   static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,

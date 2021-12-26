@@ -128,6 +128,26 @@ void Mesh::onDisconnect(BLEClient *client) {
   scan();
 }
 
+#include "event_manager.hpp"
+bool Mesh::onConfirmPIN(uint32_t pass_key) {
+  // TODO: need some other way to interface with the event manager;
+  extern EventManager manager;
+  // confirm pin from the server
+  const uint32_t timeout = 500000; // milliseconds
+  size_t start = millis();
+  printf("Received password %d \n", pass_key);
+  // manager.add_event(display_event(pass_key));
+  while (((millis() - start) < timeout)) {
+    // read internal button
+    if (digitalRead(GPIO_NUM_0)) {
+      printf("Pin confirmed");
+      return true;
+    }
+  }
+  printf(("Pin timeout elapsed, connection refused\n"));
+  return false;
+};
+
 BLEClient *lookup_client(BLEAdvertisedDevice *host_dev) {
   /**
    * @brief      Looks up client on host device

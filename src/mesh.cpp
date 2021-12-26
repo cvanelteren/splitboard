@@ -21,7 +21,11 @@
  **/
 
 // TODO: Implement dynamic client/server role in system for battery balancing.
+// I am expecting that this feature does not improve the battery life. I
+// would have to test the current draw on both halves to determine if there is
+// any significant difference in current draw.
 // TODO: test dynamic mesh, i.e. multiple clients presented to the HID.
+// TODO: perform password pairing between halves, show passwords on the display.
 const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
 const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
 static SemaphoreHandle_t mesh_mutex = xSemaphoreCreateMutex();
@@ -219,6 +223,19 @@ void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
   }
   printf("Added %d keys to mesh buffer\n", length);
   xSemaphoreGive(mesh_mutex);
+}
+
+void Mesh::onConnect(BLEClient *client) {
+  printf("Connected\n");
+
+  /** Default connnection  parameters are min 20  ms and max
+   *40ms with a timeout of  4 seconds. In the tutorial there
+   *is a slower  connection shown. * below  is min interval,
+   *max interval, latency, timeout. The values are multiples of 1.25ms except
+   *the timeout which is *10ms.
+   **/
+
+  client->updateConnParams(1, 10, 0, 60);
 }
 
 bool Mesh::connect_to_server(BLEClient *client) {

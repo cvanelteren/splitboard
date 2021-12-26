@@ -35,7 +35,7 @@ std::vector<keyswitch_t> Mesh::buffer = {};
 void scan_ended_cb(BLEScanResults results) { printf("Scan Ended\n"); }
 
 Mesh::Mesh(Config *config) {
-  Serial.println("Setting up mesh connection");
+  printf("Setting up mesh connection\n");
   this->config = config;
 }
 

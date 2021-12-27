@@ -7,18 +7,23 @@
 
 #include <unordered_map>
 
+Keyboard::~Keyboard() {
+  delete config;
+  delete matrix;
+  delete mesh;
+  delete display;
+  delete manager;
+};
+
 Keyboard::Keyboard(Config *config) {
   this->config = config;
   // init the keyboard
-  this->matrix = new Matrix(config);
-  // this->layout = new Layout(config);
-  // setup esp_now
-  // setting station wifi mode
-  this->mesh = new Mesh(config);
-
+  matrix = new Matrix(config);
+  mesh = new Mesh(config);
   // setup display
-  this->display = new Display(config);
-  this->led = new LED(config);
+  display = new Display(config);
+  led = new LED(config);
+  manager = new EventManager();
 
   byte mac_addr[6];
   WiFi.macAddress(mac_addr);
@@ -149,53 +154,29 @@ void Keyboard::begin() {
   }
   Serial.println();
 
-  this->led->begin();
-  this->mesh->begin();
-  this->rotary_encoder->begin();
+  led->begin();
+  mesh->begin();
+  rotary_encoder->begin();
+  manager->begin();
 
   // setup start display
-  if (this->display != nullptr) {
-    this->display->begin();
+  if (display != NULL) {
+    display->begin();
     // FIXME: move this to display somehow
     auto width = 32;
     auto height = 10;
 
-    this->display->log_buffer.resize(width * height);
-    this->display->log.begin(*this->display, width, height,
-                             &(this->display->log_buffer)[0]);
+    display->log_buffer.resize(width * height);
+    display->log.begin(*this->display, width, height,
+                       &(this->display->log_buffer)[0]);
   }
 
   // start bluetooth when server
   if (this->is_server) {
     printf("Starting bluetooth\n");
-    this->bluetooth.begin();
-    this->bluetooth.releaseAll();
+    bluetooth.begin();
+    bluetooth.releaseAll();
   }
-}
-
-// Function to toggle bits in the given range
-int toggleBitsFromLToR(int n, int l, int r) {
-  // calculating a number 'num' having 'r' number of bits
-  // and bits in the range l to r are the only set bits
-  int num = ((1 << r) - 1) ^ ((1 << (l - 1)) - 1);
-
-  // toggle the bits in the range l to r in 'n'
-  // and return the number
-  return (n ^ num);
-}
-
-// Function to unset bits in the given range
-int unsetBitsInGivenRange(int n, int l, int r) {
-  // 'num' is the highest positive integer number
-  // all the bits of 'num' are set
-  long num = (1ll << (4 * 8 - 1)) - 1;
-
-  // toggle the bits in the range l to r in 'num'
-  num = toggleBitsFromLToR(num, l, r);
-
-  // unset the bits in the range l to r in 'n'
-  // and return the number
-  return (n & num);
 }
 
 void Keyboard::keep_active(keyswitch_t &keyswitch) {
@@ -536,11 +517,11 @@ void Keyboard::wakeup() {
     Serial.println("Wakeup not caused by deep sleep");
     break;
   }
-  this->matrix->wakeup();
-  this->mesh->wakeup();
-  this->led->wakeup();
-  this->display->wakeup();
-  this->last_activity = millis();
+  matrix->wakeup();
+  mesh->wakeup();
+  led->wakeup();
+  display->wakeup();
+  last_activity = millis();
 }
 
 size_t Keyboard::get_last_activity() { return this->last_activity; }
@@ -559,11 +540,11 @@ void Keyboard::sleep() {
   /**
    * @brief      Enter deep sleep
    */
-  this->led->sleep();
+  led->sleep();
   // prepare pins for sleep
-  this->mesh->sleep();
-  this->matrix->sleep();
-  this->display->sleep();
+  mesh->sleep();
+  matrix->sleep();
+  display->sleep();
 
   esp_sleep_enable_touchpad_wakeup();
   Serial.println("Going sleepy time!");

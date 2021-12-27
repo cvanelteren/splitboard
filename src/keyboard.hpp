@@ -13,6 +13,7 @@
 #include "matrix.hpp"
 // holds layout keys
 #include "display.hpp"
+#include "event_manager.hpp"
 #include "layout.hpp"
 #include "led_driver.hpp"
 #include "mesh.hpp"
@@ -178,10 +179,12 @@ public:
   Display *display;
   LED *led;
   BleKeyboard bluetooth;
+  EventManager *manager;
 
   RotaryEncoder *rotary_encoder;
 
   Keyboard(Config *config);
+  ~Keyboard();
   void begin();
   void update();
   // communicate with bluetooth

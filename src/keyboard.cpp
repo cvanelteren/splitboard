@@ -431,17 +431,6 @@ void Keyboard::update() {
    * Reads switch states and pushes it to bluetooth.
    *;
    */
-  // Serial.println("Scanning");
-
-  // bool state;
-  // if (millis() - last_led_time > 1000) {
-  //   pinMode(2, OUTPUT);
-  //   state = (digitalRead(2) ? LOW : HIGH);
-  //   digitalWrite(2, state);
-  //   Serial.printf("Writing state as %d \n", state);
-  //   last_led_time = millis();
-  // }
-
   // update components
   this->matrix->update();
 #ifdef USE_ENCODER
@@ -456,8 +445,6 @@ void Keyboard::update() {
   if (this->matrix->active_keys.size()) {
     this->last_activity = millis();
   }
-  // Serial.printf("%d %d\n", last_activity, millis() - last_activity);
-
   // handle sending keys
   // handle server
   if (this->is_server) {
@@ -468,7 +455,6 @@ void Keyboard::update() {
     if (this->matrix->active_keys.size()) {
       this->mesh->send(this->matrix->active_keys);
     }
-    // delay(10);
   }
 
 #ifdef USE_SLEEP

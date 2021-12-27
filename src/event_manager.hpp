@@ -17,6 +17,11 @@
  to be written in a way where different event types can be
  created.
  */
+
+// deprecated
+// This ended up being a little bit too complicated. It is easier to just
+// directly interact with the keyboard by calling an extern promise.
+// This is not the prettiest way, but it gets very complicated otherwise.
 class AbstractEvent {
 public:
   AbstractEvent(std::string name, uint32_t type);
@@ -32,6 +37,7 @@ protected:
 template <class T> class Event : public AbstractEvent {
 public:
   Event(std::string name, uint32_t type, T *component);
+  ~Event();
 
 protected:
   T *component;
@@ -48,15 +54,18 @@ class LEDEvent : public Event<LED> {
 public:
   bool run() override;
 };
+// end deprecated
 
 class EventManager {
 private:
-  std::vector<AbstractEvent *> queue;
+  std::vector<bool (*)()> queue;
+  // std::vector<AbstractEvent *> queue;
 
 public:
   EventManager();
 
-  void add_event(AbstractEvent &event);
+  // void add_event(AbstractEvent &event);
+  void add_event(bool (*event)());
   void update();
   static void start_xtask(void *obj);
   void begin();

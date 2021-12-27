@@ -39,8 +39,8 @@ public:
   void follow_me();
   void set_color(uint8_t hue, uint8_t saturation, uint8_t value);
   void set_brightness(uint8_t value);
-  void decrease_brightness();
-  void increase_brightness();
+  bool decrease_brightness();
+  bool increase_brightness();
   bool set_mode(uint8_t type);
   void ble_status(bool connected);
   void turn_off_all();

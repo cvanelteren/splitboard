@@ -23,18 +23,24 @@ void LED::set_brightness(uint8_t value) {
   FastLED.show();
 }
 
-void LED::decrease_brightness() {
+bool LED::decrease_brightness() {
+  printf("Decreasing brightness\n");
   if (brightness != 0) {
     brightness <<= 1;
     set_brightness(brightness);
+    return false;
   }
+  return true;
 }
 
-void LED::increase_brightness() {
-  if (brightness != 256) {
+bool LED::increase_brightness() {
+  printf("Increasing brightness\n");
+  if (brightness != 255) {
     brightness >>= 1;
     set_brightness(brightness);
+    return false;
   }
+  return true;
 }
 
 void LED::update() {
@@ -94,9 +100,6 @@ void LED::cycle() {
   // rainbow effect
   static uint8_t hue, saturation, value;
   value = 50;
-  // Serial.printf("%d \t %d \t %d \n", hue, saturation, value);
-  // FastLED.showColor();
-
   // saturation++;
   saturation = 255; // primary colors
   hue++;

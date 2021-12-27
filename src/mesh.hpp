@@ -3,6 +3,7 @@
 #include "config.hpp"
 
 #include "types.hpp"
+#include <cstdint>
 
 #if defined(USE_NIMBLE)
 #include "NimBLECharacteristic.h"
@@ -32,10 +33,27 @@
 #include <BLEUtils.h>
 #endif // USE_NIMBLE
 
-// deprecated
-typedef struct {
-  uint16_t keys;
-  uint8_t layer;
+// message kinds
+/* KIND BIT : event
+ * --------------------------
+ * 0x0000   : key event down
+ * 0x0001   : key event up
+ * 0x0010   : one shot event
+ * */
+typedef union message {
+  uint16_t bits;
+
+  struct matrix {
+    uint8_t kind : 4;
+    uint8_t col : 6;
+    uint8_t row : 6;
+  };
+
+  struct event {
+    uint8_t kind : 4;
+    uint8_t event_idx : 8;
+    // 4 bits left over
+  };
 
 } msg_t;
 
@@ -50,6 +68,8 @@ class Mesh : public BLEServerCallbacks,
 public:
   Mesh(Config *config);
   void send(std::vector<keyswitch_t> &data);
+  void send(msg_t &msg);
+
   void wakeup();
   void sleep();
 

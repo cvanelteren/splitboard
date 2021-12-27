@@ -104,7 +104,16 @@ void Mesh::wakeup() { begin(); }
 
 void Mesh::send(std::vector<keyswitch_t> &data) {
   // fill the characterstic & notify subscribed clients
+  // std::vector<msg_t> msg;
+  // msg_t msg_content;
   if (data.size()) {
+    // for (keyswitch_t &key : data) {
+    //   msg_content.kind = (key.pressed_down ? KEY_DOWN : KEY_UP);
+    //   msg_content.col = key.col;
+    //   msg_content.row = key.row;
+    //   msg.push_back(msg_content);
+    // }
+
     message_characteristic->setValue((uint8_t *)&data,
                                      sizeof(data[0]) * data.size());
     message_characteristic->notify(true);

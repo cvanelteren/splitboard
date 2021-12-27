@@ -238,13 +238,18 @@ void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
   // condition
   printf("Received message from %s\n",
          remoteCharacteristic->getUUID().toString().c_str());
-  message_t msg;
   // wait for mutex release
   printf("Waiting for release of mesh mutex\n");
   while (!(xSemaphoreTake(mesh_mutex, 0) == pdTRUE)) {
+    taskDelay();
   }
   printf("Mesh mutex obtained\n");
-  memcpy(&msg, (message_t *)data, length);
+
+  std::vector<keyswitch_t> msg;
+  msg.resize(length / sizeof(keyswitch_t));
+  memcpy(&msg[0], data, length);
+
+  // check for valid keys
   for (keyswitch_t &elem : msg) {
     // only keep initialized keys
     if (elem.time)

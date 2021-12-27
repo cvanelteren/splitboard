@@ -1,15 +1,10 @@
 #include "led_driver.hpp"
 #include <utility>
 
-enum led_modes {
-  LED_SERIAL_CYCLE,
-  LED_CYCLE,
-  LED_FOLLOW_ME,
-};
-
 LED::LED(Config *config) {
   Serial.printf("Setting %d leds", config->num_led);
   this->config = config; // TODO: fix remove this
+
   this->update_func_ptr = &LED::cycle;
   this->num_leds = config->num_led;
   this->led_pin = Config::led_pin;
@@ -20,6 +15,26 @@ LED::LED(Config *config) {
   FastLED.setBrightness(brightness);
 
   this->active_keys = nullptr;
+}
+
+void LED::set_brightness(uint8_t value) {
+  brightness = value;
+  FastLED.setBrightness(brightness);
+  FastLED.show();
+}
+
+void LED::decrease_brightness() {
+  if (brightness != 0) {
+    brightness <<= 1;
+    set_brightness(brightness);
+  }
+}
+
+void LED::increase_brightness() {
+  if (brightness != 256) {
+    brightness >>= 1;
+    set_brightness(brightness);
+  }
 }
 
 void LED::update() {
@@ -44,11 +59,14 @@ bool LED::set_mode(uint8_t mode) {
   };
   return 0;
 }
-LED::~LED() { delete this->leds; }
+LED::~LED() {
+  delete leds;
+  delete active_keys;
+}
 
 void LED::begin() {
   pinMode(led_pin, OUTPUT);
-  Serial.printf("Setting %d leds\n", num_leds);
+  printf("Setting %d leds\n", num_leds);
   FastLED.addLeds<SK6812, Config::led_pin, GRB>(leds, num_leds);
   FastLED.show();
 }
@@ -60,7 +78,7 @@ void LED::set_color(uint8_t hue, uint8_t saturation, uint8_t value) {
 }
 
 void LED::wakeup() {
-  Serial.printf("Setting LED brightness: %d \n", brightness);
+  printf("Setting LED brightness: %d \n", brightness);
   FastLED.setBrightness(brightness);
 }
 void LED::sleep() {

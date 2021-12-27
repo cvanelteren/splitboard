@@ -152,18 +152,6 @@ void Matrix::update() {
    *
    */
   this->scan();
-  // this->print_ak();
-
-  // this->print_ak();
-
-  // // Serial.println("Listing keys");
-  // // Serial.println();
-  // for (auto key : this->active_keys) {
-  //   Serial.print("\r");
-  //   Serial.print(key.source);
-  //   Serial.print(key.sinc);
-  //   Serial.println();
-  // }
 }
 
 void callback(){

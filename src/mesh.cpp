@@ -52,11 +52,20 @@ void Mesh::begin() {
 
   // initialize the channel service and characteristic
   BLEServer *server = BLEDevice::createServer();
-  channel_service = server->createService(split_channel_service_uuid);
-  message_characteristic = channel_service->createCharacteristic(
-      split_message_uuid, NIMBLE_PROPERTY::READ_ENC |
-                              NIMBLE_PROPERTY::WRITE_ENC |
-                              NIMBLE_PROPERTY::NOTIFY);
+  channel_service = server->getServiceByUUID(split_channel_service_uuid);
+
+  if (channel_service == nullptr)
+    channel_service = server->createService(split_channel_service_uuid);
+
+  message_characteristic =
+      channel_service->getCharacteristic(split_message_uuid);
+
+  if (message_characteristic == nullptr)
+    message_characteristic = channel_service->createCharacteristic(
+        split_message_uuid, NIMBLE_PROPERTY::READ_ENC |
+                                NIMBLE_PROPERTY::WRITE_ENC |
+                                NIMBLE_PROPERTY::NOTIFY);
+
   message_characteristic->setCallbacks(this);
   message_characteristic->notify(true);
   if (is_server) {

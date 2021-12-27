@@ -2,6 +2,13 @@
 #include "keyboard.hpp"
 
 extern Keyboard keyboard;
+
+enum event_kinds {
+  KEY_DOWN,
+  KEY_UP,
+  EVENT,
+};
+
 bool set_led_serial_cycle() {
   return keyboard.led->set_mode(LED_SERIAL_CYCLE);
   // TODO: add mesh communication for cycle
@@ -16,6 +23,9 @@ bool set_led_cycle() {
 bool increase_led_brightness() {
   return keyboard.led->increase_brightness();
   // TODO: add mesh communication
+  // msg_t msg;
+  // msg.kind = EVENT;
+  // msg.event = keyboard.mesh->send(msg)
 }
 bool decrease_led_brightness() {
   return keyboard.led->decrease_brightness();

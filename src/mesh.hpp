@@ -91,8 +91,11 @@ public:
   bool onConfirmPIN(uint32_t pass_key) override;
 
   BLEClient *create_client(BLEAdvertisedDevice *host_dev);
-  static void notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
-                        uint8_t *data, size_t length, bool isNotify);
+  static void retrieve_keys(BLERemoteCharacteristic *remoteCharacteristic,
+                            uint8_t *data, size_t length, bool isNotify);
+
+  static void retrieve_events(BLERemoteCharacteristic *remoteCharacteristic,
+                              uint8_t *data, size_t length, bool isNotify);
 
   // external interface to buffers
   static std::vector<keyswitch_t> get_buffer();
@@ -102,6 +105,7 @@ private:
   Config *config;
   BLEService *channel_service;
   BLECharacteristic *message_characteristic;
+  BLECharacteristic *event_characteristic;
 
   bool is_server; // role indicator
 

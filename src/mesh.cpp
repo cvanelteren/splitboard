@@ -28,7 +28,10 @@
 // TODO: perform password pairing between halves, show passwords on the display.
 const char *split_channel_service_uuid = "ee583eec-576b-11ec-bf63-0242ac130002";
 const char *split_message_uuid = "ee58419e-576b-11ec-bf63-0242ac130002";
+const char *split_event_uuid = "2cbd927c-67ed-11ec-90d6-0242ac120003";
+
 static SemaphoreHandle_t mesh_mutex = xSemaphoreCreateMutex();
+static SemaphoreHandle_t mesh_event_mutex = xSemaphoreCreateMutex();
 
 std::vector<keyswitch_t> Mesh::buffer = {};
 
@@ -67,13 +70,24 @@ void Mesh::begin() {
                                 NIMBLE_PROPERTY::NOTIFY);
 
   message_characteristic->setCallbacks(this);
-  message_characteristic->notify(true);
+  event_characteristic = channel_service->getCharacteristic(split_event_uuid);
+  if (event_characteristic == nullptr) {
+    event_characteristic = channel_service->createCharacteristic(
+        split_event_uuid, NIMBLE_PROPERTY::READ_ENC |
+                              NIMBLE_PROPERTY::WRITE_ENC |
+                              NIMBLE_PROPERTY::NOTIFY);
+  }
+  event_characteristic->setCallbacks(this);
+
+  if (channel_service->start()) {
+    printf("Channel service for mesh not started\n");
+  }
+  printf("Channel service started\n");
+
   if (is_server) {
+    server->advertiseOnDisconnect(true);
+    BLEDevice::startAdvertising();
     // only start service if it is a server
-    if (channel_service->start()) {
-      printf("Channel service for mesh  not started\n");
-    }
-    printf("Channel service started\n");
   } else {
     // start scanning for a client
     scan();
@@ -240,8 +254,8 @@ BLEClient *Mesh::create_client(BLEAdvertisedDevice *host_dev) {
  * @details Copy  the information from the  mesh server into
  * the main keyboard loop
  */
-void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
-                     uint8_t *data, size_t length, bool isNotify) {
+void Mesh::retrieve_keys(BLERemoteCharacteristic *remoteCharacteristic,
+                         uint8_t *data, size_t length, bool isNotify) {
 
   // TODO: check whether this does not cause infinite wait time with racing
   // condition
@@ -250,7 +264,7 @@ void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
   // wait for mutex release
   printf("Waiting for release of mesh mutex\n");
   while (!(xSemaphoreTake(mesh_mutex, 0) == pdTRUE)) {
-    taskDelay();
+    taskYIELD();
   }
   printf("Mesh mutex obtained\n");
 
@@ -268,6 +282,42 @@ void Mesh::notify_cb(BLERemoteCharacteristic *remoteCharacteristic,
   xSemaphoreGive(mesh_mutex);
 }
 
+#include "event_manager.hpp"
+#include "keyboard.hpp"
+#include "keyboard_events.hpp"
+
+extern Keyboard keyboard;
+extern bool (*KEYBOARD_EVENTS[])();
+void Mesh::retrieve_events(BLERemoteCharacteristic *remoteCharacteristic,
+                           uint8_t *data, size_t length, bool isNotify) {
+
+  /**
+   * @brief      Channel that deals with "special events that are not normal
+   * keys.
+   */
+
+  // TODO: check whether this does not cause infinite wait time with racing
+  // condition
+  printf("Received message from %s\n",
+         remoteCharacteristic->getUUID().toString().c_str());
+  // wait for mutex release
+  printf("Waiting for release of mesh event mutex\n");
+  while (!(xSemaphoreTake(mesh_event_mutex, 0) == pdTRUE)) {
+    taskYIELD();
+  }
+
+  printf("Mesh event mutex obtained\n");
+
+  std::vector<event_t> events;
+  events.resize(length / sizeof(event_t));
+  memcpy(&events[0], data, length);
+  for (auto &event : events) {
+    keyboard.manager->add_event(KEYBOARD_EVENTS[event]);
+  }
+
+  xSemaphoreGive(mesh_event_mutex);
+}
+
 void Mesh::onConnect(BLEClient *client) {
   printf("Connected\n");
 
@@ -279,6 +329,42 @@ void Mesh::onConnect(BLEClient *client) {
    **/
 
   client->updateConnParams(1, 10, 0, 60);
+}
+
+bool subscribe_to(std::string characteristic_uuid,
+                  BLERemoteService *remote_service, BLEClient *client) {
+  BLERemoteCharacteristic *remote_characteristic;
+
+  // subscribe to characterstic
+  void (*cb)(BLERemoteCharacteristic * remoteCharacteristic, uint8_t * data,
+             size_t length, bool isNotify);
+
+  if (characteristic_uuid == split_message_uuid)
+    cb = &Mesh::retrieve_keys;
+  else if (characteristic_uuid == split_event_uuid)
+    cb = &Mesh::retrieve_events;
+  else {
+    printf("No valid characteristic uuid given for subscription\n");
+    return true;
+  }
+
+  if (remote_service) {
+    // subscribe to server for future notification
+    remote_characteristic =
+        remote_service->getCharacteristic(characteristic_uuid);
+    // subscribe to remote characteristic
+    if (remote_characteristic->canNotify()) {
+      if (!remote_characteristic->subscribe(true, *cb)) {
+        client->disconnect();
+        return true;
+      }
+      printf("Subscribed to remote characteristic\n");
+    }
+  } else {
+    printf("Service not found\n");
+    return true;
+  }
+  return false;
 }
 
 bool Mesh::connect_to_server(BLEClient *client) {
@@ -311,29 +397,12 @@ bool Mesh::connect_to_server(BLEClient *client) {
   printf("Connected to: %s\n", client->getPeerAddress().toString().c_str());
   printf("SSRI: %d \n", client->getRssi());
 
-  // setup connection & subscribe to remote characteristic
-  BLERemoteService *remote_service;
-  BLERemoteCharacteristic *remote_characteristic;
-  // BLERemoteDescriptor *remote_description;
+  BLERemoteService *remote_service =
+      client->getService(split_channel_service_uuid);
+  if (remote_service)
+    if (subscribe_to(split_channel_service_uuid, remote_service, client))
+      return false;
 
-  // subscribe to characterstic
-  remote_service = client->getService(split_channel_service_uuid);
-  if (remote_service) {
-    // subscribe to server for future notification
-    remote_characteristic =
-        remote_service->getCharacteristic(split_message_uuid);
-    // subscribe to remote characteristic
-    if (remote_characteristic->canNotify()) {
-      if (!remote_characteristic->subscribe(true, Mesh::notify_cb)) {
-        client->disconnect();
-        return false;
-      }
-      printf("Subscribed to remote characteristic\n");
-    }
-  } else {
-    printf("Service not found\n");
-    return false;
-  }
   printf("Done with device!\n");
   return true;
 }

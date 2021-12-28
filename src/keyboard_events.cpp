@@ -2,6 +2,12 @@
 #include "keyboard.hpp"
 
 extern Keyboard keyboard;
+bool (*KEYBOARD_EVENTS[])() = {
+    set_led_serial_cycle,
+    set_led_cycle,
+    increase_led_brightness,
+    decrease_led_brightness,
+};
 
 enum event_kinds {
   KEY_DOWN,

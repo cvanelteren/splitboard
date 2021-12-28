@@ -18,6 +18,7 @@
  created.
  */
 
+typedef uint8_t event_t;
 // deprecated
 // This ended up being a little bit too complicated. It is easier to just
 // directly interact with the keyboard by calling an extern promise.

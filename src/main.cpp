@@ -17,7 +17,7 @@
 
 Config config = Config();
 Keyboard keyboard = Keyboard(&config);
-EventManager manager = EventManager();
+// EventManager manager = EventManager();
 
 // esp_pm_config_esp32 *config_pm;
 void setup() {
@@ -26,8 +26,6 @@ void setup() {
   Serial.begin(config.baud_rate);
 
   keyboard.begin();
-  manager.begin();
-
   keyboard.led->active_keys = &(keyboard.matrix->active_keys);
 
   printf("------------SPLITBOARD------------\n");

@@ -2,6 +2,7 @@
 #define mesh_hpp
 #include "config.hpp"
 
+#include "event_manager.hpp" // include event_t
 #include "types.hpp"
 #include <cstdint>
 
@@ -67,8 +68,18 @@ class Mesh : public BLEServerCallbacks,
              public BLEAdvertisedDeviceCallbacks {
 public:
   Mesh(Config *config);
-  void send(std::vector<keyswitch_t> &data);
-  void send(msg_t &msg);
+
+  template <typename T, typename A>
+  void send(const std::vector<T, A> &data, BLECharacteristic *characteristic) {
+    if (data.size()) {
+      characteristic->setValue((uint8_t *)&data, sizeof(data[0]) * data.size());
+      characteristic->notify(true);
+    }
+  }
+  // void send(const std::vector<keyswitch_t> &data,
+  //           BLECharacteristic *characteristic);
+  // void send(const std::vector<event_t> &data,
+  //           BLECharacteristic *characteristic);
 
   void wakeup();
   void sleep();
@@ -107,7 +118,7 @@ private:
   BLECharacteristic *message_characteristic;
   BLECharacteristic *event_characteristic;
 
-  bool is_server; // role indicator
+  bool is_hub; // role indicator; hub is "BLEKEYBOARD"
 
   // store message
   friend class Keyboard;

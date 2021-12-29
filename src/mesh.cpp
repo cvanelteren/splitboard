@@ -50,7 +50,7 @@ void Mesh::begin() {
     BLEDevice::init(config->device_name);
     // server if no ble is activated yet
     // keyboard will activate ble
-    is_server = true;
+    is_hub = true;
   }
 
   // initialize the channel service and characteristic
@@ -84,14 +84,11 @@ void Mesh::begin() {
   }
   printf("Channel service started\n");
 
-  if (is_server) {
-    server->advertiseOnDisconnect(true);
-    BLEDevice::startAdvertising();
-    // only start service if it is a server
-  } else {
-    // start scanning for a client
-    scan();
-  }
+  // look for other clients
+  server->advertiseOnDisconnect(true);
+  BLEDevice::startAdvertising();
+  scan();
+
   Mesh::buffer.clear();
 }
 
@@ -116,23 +113,20 @@ void Mesh::end() { BLEDevice::deinit(false); }
 
 void Mesh::wakeup() { begin(); }
 
-void Mesh::send(std::vector<keyswitch_t> &data) {
-  // fill the characterstic & notify subscribed clients
-  // std::vector<msg_t> msg;
-  // msg_t msg_content;
-  if (data.size()) {
-    // for (keyswitch_t &key : data) {
-    //   msg_content.kind = (key.pressed_down ? KEY_DOWN : KEY_UP);
-    //   msg_content.col = key.col;
-    //   msg_content.row = key.row;
-    //   msg.push_back(msg_content);
-    // }
-
-    message_characteristic->setValue((uint8_t *)&data,
-                                     sizeof(data[0]) * data.size());
-    message_characteristic->notify(true);
-  }
-}
+// void Mesh::send(const std::vector<keyswitch_t> &data,
+//                 BLECharacteristic *characteristic) {
+//   if (data.size()) {
+//     characteristic->setValue((uint8_t *)&data, sizeof(data[0]) *
+//     data.size()); characteristic->notify(true);
+//   }
+// }
+// void Mesh::send(const std::vector<event_t> &data,
+//                 BLECharacteristic *characteristic) {
+//   if (data.size()) {
+//     characteristic->setValue((uint8_t *)&data, sizeof(data[0]) *
+//     data.size()); characteristic->notify(true);
+//   }
+// }
 
 std::vector<keyswitch_t> Mesh::get_buffer() {
   /**
@@ -312,7 +306,11 @@ void Mesh::retrieve_events(BLERemoteCharacteristic *remoteCharacteristic,
   events.resize(length / sizeof(event_t));
   memcpy(&events[0], data, length);
   for (auto &event : events) {
-    keyboard.manager->add_event(KEYBOARD_EVENTS[event]);
+    try {
+      keyboard.manager->add_event(KEYBOARD_EVENTS[event]);
+    } catch (const std::exception &e) {
+      printf("Adding keyboard event failed\n");
+    }
   }
 
   xSemaphoreGive(mesh_event_mutex);
@@ -412,14 +410,17 @@ void Mesh::onResult(BLEAdvertisedDevice *other) {
   if (other->isAdvertisingService(BLEUUID(split_channel_service_uuid))) {
     printf("Found other service!\n");
     printf("Found device %s \n", other->toString().c_str());
-    if (!is_server) {
-      connect_to_server(create_client(other));
-    }
-    // look for other devices in mesh
-    if (BLEDevice::getClientListSize() < COMPONENTS_IN_MESH) {
-      scan();
-    } else {
-      BLEDevice::getScan()->stop();
+    if (!connect_to_server(create_client(other))) {
+      if ((is_hub) && (BLEDevice::getClientListSize() < COMPONENTS_IN_MESH)) {
+        scan();
+      } else {
+        BLEDevice::getScan()->stop();
+      }
     }
   }
 }
+
+// template Mesh::send(const std::vector<keyswitch_t> &data,
+//                     BLECharacteristic *characteristic);
+// template Mesh::send(const std::vector<event_t> &data,
+//                     BLECharacteristic *characteristic);

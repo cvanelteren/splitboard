@@ -7,40 +7,14 @@
 
 #include <unordered_map>
 
-Keyboard::~Keyboard() {
-  delete config;
-  delete matrix;
-  delete mesh;
-  delete display;
-  delete manager;
-};
-
 Keyboard::Keyboard(Config *config) {
   this->config = config;
   // init the keyboard
-  matrix = new Matrix(config);
-  mesh = new Mesh(config);
-  // setup display
-  display = new Display(config);
-  led = new LED(config);
-  manager = new EventManager();
-
-  byte mac_addr[6];
-  WiFi.macAddress(mac_addr);
-  this->is_server = true;
-  for (int idx = 0; idx < 6; idx++) {
-    if (mac_addr[idx] != config->serv_add[idx]) {
-      this->is_server = false;
-      break;
-    }
-  }
-
-  // default to client
-  if (this->is_server) {
-    Serial.println("Setting up bluetooth");
-    this->bluetooth = BleKeyboard(
-        config->device_name, config->device_manufacturer, get_battery_level());
-  }
+  this->encoder_codes = {
+      {"LEFT",
+       {{"UP", &KEY_MEDIA_VOLUME_UP}, {"DOWN", &KEY_MEDIA_VOLUME_DOWN}}},
+      {"RIGHT",
+       {{"UP", &KEY_MEDIA_VOLUME_DOWN}, {"DOWN", &KEY_MEDIA_VOLUME_UP}}}};
 
   layer_t qwerty = {{KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8,
                      KC_9, KC_0, KC_BSPC},
@@ -78,24 +52,44 @@ Keyboard::Keyboard(Config *config) {
                       KC_NO}};
 
   this->layers = {qwerty, program};
-  // this->layers.push_back(qwerty);
-  // this->layers.push_back(qwerty);
   this->set_active_layer(0);
-
-  // setup rotary encoder
-  this->rotary_encoder = new RotaryEncoder(config);
-  this->encoder_codes = {
-      {"LEFT",
-       {{"UP", &KEY_MEDIA_VOLUME_UP}, {"DOWN", &KEY_MEDIA_VOLUME_DOWN}}},
-      {"RIGHT",
-       {{"UP", &KEY_MEDIA_VOLUME_DOWN}, {"DOWN", &KEY_MEDIA_VOLUME_UP}}}};
-  // this->ble = BleKeyboard(config->name);
-
-  // this->fb = std::vector<uint8_t>(this->display->getDisplayHeight() *
-  // this->display->getDisplayWidth());
-
-  // this->fb = std::vector<uint8_t>(64 / 7 * 128 / 14);
 }
+layer_t *Keyboard::get_active_layer() { return active_layer; }
+uint8_t Keyboard::get_active_layer_num() { return active_layer_num; }
+
+// these are redundant :P just in case
+// Keyboard &Keyboard::operator=(const Keyboard &other) {
+//   if (&other == this)
+//     return *this;
+
+//   std::swap(this, other);
+//   // reset all properties
+//   delete config;
+//   delete matrix;
+//   delete mesh;
+//   delete display;
+//   delete manager;
+//   delete active_layer;
+
+//   config = other.config;
+//   matrix = other.matrix;
+//   mesh = other.mesh;
+//   display = other.display;
+//   manager = other.manager;
+//   is_server = other.is_server;
+//   active_layer = other.get_active_layer();
+//   layers = other.layers;
+//   active_layer_num = other.get_active_layer_num();
+//   return *this;
+// }
+
+Keyboard::~Keyboard() {
+  delete config;
+  delete matrix;
+  delete mesh;
+  delete display;
+  delete manager;
+};
 
 auto *font = u8g2_font_7x14B_mr;
 // start the keyboard
@@ -146,6 +140,37 @@ double Keyboard::get_battery_level() {
 }
 
 void Keyboard::begin() {
+  matrix = new Matrix(config);
+  // setup display
+  display = new Display(config);
+  led = new LED(config);
+  manager = new EventManager();
+
+  std::string servAddr = BLEAddress(config->serv_add).toString();
+  printf(BLEDevice::getAddress().toString().c_str());
+  printf("\n");
+  printf(servAddr.c_str());
+  printf("\n%d\n", BLEDevice::getAddress().toString().compare(servAddr));
+
+  // // only hub for non-servers
+  if (BLEDevice::getAddress().toString().compare(servAddr) == 0) {
+    is_server = true;
+  } else {
+    is_server = false;
+  }
+
+  // default to client
+  if (this->is_server) {
+    Serial.println("Setting up bluetooth");
+    this->bluetooth = BleKeyboard(
+        config->device_name, config->device_manufacturer, get_battery_level());
+  }
+
+  mesh = new Mesh(config);
+
+  // setup rotary encoder
+  this->rotary_encoder = new RotaryEncoder(config);
+
   Serial.println("Starting keyboard");
   Serial.println(printf("Am I a server? %d\n", this->is_server));
   Serial.print("MAC address is: ");
@@ -153,7 +178,12 @@ void Keyboard::begin() {
     Serial.print(hex_num);
   }
   Serial.println();
-
+  // start bluetooth when server
+  if (this->is_server) {
+    printf("Starting bluetooth\n");
+    bluetooth.begin();
+    bluetooth.releaseAll();
+  }
   led->begin();
   mesh->begin();
   rotary_encoder->begin();
@@ -169,13 +199,6 @@ void Keyboard::begin() {
     display->log_buffer.resize(width * height);
     display->log.begin(*this->display, width, height,
                        &(this->display->log_buffer)[0]);
-  }
-
-  // start bluetooth when server
-  if (this->is_server) {
-    printf("Starting bluetooth\n");
-    bluetooth.begin();
-    bluetooth.releaseAll();
   }
 }
 
@@ -449,11 +472,17 @@ void Keyboard::update() {
   // handle server
   if (this->is_server) {
     this->process_keyswitches();
+    this->mesh->update();
   }
+
   // handle client
   else {
     if (this->matrix->active_keys.size()) {
-      this->mesh->send(this->matrix->active_keys);
+      printf("Mesh sending\n");
+      for (auto &elem : matrix->active_keys) {
+        printf("%d %d\n", elem.col, elem.row);
+      }
+      mesh->send(matrix->active_keys, mesh->message_characteristic);
     }
   }
 

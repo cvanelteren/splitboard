@@ -185,6 +185,7 @@ public:
 
   Keyboard(Config *config);
   ~Keyboard();
+  Keyboard &operator=(const Keyboard &other);
   void begin();
   void update();
   // communicate with bluetooth
@@ -201,6 +202,8 @@ public:
   layers_t layers;
   void sleep();
   void wakeup();
+  layer_t *get_active_layer();
+  uint8_t get_active_layer_num();
 
 private:
   layer_t *active_layer;

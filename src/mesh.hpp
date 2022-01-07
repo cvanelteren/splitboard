@@ -62,8 +62,7 @@ typedef std::vector<keyswitch_t> buffer_t;
 typedef std::array<keyswitch_t, 6> message_t;
 // end deprecated
 
-class Mesh : public BLEServerCallbacks,
-             public BLECharacteristicCallbacks,
+class Mesh : public BLECharacteristicCallbacks,
              public BLEClientCallbacks,
              public BLEAdvertisedDeviceCallbacks {
 public:
@@ -72,9 +71,12 @@ public:
   template <typename T, typename A>
   void send(const std::vector<T, A> &data, BLECharacteristic *characteristic) {
     if (data.size()) {
-      characteristic->setValue((uint8_t *)&data, sizeof(data[0]) * data.size());
-      characteristic->notify(true);
+      printf("Sending %d\n", data.size());
+      characteristic->setValue((uint8_t *)&data[0],
+                               sizeof(data[0]) * data.size());
+      characteristic->notify();
     }
+    printf("Connected to %d\n", BLEDevice::getClientListSize());
   }
   // void send(const std::vector<keyswitch_t> &data,
   //           BLECharacteristic *characteristic);
@@ -96,11 +98,14 @@ public:
   // *desc, uint16_t subValue);
 
   void scan();
+  void update();
+  bool is_connected();
   bool connect_to_server(BLEClient *client);
   void onDisconnect(BLEClient *client) override;
   void onConnect(BLEClient *client) override;
-  bool onConfirmPIN(uint32_t pass_key) override;
+  // bool onConfirmPIN(uint32_t pass_key) override;
 
+  bool connectServer();
   BLEClient *create_client(BLEAdvertisedDevice *host_dev);
   static void retrieve_keys(BLERemoteCharacteristic *remoteCharacteristic,
                             uint8_t *data, size_t length, bool isNotify);
@@ -117,7 +122,9 @@ private:
   BLEService *channel_service;
   BLECharacteristic *message_characteristic;
   BLECharacteristic *event_characteristic;
+  bool has_connection;
 
+  BLEAdvertisedDevice *host_dev;
   bool is_hub; // role indicator; hub is "BLEKEYBOARD"
 
   // store message

@@ -29,9 +29,6 @@ bool set_led_cycle() {
 bool increase_led_brightness() {
   return keyboard.led->increase_brightness();
   // TODO: add mesh communication
-  // msg_t msg;
-  // msg.kind = EVENT;
-  // msg.event = keyboard.mesh->send(msg)
 }
 bool decrease_led_brightness() {
   return keyboard.led->decrease_brightness();

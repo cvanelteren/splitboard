@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #if defined(USE_NIMBLE)
+
 #include "NimBLECharacteristic.h"
 #include "NimBLEHIDDevice.h"
 #include <NimBLEDevice.h>
@@ -14,14 +15,14 @@
 #include <NimBLEServer.h>
 #include <NimBLEUtils.h>
 
-#define BLEDevice NimBLEDevice
-#define BLEServerCallbacks NimBLEServerCallbacks
-#define BLECharacteristicCallbacks NimBLECharacteristicCallbacks
-#define BLEHIDDevice NimBLEHIDDevice
-#define BLECharacteristic NimBLECharacteristic
-#define BLEAdvertising NimBLEAdvertising
-#define BLEServer NimBLEServer
-#define BLAdvertisedDeviceCallbacks NimBLEAdvertisedDeviceCallbacks
+// #define BLEDevice NimBLEDevice
+// #define BLEServerCallbacks NimBLEServerCallbacks
+// #define BLECharacteristicCallbacks NimBLECharacteristicCallbacks
+// #define BLEHIDDevice NimBLEHIDDevice
+// #define BLECharacteristic NimBLECharacteristic
+// #define BLEAdvertising NimBLEAdvertising
+// #define BLEServer NimBLEServer
+// #define BLAdvertisedDeviceCallbacks NimBLEAdvertisedDeviceCallbacks
 
 #define BLE_MAX_CONNECTIONS NIMBLE_MAX_CONNECTIONS
 

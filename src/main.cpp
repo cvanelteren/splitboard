@@ -188,7 +188,7 @@ void setup() {
 
   // mesh.begin();
   keyboard.begin();
-  // keyboard.led->active_keys = &(keyboard.matrix->active_keys);
+  keyboard.led->active_keys = &(keyboard.matrix->active_keys);
 
   printf("------------SPLITBOARD------------\n");
   // printf("layers size %d\n", keyboard.layers.size());
@@ -196,7 +196,6 @@ void setup() {
 
 static bool is_connected;
 void loop() {
-
   // keyboard.mesh->update();
   keyboard.update();
   // while (!keyboard.mesh->is_connected()) {

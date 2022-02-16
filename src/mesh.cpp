@@ -43,6 +43,7 @@ Mesh::Mesh(Config *config) {
   printf("Setting up mesh connection\n");
   this->config = config;
   has_connection = false;
+  host_dev = NULL;
 }
 
 void Mesh::begin() {
@@ -142,21 +143,6 @@ void Mesh::sleep() { end(); }
 void Mesh::end() { BLEDevice::deinit(false); }
 
 void Mesh::wakeup() { begin(); }
-
-// void Mesh::send(const std::vector<keyswitch_t> &data,
-//                 BLECharacteristic *characteristic) {
-//   if (data.size()) {
-//     characteristic->setValue((uint8_t *)&data, sizeof(data[0]) *
-//     data.size()); characteristic->notify(true);
-//   }
-// }
-// void Mesh::send(const std::vector<event_t> &data,
-//                 BLECharacteristic *characteristic) {
-//   if (data.size()) {
-//     characteristic->setValue((uint8_t *)&data, sizeof(data[0]) *
-//     data.size()); characteristic->notify(true);
-//   }
-// }
 
 std::vector<keyswitch_t> Mesh::get_buffer() {
   /**
@@ -290,7 +276,7 @@ BLEClient *Mesh::create_client(BLEAdvertisedDevice *host_dev) {
 bool Mesh::connectServer() {
   NimBLEClient *client = nullptr;
 
-  printf("Attempting connection");
+  printf("Attempting connection\n");
   if (host_dev == nullptr) {
     printf("no host dev found\n");
     return false;
@@ -316,7 +302,9 @@ bool Mesh::connectServer() {
       return false;
     }
 
+    printf("%d", host_dev == NULL);
     printf("Creating client\n");
+    printf("%s \n", host_dev->getAddress().toString().c_str());
     client = BLEDevice::createClient(host_dev->getAddress());
     printf("New client created\n");
 
@@ -346,8 +334,6 @@ bool Mesh::connectServer() {
   } else {
     printf("Warning connection is not secure\n");
   }
-
-  printf("Testing here");
 
   printf("Connected to: %s\n", client->getPeerAddress().toString().c_str());
   printf("SSRI: %d \n", client->getRssi());
@@ -456,12 +442,15 @@ void Mesh::retrieve_events(BLERemoteCharacteristic *remoteCharacteristic,
 
 void Mesh::update() {
   static size_t last_time;
-  if ((is_hub == false))
-    if (is_connected() == false) {
-      if (!connectServer()) {
-        scan();
+  if ((last_time - millis()) > 1000) {
+    last_time = millis();
+    if ((is_hub == false))
+      if (is_connected() == false) {
+        if (!connectServer()) {
+          scan();
+        }
       }
-    }
+  }
 }
 
 void Mesh::onConnect(BLEClient *client) {
@@ -503,7 +492,6 @@ bool subscribe_to(std::string characteristic_uuid,
         remote_service->getCharacteristic(characteristic_uuid);
     // subscribe to remote characteristic
     if (remote_characteristic->canNotify()) {
-      printf("REMOTE SERVICE CAN NOTIFY\n");
       if (!remote_characteristic->subscribe(true, *cb)) {
         printf("Cannot subscribe to characteristic \n");
         client->disconnect();

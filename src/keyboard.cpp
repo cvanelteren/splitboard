@@ -504,6 +504,7 @@ void Keyboard::update() {
       printf("Bluetooth disconnected\n");
     ble_connected = 0;
   }
+  led->update();
 }
 
 void Keyboard::wakeup() {

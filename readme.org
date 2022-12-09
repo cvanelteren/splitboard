@@ -1,10 +1,7 @@
 #+options: ^:{} toc:nil
-#begin_html
-<a href="https://www.buymeacoffee.com/cvanelteren" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-#+end_html
 * Welcome to Splitboard
-
 #+html: <p align="center"><img src="figures/logo_firmware.svg" /></p>
+#+html:<a href="https://www.buymeacoffee.com/cvanelteren" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
 Keyboard firmware written for the  esp32. I wanted to have a
 bluetooth  split  keyboard  for  a while  so  I  wrote  this

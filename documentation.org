@@ -1,13 +1,26 @@
 * Kind note
 The keyboard project is a bit on the backburner. The current
 code  is functional  for  the enthusiast  and  will work  as
-advertised.   Currrently, the   display  interface   is  not
+advertised.  Currrently,   the  display  interface   is  not
+finished (PR  welcome ;)). Further,  the esp32 C1  used here
+ended up consuming quite a lot of battery. From some initial
+tests, the esp32 can, in the worst case, end up consuming up
+to 150mah.  This lackluster performance compared  to say the
+nicenano!v2 prevents its from forming a nice base for a long
+lasting  keyboard.  By  eliminating the  wifi  antenna  from
+earlier builds  by using  bluetooth mesh  functionality this
+was reduced to  50mah on the units I have.  Although a great
+improvement,  it still  requires  to  recharge the  keyboard
+every 2 days or so.
+
 * Installation
 The   flashing   and   dependencies  are   handled   through
 Platformio.   Install    platformio   using    the   install
 instructions. I installed it using mamba
 
-```mamba install platformio```
+#+begin_src
+mamba install platformio
+#+end_src
 
 Familiarize  yourself   with  platformio   framework.  Their
 documentation is way better than this one.
@@ -27,7 +40,10 @@ variable serv_addr  should contain  the mac address  of your
 target server  previously mentioned. The mac  address can be
 obtained through platformio through:
 
-```pio device list````
+#+begin_src
+pio device list
+#+end_src
+
 
 after  connecting  the device  with  a  usb connection  that
 supports data transfer.
@@ -39,7 +55,9 @@ pio run -t upload --upload port /dev/ttyusbX
 where @x  is the port  of one of your  halves. Alternatively
 one could use the provided  `flash.py` by running
 
-```python flash.py```
+#+begin_src
+python flash.py
+#+end_src
 
 * Troubleshooting
 ** Bluetooth not connecting after flash

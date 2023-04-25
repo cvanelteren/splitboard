@@ -1,0 +1,57 @@
+* Kind note
+The keyboard project is a bit on the backburner. The current
+code  is functional  for  the enthusiast  and  will work  as
+advertised.   Currrently, the   display  interface   is  not
+* Installation
+The   flashing   and   dependencies  are   handled   through
+Platformio.   Install    platformio   using    the   install
+instructions. I installed it using mamba
+
+```mamba install platformio```
+
+Familiarize  yourself   with  platformio   framework.  Their
+documentation is way better than this one.
+
+* Flashing
+Currently  splitboard  supports  two  modules  operating  in
+conjunction. One board  acts as a host that  interfaces as a
+bluetooth  Human Interface  Device (HID)  with the  external
+device. In addition, it also works  as a host server for the
+other  half.  Both halves  have  to  be flashed  with  these
+differences in mind.
+
+The  consequence being  that one  has  to flash  one of  the
+halves  with the  master role  and the  other half  with the
+slave role. Configuration is  handled in [[src/config.hpp]]; the
+variable serv_addr  should contain  the mac address  of your
+target server  previously mentioned. The mac  address can be
+obtained through platformio through:
+
+```pio device list````
+
+after  connecting  the device  with  a  usb connection  that
+supports data transfer.
+
+Flashing can be performed by running
+#+begin_src
+pio run -t upload --upload port /dev/ttyusbX
+#+end_src
+where @x  is the port  of one of your  halves. Alternatively
+one could use the provided  `flash.py` by running
+
+```python flash.py```
+
+* Troubleshooting
+** Bluetooth not connecting after flash
+Bluetooth sometimes  prevents reconnect after the  device is
+flashed.  This bug  has unknown  origin to  me and  could be
+related to BLE  framework used. It can be  fixed by removing
+the bluetooth devices on the connected device and reconnecting
+** Bluetooth connection takes long to establish
+Sometimes  the bluetooth  connection  takes a  long time  to
+connect.  In  particular,  this  may  occur  when  initially
+connecting the device to computer.  I believe this is caused
+by the  server looking  for a  client and  overwhealming the
+processor preventing  any connection  to establish.  This is
+best circumvented by first powering both halves on, and then
+connecting it to a device.

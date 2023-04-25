@@ -38,6 +38,8 @@ basic  setup  of 27  keys  +  1 rotary  encoder  (optional).
 Adaptations can be made to the setup and configurations are set
 in [[file:./src/config.hpp]].
 
+See [[file:./documentation.org]] for more information.
+
 * History
 I     documented     the     design     process     (partly)
 [[https://cvanelteren.github.io/post/splitboard/][here]] for those that are interested.

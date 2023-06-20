@@ -19,7 +19,7 @@ LED::LED(Config *config) {
 
 void LED::set_brightness(uint8_t value) {
   brightness = value;
-  FastLED.setBrightness(brightness);
+  FastLED.setBrightness(this->brightness);
   FastLED.show();
 }
 
@@ -27,7 +27,7 @@ bool LED::decrease_brightness() {
   printf("Decreasing brightness\n");
   if (brightness != 0) {
     brightness <<= 1;
-    set_brightness(brightness);
+    set_brightness(this->brightness);
     return false;
   }
   return true;
@@ -35,9 +35,9 @@ bool LED::decrease_brightness() {
 
 bool LED::increase_brightness() {
   printf("Increasing brightness\n");
-  if (brightness != 255) {
-    brightness >>= 1;
-    set_brightness(brightness);
+  if (this->brightness != 255) {
+    this->brightness >>= 1;
+    set_brightness(this->brightness);
     return false;
   }
   return true;

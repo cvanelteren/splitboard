@@ -20,7 +20,7 @@ Keyboard::Keyboard(Config *config) {
                      KC_9, KC_0, KC_BSPC},
                     {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I,
                      KC_O, KC_P, KC_LCBRACKET, KC_RCBRACKET},
-                    {KC_TAB, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
+                    {KC_LCTL, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K,
                      KC_L, KC_SCOLON, KC_SQUOTE},
                     {KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M,
                      KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT},
@@ -504,6 +504,8 @@ void Keyboard::update() {
       printf("Bluetooth disconnected\n");
     ble_connected = 0;
   }
+
+  display->update(this->get_battery_level());
   led->update();
 }
 

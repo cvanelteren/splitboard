@@ -16,6 +16,10 @@ public:
   Display(Config *config);
   void sleep();
   void wakeup();
+
+  void draw_battery(double battery_level);
+  void draw_text(String text, int y);
+  void update(double battery_level);
   // void print(uint8_t x, uint8_t y, text);
 };
 
